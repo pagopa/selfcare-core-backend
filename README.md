@@ -1,1 +1,1 @@
-# selfcare-dashboard-backend
+# selfcare-ms-product
