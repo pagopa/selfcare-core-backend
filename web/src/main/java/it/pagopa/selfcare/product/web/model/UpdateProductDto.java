@@ -5,10 +5,8 @@ import it.pagopa.selfcare.product.dao.model.Product;
 import lombok.Data;
 
 @Data
-public class ProductResource {
+public class UpdateProductDto {
 
-    @ApiModelProperty("${swagger.product.id}")
-    private String id;
     @ApiModelProperty("${swagger.product.logo}")
     private String logo;
     @ApiModelProperty("${swagger.product.title}")
@@ -21,16 +19,15 @@ public class ProductResource {
     private String urlBO;
 
 
-    public static ProductResource create(Product product) {
-        ProductResource resource = new ProductResource();
-        resource.setId(product.getId());
-        resource.setLogo(product.getLogo());
-        resource.setTitle(product.getTitle());
-        resource.setDescription(product.getDescription());
-        resource.setUrlPublic(product.getUrlPublic());
-        resource.setUrlBO(product.getUrlBO());
+    public static Product toEntity(UpdateProductDto updateProductDto) {
+        Product product = new Product();
+        product.setLogo(updateProductDto.getLogo());
+        product.setTitle(updateProductDto.getTitle());
+        product.setDescription(updateProductDto.getDescription());
+        product.setUrlPublic(updateProductDto.getUrlPublic());
+        product.setUrlBO(updateProductDto.getUrlBO());
 
-        return resource;
+        return product;
     }
 
 }

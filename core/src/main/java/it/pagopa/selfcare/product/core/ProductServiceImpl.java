@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 class ProductServiceImpl implements ProductService {
@@ -24,7 +25,39 @@ class ProductServiceImpl implements ProductService {
 
     @Override
     public Product createProduct(Product product) {
-        return repository.save(new Product(product.getTitle(), product.getDescription()));
+        return repository.save(new Product(product.getLogo(), product.getTitle(), product.getDescription(), product.getUrlPublic(), product.getUrlBO()));
+    }
+
+    @Override
+    public void deleteProducts() {
+        repository.deleteAll();
+    }
+
+    @Override
+    public void deleteProduct(String id) {
+        repository.deleteById(id);
+    }
+
+    @Override
+    public Optional<Product> getProduct(String id) {
+        return repository.findById(id);
+    }
+
+
+    @Override
+    public Product updateProduct(String id, Product product) {
+        Optional<Product> foundProduct = repository.findById(id);
+        Product result = null;
+        if (foundProduct.isPresent()) {
+            Product p = foundProduct.get();
+            p.setLogo(product.getLogo());
+            p.setTitle(product.getTitle());
+            p.setDescription(product.getDescription());
+            p.setUrlPublic(product.getUrlPublic());
+            p.setUrlBO(product.getUrlBO());
+            result = repository.save(p);
+        }
+        return result;
     }
 
 }
