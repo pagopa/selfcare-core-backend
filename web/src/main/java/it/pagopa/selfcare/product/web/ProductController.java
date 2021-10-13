@@ -1,5 +1,7 @@
 package it.pagopa.selfcare.product.web;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import it.pagopa.selfcare.product.core.ProductService;
 import it.pagopa.selfcare.product.dao.model.Product;
 import it.pagopa.selfcare.product.web.model.CreateProductDto;
@@ -13,15 +15,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController("/products")
-public class DashboardController {
+public class ProductController {
 
     private ProductService productService;
 
     @Autowired
-    public DashboardController(ProductService productService) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
+    @ApiOperation(value = "", notes = "${swagger.product.operation.getProducts}")
     @GetMapping("/")
     @ResponseStatus(HttpStatus.OK)
     public List<ProductResource> getProducts() {
@@ -31,24 +34,36 @@ public class DashboardController {
                 .collect(Collectors.toList());
     }
 
+
+    @ApiOperation(value = "", notes = "${swagger.product.operation.createProduct}")
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    public ProductResource createProduct(@RequestBody CreateProductDto product) {
+    public ProductResource createProduct(@RequestBody
+                                                 CreateProductDto product) {
         Product p = productService.createProduct(CreateProductDto.toEntity(product));
         return ProductResource.create(p);
     }
 
+
+    @ApiOperation(value = "", notes = "${swagger.product.operation.updateProduct}")
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ProductResource updateProduct(@PathVariable("id") String id, @RequestBody UpdateProductDto product) {
+    public ProductResource updateProduct(@ApiParam("${swagger.product.model.id}")
+                                         @PathVariable("id")
+                                                 String id,
+                                         @RequestBody
+                                                 UpdateProductDto product) {
         Product updatedProduct = productService.updateProduct(id, UpdateProductDto.toEntity(product));
         return ProductResource.create(updatedProduct);
     }
 
 
+    @ApiOperation(value = "", notes = "${swagger.product.operation.deleteProduct}")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProduct(@PathVariable("id") String id) {
+    public void deleteProduct(@ApiParam("${swagger.product.model.id}")
+                              @PathVariable("id")
+                                      String id) {
         productService.deleteProduct(id);
     }
 
