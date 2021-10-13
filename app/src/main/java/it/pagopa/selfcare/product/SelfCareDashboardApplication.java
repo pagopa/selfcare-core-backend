@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SelfCareDashboardApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(SelfCareDashboardApplication.class, args);
     }
 

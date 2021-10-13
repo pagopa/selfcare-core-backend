@@ -3,7 +3,6 @@ package it.pagopa.selfcare.product.core;
 import it.pagopa.selfcare.product.dao.model.Product;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ProductService {
 
@@ -15,7 +14,7 @@ public interface ProductService {
 
     void deleteProduct(String id);
 
-    Optional<Product> getProduct(String id);
+    Product getProduct(String id);
 
     Product updateProduct(String id, Product product);
 }

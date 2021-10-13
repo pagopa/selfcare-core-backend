@@ -24,11 +24,18 @@ public class DashboardController {
 
     @GetMapping("/")
     @ResponseStatus(HttpStatus.OK)
-    public List<ProductResource> getProducts() {
+    public List<ProductResource> getAllProducts() {
         List<Product> products = productService.getProducts();
         return products.stream()
                 .map(ProductResource::create)
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ProductResource getProduct(@PathVariable("id") String id) {
+        Product product = productService.getProduct(id);
+        return ProductResource.create(product);
     }
 
     @PostMapping("/")
@@ -55,7 +62,8 @@ public class DashboardController {
 
     @DeleteMapping("/")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProducts() {
+    public void deleteAllProducts() {
+
         productService.deleteProducts();
     }
 
