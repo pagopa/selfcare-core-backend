@@ -7,27 +7,28 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.Ordered;
-import org.springframework.data.domain.Pageable;
-import springfox.documentation.builders.AlternateTypeBuilder;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.AuthorizationScope;
+import springfox.documentation.service.HttpAuthenticationScheme;
+import springfox.documentation.service.SecurityReference;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger.web.SecurityConfiguration;
-import springfox.documentation.swagger.web.SecurityConfigurationBuilder;
 
-import java.lang.reflect.Type;
 import java.time.LocalTime;
-
-import static springfox.documentation.schema.AlternateTypeRules.newRule;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * The Class SwaggerConfig.
  */
 @Configuration
 public class SwaggerConfig {
+
+    public static final String AUTH_SCHEMA_NAME = "bearerAuth";
 
     @Configuration
     @Profile("swaggerIT")
@@ -61,13 +62,12 @@ public class SwaggerConfig {
      */
     @Bean
     public Docket swaggerSpringPlugin(@Autowired TypeResolver typeResolver) {
-        return (new Docket(DocumentationType.OAS_30)).select().apis(RequestHandlerSelectors.any())
-                .apis(RequestHandlerSelectors.basePackage("org.springframework.boot").negate())
-                .apis(RequestHandlerSelectors.basePackage("org.springframework.hateoas").negate()).build()
-                .alternateTypeRules(
-                        newRule(typeResolver.resolve(Pageable.class), pageableMixin(), Ordered.HIGHEST_PRECEDENCE))
+        return (new Docket(DocumentationType.OAS_30)).select()
+                .apis(RequestHandlerSelectors.basePackage("it.pagopa.selfcare.product.web")).build()
                 .directModelSubstitute(LocalTime.class, String.class)
-                .apiInfo(this.metadata());
+                .apiInfo(this.metadata())
+                .securityContexts(Collections.singletonList(securityContext()))
+                .securitySchemes(Collections.singletonList(HttpAuthenticationScheme.JWT_BEARER_BUILDER.name(AUTH_SCHEMA_NAME).build()));
     }
 
     /**
@@ -79,22 +79,24 @@ public class SwaggerConfig {
         return (new ApiInfoBuilder()).title(this.title).description(this.description).version(this.version).build();
     }
 
-    private Type pageableMixin() {
-        return new AlternateTypeBuilder()
-                .fullyQualifiedClassName(String.format("%s.generated.%s", Pageable.class.getPackage().getName(),
-                        Pageable.class.getSimpleName()))
-                .property(p -> p.name("page").type(Integer.class).canRead(true).canWrite(true))
-                .property(p -> p.name("size").type(Integer.class).canRead(true).canWrite(true))
-                .property(p -> p.name("sort").type(String.class).canRead(true).canWrite(true))
-                .build();
+
+    private SecurityContext securityContext() {
+        return SecurityContext.builder().securityReferences(defaultAuth()).build();
     }
 
 
-    @Bean
-    public SecurityConfiguration security() {
-        return SecurityConfigurationBuilder.builder().scopeSeparator(",")
-                .additionalQueryStringParams(null)
-                .useBasicAuthenticationWithAccessCodeGrant(false).build();
+    private List<SecurityReference> defaultAuth() {
+        AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
+        AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
+        authorizationScopes[0] = authorizationScope;
+        return Arrays.asList(new SecurityReference(AUTH_SCHEMA_NAME, authorizationScopes));
     }
+
+//    @Bean
+//    public SecurityConfiguration security() {
+//        return SecurityConfigurationBuilder.builder().scopeSeparator(",")
+//                .additionalQueryStringParams(null)
+//                .useBasicAuthenticationWithAccessCodeGrant(false).build();
+//    }
 
 }
