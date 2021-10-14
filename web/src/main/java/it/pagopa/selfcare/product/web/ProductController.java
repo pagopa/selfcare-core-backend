@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController("/products")
-public class DashboardController {
+public class ProductController {
 
     private ProductService productService;
 
     @Autowired
-    public DashboardController(ProductService productService) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
@@ -29,6 +29,13 @@ public class DashboardController {
         return products.stream()
                 .map(ProductResource::create)
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ProductResource getProduct(@PathVariable("id") String id) {
+        Product product = productService.getProduct(id);
+        return ProductResource.create(product);
     }
 
     @PostMapping("/")
