@@ -7,15 +7,15 @@ import lombok.Data;
 @Data
 public class CreateProductDto {
 
-    @ApiModelProperty("${swagger.product.logo}")
+    @ApiModelProperty("${swagger.product.model.logo}")
     private String logo;
-    @ApiModelProperty("${swagger.product.title}")
+    @ApiModelProperty("${swagger.product.model.title}")
     private String title;
-    @ApiModelProperty("${swagger.product.description}")
+    @ApiModelProperty("${swagger.product.model.description}")
     private String description;
-    @ApiModelProperty("${swagger.product.urlPublic}")
+    @ApiModelProperty("${swagger.product.model.urlPublic}")
     private String urlPublic;
-    @ApiModelProperty("${swagger.product.urlBO}")
+    @ApiModelProperty("${swagger.product.model.urlBO}")
     private String urlBO;
 
 
