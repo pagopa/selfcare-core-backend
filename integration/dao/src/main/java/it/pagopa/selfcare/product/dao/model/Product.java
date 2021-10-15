@@ -12,7 +12,6 @@ public class Product {
     @Id
     private String id;
 
-    //private Image logo;
     private String logo;
     private String title;
     private String description;
@@ -27,9 +26,4 @@ public class Product {
         this.urlPublic = urlPublic;
         this.urlBO = urlBO;
     }
-
-//    public Product(String title, String description) {
-//        this.title = title;
-//        this.description = description;
-//    }
 }

@@ -83,7 +83,6 @@ class ProductServiceImplTest {
     void getProduct_notNull() {
         // given
         String productId = "productId";
-        //Product prod = new Product("logo", "title", "description", "urlPublic", "urlBO");
         BDDMockito.when(repositoryMock.findById(BDDMockito.eq(productId)))
                 .thenAnswer(invocationOnMock -> {
                     Product p = new Product("logo", "title", "description", "urlPublic", "urlBO");
@@ -92,7 +91,6 @@ class ProductServiceImplTest {
         // when
         Product product = productService.getProduct(productId);
         // then
-        //assertEquals(prod, product);
         assertFalse(product.toString().isEmpty());
     }
 
