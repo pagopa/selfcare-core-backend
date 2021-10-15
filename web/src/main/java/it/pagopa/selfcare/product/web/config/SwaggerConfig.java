@@ -9,10 +9,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.AuthorizationScope;
-import springfox.documentation.service.HttpAuthenticationScheme;
-import springfox.documentation.service.SecurityReference;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -62,13 +59,23 @@ public class SwaggerConfig {
      */
     @Bean
     public Docket swaggerSpringPlugin(@Autowired TypeResolver typeResolver) {
-        return (new Docket(DocumentationType.OAS_30)).select()
-                .apis(RequestHandlerSelectors.basePackage("it.pagopa.selfcare.product.web")).build()
-                .directModelSubstitute(LocalTime.class, String.class)
+        return (new Docket(DocumentationType.OAS_30))
                 .apiInfo(this.metadata())
+                .select().apis(RequestHandlerSelectors.basePackage("it.pagopa.selfcare.product.web")).build()
+                .tags(new Tag("product", "Product endpoints for CRUD operations"))
+                .directModelSubstitute(LocalTime.class, String.class)
                 .securityContexts(Collections.singletonList(securityContext()))
                 .securitySchemes(Collections.singletonList(HttpAuthenticationScheme.JWT_BEARER_BUILDER.name(AUTH_SCHEMA_NAME).build()));
     }
+//    @Bean
+//    public Docket swaggerSpringPlugin(@Autowired TypeResolver typeResolver) {
+//        return (new Docket(DocumentationType.OAS_30)).select()
+//                .apis(RequestHandlerSelectors.basePackage("it.pagopa.selfcare.product.web")).build()
+//                .directModelSubstitute(LocalTime.class, String.class)
+//                .apiInfo(this.metadata())
+//                .securityContexts(Collections.singletonList(securityContext()))
+//                .securitySchemes(Collections.singletonList(HttpAuthenticationScheme.JWT_BEARER_BUILDER.name(AUTH_SCHEMA_NAME).build()));
+//    }
 
     /**
      * Metadata.
@@ -92,11 +99,17 @@ public class SwaggerConfig {
         return Arrays.asList(new SecurityReference(AUTH_SCHEMA_NAME, authorizationScopes));
     }
 
+
 //    @Bean
-//    public SecurityConfiguration security() {
-//        return SecurityConfigurationBuilder.builder().scopeSeparator(",")
-//                .additionalQueryStringParams(null)
-//                .useBasicAuthenticationWithAccessCodeGrant(false).build();
+//    public OpenAPI springShopOpenAPI() {
+//        return new OpenAPI()
+//                .info(new Info().title(title)
+//                        .description(description)
+//                        .version(version)
+//                        .license(new License().name("PagoPA").url("https://www.pagopa.it/")));
+//                .externalDocs(new ExternalDocumentation()
+//                        .description("SpringShop Wiki Documentation")
+//                        .url("https://springshop.wiki.github.org/docs"));
 //    }
 
 }

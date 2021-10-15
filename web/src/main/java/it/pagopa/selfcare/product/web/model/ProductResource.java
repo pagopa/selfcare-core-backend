@@ -1,23 +1,23 @@
 package it.pagopa.selfcare.product.web.model;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import it.pagopa.selfcare.product.dao.model.Product;
 import lombok.Data;
 
 @Data
 public class ProductResource {
 
-    @ApiModelProperty("${swagger.product.id}")
+    @Schema(description = "${swagger.product.id}")
     private String id;
-    @ApiModelProperty("${swagger.product.logo}")
+    @Schema(description = "${swagger.product.logo}")
     private String logo;
-    @ApiModelProperty("${swagger.product.title}")
+    @Schema(description = "${swagger.product.title}")
     private String title;
-    @ApiModelProperty("${swagger.product.description}")
+    @Schema(description = "${swagger.product.description}")
     private String description;
-    @ApiModelProperty("${swagger.product.urlPublic}")
+    @Schema(description = "${swagger.product.urlPublic}")
     private String urlPublic;
-    @ApiModelProperty("${swagger.product.urlBO}")
+    @Schema(description = "${swagger.product.urlBO}")
     private String urlBO;
 
 

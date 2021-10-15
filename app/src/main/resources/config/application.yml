@@ -9,6 +9,13 @@ spring:
     include:
       # TO enable italian documentations
       - swaggerIT
+  jackson:
+    default-property-inclusion: NON_NULL
+    serialization.write-dates-as-timestamps: false
+    serialization.fail-on-empty-beans: false
+    deserialization.fail-on-unknown-properties: false
+    visibility.all: NONE
+    visibility.field: ANY
 
 info:
   build:
@@ -21,6 +28,3 @@ info:
 logging:
   level:
     it.pagopa.selfcare.product: ${LOG_LEVEL_SELC_PRODUCT:DEBUG}
-
-swagger:
-  description: I servizi descritti in questa sezione si occuperanno della gestione dell’entità Prodotto, fornendo i metodi necessari per il loro censimento, la loro consultazione e attivazione

@@ -1,5 +1,8 @@
 package it.pagopa.selfcare.product.web;
 
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import it.pagopa.selfcare.product.core.ProductService;
 import it.pagopa.selfcare.product.dao.model.Product;
 import it.pagopa.selfcare.product.web.model.CreateProductDto;
@@ -13,17 +16,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController("/products")
+@Api(tags = "product")
 public class ProductController {
 
-    private ProductService productService;
+    private final ProductService productService;
+
 
     @Autowired
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
 
+
     @GetMapping("/")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(description = "${swagger.product.operation.getProducts}")
     public List<ProductResource> getProducts() {
         List<Product> products = productService.getProducts();
         return products.stream()
@@ -31,23 +38,34 @@ public class ProductController {
                 .collect(Collectors.toList());
     }
 
+
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(description = "${swagger.product.operation.getProduct}")
     public ProductResource getProduct(@PathVariable("id") String id) {
         Product product = productService.getProduct(id);
         return ProductResource.create(product);
     }
 
+
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    public ProductResource createProduct(@RequestBody CreateProductDto product) {
+    @Operation(description = "${swagger.product.operation.createProduct}")
+    public ProductResource createProduct(@RequestBody
+                                                 CreateProductDto product) {
         Product p = productService.createProduct(CreateProductDto.toEntity(product));
         return ProductResource.create(p);
     }
 
+
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ProductResource updateProduct(@PathVariable("id") String id, @RequestBody UpdateProductDto product) {
+    @Operation(description = "${swagger.product.operation.updateProduct}")
+    public ProductResource updateProduct(@Parameter(description = "${swagger.product.model.id}")
+                                         @PathVariable("id")
+                                                 String id,
+                                         @RequestBody
+                                                 UpdateProductDto product) {
         Product updatedProduct = productService.updateProduct(id, UpdateProductDto.toEntity(product));
         return ProductResource.create(updatedProduct);
     }
@@ -55,7 +73,10 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProduct(@PathVariable("id") String id) {
+    @Operation(description = "${swagger.product.operation.deleteProduct}")
+    public void deleteProduct(@Parameter(description = "${swagger.product.model.id}")
+                              @PathVariable("id")
+                                      String id) {
         productService.deleteProduct(id);
     }
 
