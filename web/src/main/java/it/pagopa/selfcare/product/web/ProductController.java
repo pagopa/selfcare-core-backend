@@ -1,13 +1,14 @@
 package it.pagopa.selfcare.product.web;
 
 import io.swagger.annotations.Api;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import it.pagopa.selfcare.product.core.ProductService;
 import it.pagopa.selfcare.product.dao.model.Product;
 import it.pagopa.selfcare.product.web.model.CreateProductDto;
 import it.pagopa.selfcare.product.web.model.ProductResource;
 import it.pagopa.selfcare.product.web.model.UpdateProductDto;
+import it.pagopa.selfcare.product.web.model.mapper.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -30,51 +31,53 @@ public class ProductController {
 
     @GetMapping("/")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(description = "${swagger.product.operation.getProducts}")
+    @ApiOperation(value = "", notes = "${swagger.product.operation.getProducts}")
     public List<ProductResource> getProducts() {
         List<Product> products = productService.getProducts();
         return products.stream()
-                .map(ProductResource::create)
+                .map(ProductMapper::toResource)
                 .collect(Collectors.toList());
     }
 
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(description = "${swagger.product.operation.getProduct}")
-    public ProductResource getProduct(@PathVariable("id") String id) {
+    @ApiOperation(value = "", notes = "${swagger.product.operation.getProduct}")
+    public ProductResource getProduct(@ApiParam("${swagger.product.model.id}")
+                                      @PathVariable("id")
+                                              String id) {
         Product product = productService.getProduct(id);
-        return ProductResource.create(product);
+        return ProductMapper.toResource(product);
     }
 
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(description = "${swagger.product.operation.createProduct}")
+    @ApiOperation(value = "", notes = "${swagger.product.operation.createProduct}")
     public ProductResource createProduct(@RequestBody
                                                  CreateProductDto product) {
-        Product p = productService.createProduct(CreateProductDto.toEntity(product));
-        return ProductResource.create(p);
+        Product p = productService.createProduct(ProductMapper.fromDto(product));
+        return ProductMapper.toResource(p);
     }
 
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(description = "${swagger.product.operation.updateProduct}")
-    public ProductResource updateProduct(@Parameter(description = "${swagger.product.model.id}")
+    @ApiOperation(value = "", notes = "${swagger.product.operation.updateProduct}")
+    public ProductResource updateProduct(@ApiParam("${swagger.product.model.id}")
                                          @PathVariable("id")
                                                  String id,
                                          @RequestBody
                                                  UpdateProductDto product) {
-        Product updatedProduct = productService.updateProduct(id, UpdateProductDto.toEntity(product));
-        return ProductResource.create(updatedProduct);
+        Product updatedProduct = productService.updateProduct(id, ProductMapper.fromDto(product));
+        return ProductMapper.toResource(updatedProduct);
     }
 
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(description = "${swagger.product.operation.deleteProduct}")
-    public void deleteProduct(@Parameter(description = "${swagger.product.model.id}")
+    @ApiOperation(value = "", notes = "${swagger.product.operation.deleteProduct}")
+    public void deleteProduct(@ApiParam("${swagger.product.model.id}")
                               @PathVariable("id")
                                       String id) {
         productService.deleteProduct(id);

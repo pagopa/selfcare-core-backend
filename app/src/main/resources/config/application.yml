@@ -9,13 +9,13 @@ spring:
     include:
       # TO enable italian documentations
       - swaggerIT
-  jackson:
-    default-property-inclusion: NON_NULL
-    serialization.write-dates-as-timestamps: false
-    serialization.fail-on-empty-beans: false
-    deserialization.fail-on-unknown-properties: false
-    visibility.all: NONE
-    visibility.field: ANY
+#  jackson:
+#    default-property-inclusion: NON_NULL
+#    serialization.write-dates-as-timestamps: false
+#    serialization.fail-on-empty-beans: false
+#    deserialization.fail-on-unknown-properties: false
+#    visibility.all: NONE
+#    visibility.field: ANY
 
 info:
   build:
