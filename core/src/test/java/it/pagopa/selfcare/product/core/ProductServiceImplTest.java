@@ -36,7 +36,6 @@ class ProductServiceImplTest {
         assertTrue(products.isEmpty());
     }
 
-
     @Test
     void getProducts_notEmptyList() {
         // given
@@ -61,11 +60,6 @@ class ProductServiceImplTest {
         Product product = productService.createProduct(prod);
         // then
         assertFalse(product.toString().isEmpty());
-    }
-
-    @Test
-    void deleteProducts() {
-
     }
 
     @Test

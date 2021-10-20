@@ -6,7 +6,7 @@ import org.springframework.security.core.AuthenticationException;
 
 
 //@Component
-public class CustomAuthProvider implements AuthenticationProvider {
+public class CustomAuthProvider implements AuthenticationProvider {//TODO
 
 //    @Autowired
 //    AuthService authService;
