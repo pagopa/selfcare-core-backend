@@ -83,11 +83,4 @@ public class ProductController {
         productService.deleteProduct(id);
     }
 
-
-    @DeleteMapping("/")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProducts() {
-        productService.deleteProducts();
-    }
-
 }
