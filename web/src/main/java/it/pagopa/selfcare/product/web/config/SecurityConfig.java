@@ -1,107 +1,104 @@
 package it.pagopa.selfcare.product.web.config;
 
+import it.pagopa.selfcare.product.core.security.UserDetailsServiceImpl;
 import it.pagopa.selfcare.product.web.handler.RestAuthenticationSuccessHandler;
-import it.pagopa.selfcare.product.web.security.AuthEntryPointJwt;
 import it.pagopa.selfcare.product.web.security.AuthTokenFilter;
+import it.pagopa.selfcare.product.web.security.CustomAuthProvider;
+import it.pagopa.selfcare.product.web.security.JwtService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @PropertySource("classpath:config/jwt.properties")
-//@EnableGlobalMethodSecurity(
-//        // securedEnabled = true,
-//        // jsr250Enabled = true,
-//        prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    private SimpleUrlAuthenticationFailureHandler authenticationFailureHandler = new SimpleUrlAuthenticationFailureHandler();
-
-    private AccessDeniedHandler accessDeniedHandler = (request, response, accessDeniedException) -> {
-        response.getOutputStream().print("Unauthorized!");
-        response.setStatus(403);
-    };
-
-    @Autowired
-    private AuthEntryPointJwt authEntryPointJwt;
 
     @Autowired
     private RestAuthenticationSuccessHandler authenticationSuccessHandler;
 
+    @Autowired
+    private JwtService jwtService;
+
 
     @Bean
     @Override
-    public UserDetailsService userDetailsService() {
-        UserDetails john = User.withUsername("john").password(encoder()
-                .encode("doe")).roles("USER").build();
-        UserDetails jane = User.withUsername("jane").password(encoder()
-                .encode("doe")).roles("USER", "ADMIN").build();
-        UserDetails admin = User.withUsername("admin").password(encoder()
-                .encode("admin")).roles("ADMIN").build();
-        return new InMemoryUserDetailsManager(john, jane, admin);
+    protected UserDetailsService userDetailsService() {
+        return new UserDetailsServiceImpl();
     }
 
 
-    @Bean
-    PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-
-    @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
+    @Override
+    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+        authenticationManagerBuilder.authenticationProvider(new CustomAuthProvider());
     }
 
     private static final String[] AUTH_WHITELIST = {
-            // -- Swagger UI v2
-//            "/v2/api-docs",
-//            "/swagger-resources",
-            "/swagger-resources/**",
-//            "/configuration/ui",
-//            "/configuration/security",
-//            "/swagger-ui.html",
-//            "/webjars/**",
             // -- Swagger UI v3 (OpenAPI)
+            "/swagger-resources/**",
+            "/v3/api-docs",
             "/v3/api-docs/**",
+            "/swagger-ui.html",
             "/swagger-ui/**",
             "/favicon.ico"
-            // other public endpoints of your API may be appended to this array
     };
+
+
+    @Override
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers(AUTH_WHITELIST);
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
+        // TODO: configure CORS
+//        CorsConfiguration corsConfiguration = new CorsConfiguration();
+//        corsConfiguration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+//        corsConfiguration.setAllowedOrigins(List.of("*"));
+//        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PUT","OPTIONS","PATCH", "DELETE"));
+//        corsConfiguration.setAllowCredentials(true);
+//        corsConfiguration.setExposedHeaders(List.of("Authorization"));
+//        http.cors().configurationSource(request -> corsConfiguration)
+        http.cors()
+                .and()
+                .csrf().disable()
                 .exceptionHandling()
-                .accessDeniedHandler(accessDeniedHandler)
-                .authenticationEntryPoint(authEntryPointJwt)
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    log.error("Unauthorized error: {}: {}", accessDeniedException.getMessage(), request.getRequestURI());
+                    response.sendError(HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN.getReasonPhrase());
+                })
+                .authenticationEntryPoint((request, response, authException) -> {
+                    log.error("Unauthorized error: {}: {}", authException.getMessage(), request.getRequestURI());
+                    response.addHeader(HttpHeaders.WWW_AUTHENTICATE, "Bearer realm=\"selfcare\"");
+                    response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
+                })
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(AUTH_WHITELIST).permitAll()
-                .antMatchers("/products").hasRole("USER")
+//                .antMatchers(AUTH_WHITELIST).permitAll()
+                .antMatchers(HttpMethod.GET, "/products/**").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/products/**").hasRole("ADMIN")
-                .antMatchers("/**").hasAnyRole("ADMIN", "USER")
+                .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .successHandler(authenticationSuccessHandler)
-                .failureHandler(authenticationFailureHandler)
+                .failureHandler(new SimpleUrlAuthenticationFailureHandler())
                 .and()
                 .httpBasic()
                 .and()
@@ -111,7 +108,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .headers().cacheControl();
 
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new AuthTokenFilter(userDetailsService(), jwtService), UsernamePasswordAuthenticationFilter.class);
     }
 
+    // TODO: configure CORS
+//    @Bean
+//    protected CorsConfigurationSource corsConfigurationSource() {
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
+//        return source;
+//    }
 }

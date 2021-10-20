@@ -1,4 +1,4 @@
-package it.pagopa.selfcare.product.web.security;
+package it.pagopa.selfcare.product.core.security;
 
 import lombok.Getter;
 
