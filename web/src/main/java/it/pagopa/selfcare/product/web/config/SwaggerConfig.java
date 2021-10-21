@@ -26,19 +26,23 @@ public class SwaggerConfig {
 
     @Configuration
     @Profile("swaggerIT")
-    @PropertySource("classpath:/swagger/swagger_it_IT.properties")
+    @PropertySource("classpath:/swagger/swagger_it.properties")
     public static class itConfig {
     }
 
-//    @Value("${swagger.title:${spring.application.name}}") String title;
-//    @Value("${swagger.description:Api and Models}") String description;
-//    @Value("${swagger.version:${spring.application.version}}") String version;
+    @Configuration
+    @Profile("swaggerEN")
+    @PropertySource("classpath:/swagger/swagger_en.properties")
+    public static class enConfig {
+    }
+
 
     @Bean
     public Docket swaggerSpringPlugin(@Value("${swagger.title:${spring.application.name}}") String title,
                                       @Value("${swagger.description:Api and Models}") String description,
                                       @Value("${swagger.version:${spring.application.version}}") String version,
-                                      @Value("${swagger.product.api.description}") String productApiDesc
+                                      @Value("${swagger.product.api.description}") String productApiDesc,
+                                      @Value("${swagger.security.schema.bearer.description}") String authSchemaDesc
     ) {
         return (new Docket(DocumentationType.OAS_30))
                 .apiInfo(apiInfo(title, description, version))
@@ -46,7 +50,10 @@ public class SwaggerConfig {
                 .tags(new Tag("product", productApiDesc))
                 .directModelSubstitute(LocalTime.class, String.class)
                 .securityContexts(Collections.singletonList(securityContext()))
-                .securitySchemes(Collections.singletonList(HttpAuthenticationScheme.JWT_BEARER_BUILDER.name(AUTH_SCHEMA_NAME).build()));
+                .securitySchemes(Collections.singletonList(HttpAuthenticationScheme.JWT_BEARER_BUILDER
+                        .name(AUTH_SCHEMA_NAME)
+                        .description(authSchemaDesc)
+                        .build()));
     }
 
 
@@ -66,24 +73,5 @@ public class SwaggerConfig {
         authorizationScopes[0] = authorizationScope;
         return Collections.singletonList(new SecurityReference(AUTH_SCHEMA_NAME, authorizationScopes));
     }
-
-
-//    @Bean
-//    public OpenAPI springShopOpenAPI(@Value("${swagger.title:${spring.application.name}}") String title,
-//                                     @Value("${swagger.description:Api and Models}") String description,
-//                                     @Value("${swagger.version:${spring.application.version}}") String version) {
-//        return new OpenAPI()
-//                .info(new Info().title(title)
-//                        .description(description)
-//                        .version(version)
-//                        .license(new License().name("PagoPA").url("https://www.pagopa.it/")))
-//                .components(new Components()
-//                        .addSecuritySchemes(AUTH_SCHEMA_NAME,
-//                                new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")))
-//                ;
-////                .externalDocs(new ExternalDocumentation()
-////                        .description("SpringShop Wiki Documentation")
-////                        .url("https://springshop.wiki.github.org/docs"));
-//    }
 
 }
