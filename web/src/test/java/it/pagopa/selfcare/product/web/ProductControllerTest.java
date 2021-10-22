@@ -199,7 +199,7 @@ class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
         // then
-        assertEquals("", result.getResponse().getContentAsString());
+        TestUtils.reflectionEqualsByName(UPDATE_PRODUCT_DTO, result.getResponse().getContentAsString(), "id");
     }
 
     @Test
