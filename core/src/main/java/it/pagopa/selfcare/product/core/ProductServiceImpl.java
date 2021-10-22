@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.product.core;
 
+import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.dao.ProductRepository;
 import it.pagopa.selfcare.product.dao.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,34 +31,31 @@ class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(String id) {
-        repository.deleteById(id);
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+        } else {
+            throw new ResourceNotFoundException();
+        }
     }
 
     @Override
     public Product getProduct(String id) {
         Optional<Product> foundProduct = repository.findById(id);
-        Product result = null;
-        if (foundProduct.isPresent()) {
-            result = foundProduct.get();
-        }
-        return result;
+
+        return foundProduct.orElseThrow(ResourceNotFoundException::new);
     }
 
 
     @Override
     public Product updateProduct(String id, Product product) {
         Optional<Product> foundProduct = repository.findById(id);
-        Product result = null;
-        if (foundProduct.isPresent()) {
-            Product p = foundProduct.get();
-            p.setLogo(product.getLogo());
-            p.setTitle(product.getTitle());
-            p.setDescription(product.getDescription());
-            p.setUrlPublic(product.getUrlPublic());
-            p.setUrlBO(product.getUrlBO());
-            result = repository.save(p);
-        }
-        return result;
+        Product p = foundProduct.orElseThrow(ResourceNotFoundException::new);
+        p.setLogo(product.getLogo());
+        p.setTitle(product.getTitle());
+        p.setDescription(product.getDescription());
+        p.setUrlPublic(product.getUrlPublic());
+        p.setUrlBO(product.getUrlBO());
+        return repository.save(p);
     }
 
 }

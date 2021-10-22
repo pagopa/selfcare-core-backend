@@ -1,10 +1,12 @@
 package it.pagopa.selfcare.product.core;
 
+import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.dao.ProductRepository;
 import it.pagopa.selfcare.product.dao.model.Product;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
@@ -39,7 +41,7 @@ class ProductServiceImplTest {
     @Test
     void getProducts_notEmptyList() {
         // given
-        BDDMockito.when(repositoryMock.findAll())
+        Mockito.when(repositoryMock.findAll())
                 .thenAnswer(invocationOnMock -> {
                     Product product = new Product("logo", "title", "description", "urlPublic", "urlBO");
                     return Collections.singletonList(product);
@@ -54,7 +56,7 @@ class ProductServiceImplTest {
     void createProduct() {
         // given
         Product prod = new Product("logo", "title", "description", "urlPublic", "urlBO");
-        BDDMockito.when(repositoryMock.save(prod))
+        Mockito.when(repositoryMock.save(prod))
                 .thenAnswer(invocationOnMock -> new Product("logo", "title", "description", "urlPublic", "urlBO"));
         // when
         Product product = productService.createProduct(prod);
@@ -63,21 +65,34 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void deleteProduct() {
+    void deleteProduct_exist() {
         // given
         String productId = "productId";
+        Mockito.when(repositoryMock.existsById(Mockito.anyString()))
+                .thenReturn(true);
+        Mockito.doNothing()
+                .when(repositoryMock).deleteById(Mockito.anyString());
         // when
         productService.deleteProduct(productId);
         // then
-        Optional<Product> foundProduct = repositoryMock.findById(productId);
-        assertFalse(foundProduct.isPresent());
+        Mockito.verify(repositoryMock, Mockito.times(1)).deleteById(Mockito.anyString());
+    }
+
+    @Test
+    void deleteProduct_NotExist() {
+        // given
+        String productId = "productId";
+        Mockito.when(repositoryMock.existsById(Mockito.anyString()))
+                .thenReturn(false);
+        // when - then
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> productService.deleteProduct(productId));
     }
 
     @Test
     void getProduct_notNull() {
         // given
         String productId = "productId";
-        BDDMockito.when(repositoryMock.findById(BDDMockito.eq(productId)))
+        Mockito.when(repositoryMock.findById(Mockito.eq(productId)))
                 .thenAnswer(invocationOnMock -> {
                     Product p = new Product("logo", "title", "description", "urlPublic", "urlBO");
                     return Optional.of(p);
@@ -92,10 +107,8 @@ class ProductServiceImplTest {
     void getProduct_null() {
         // given
         String productId = "productId";
-        // when
-        Product product = productService.getProduct(productId);
-        // then
-        assertNull(product);
+        // when - then
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> productService.getProduct(productId));
     }
 
     @Test
@@ -103,12 +116,12 @@ class ProductServiceImplTest {
         // given
         String productId = "productId";
         Product product = new Product("logo2", "title2", "description2", "urlPublic2", "urlBO2");
-        BDDMockito.when(repositoryMock.findById(BDDMockito.eq(productId)))
+        Mockito.when(repositoryMock.findById(Mockito.eq(productId)))
                 .thenAnswer(invocationOnMock -> {
                     Product p = new Product("logo", "title", "description", "urlPublic", "urlBO");
                     return Optional.of(p);
                 });
-        BDDMockito.when(repositoryMock.save(BDDMockito.any()))
+        Mockito.when(repositoryMock.save(Mockito.any()))
                 .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, Product.class));
         // when
         Product savedProduct = productService.updateProduct(productId, product);
@@ -126,8 +139,7 @@ class ProductServiceImplTest {
         String productId = "productId";
         Product product = new Product("logo2", "title2", "description2", "urlPublic2", "urlBO2");
         // when
-        Product savedProduct = productService.updateProduct(productId, product);
+        assertThrows(ResourceNotFoundException.class, () -> productService.updateProduct(productId, product));
         // then
-        assertNull(savedProduct);
     }
 }
