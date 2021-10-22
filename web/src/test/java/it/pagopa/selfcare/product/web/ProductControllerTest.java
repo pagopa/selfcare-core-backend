@@ -34,15 +34,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProductControllerTest {
 
     private static final String BASE_URL = "/products";
-    private static final CreateProductDto CREATE_PRODUCT_DTO;
-    private static final UpdateProductDto UPDATE_PRODUCT_DTO;
-    private static final Product PRODUCT;
-
-    static {
-        CREATE_PRODUCT_DTO = TestUtils.mockInstance(new CreateProductDto());
-        UPDATE_PRODUCT_DTO = TestUtils.mockInstance(new UpdateProductDto());
-        PRODUCT = TestUtils.mockInstance(new Product());
-    }
+    private static final CreateProductDto CREATE_PRODUCT_DTO = TestUtils.mockInstance(new CreateProductDto());
+    private static final UpdateProductDto UPDATE_PRODUCT_DTO = TestUtils.mockInstance(new UpdateProductDto());
+    private static final Product PRODUCT = TestUtils.mockInstance(new Product());
 
     @MockBean
     private ProductService productServiceMock;
