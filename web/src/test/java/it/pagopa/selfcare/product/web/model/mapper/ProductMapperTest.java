@@ -45,7 +45,7 @@ class ProductMapperTest {
         Product product = ProductMapper.fromDto(dto);
         // then
         assertNull(product.getId());
-        TestUtils.reflectionEqualsByName(dto, product, "id");
+        TestUtils.reflectionEqualsByName(dto, product, "setId");
     }
 
     @Test
@@ -65,7 +65,7 @@ class ProductMapperTest {
         Product product = ProductMapper.fromDto(dto);
         // then
         assertNull(product.getId());
-        TestUtils.reflectionEqualsByName(dto, product, "id");
+        TestUtils.reflectionEqualsByName(dto, product, "setId");
     }
 
     @Test

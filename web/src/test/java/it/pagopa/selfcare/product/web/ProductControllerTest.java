@@ -156,7 +156,7 @@ class ProductControllerTest {
         ProductResource product = objectMapper.readValue(result.getResponse().getContentAsString(), ProductResource.class);
         assertNotNull(product);
         assertNotNull(product.getId());
-        TestUtils.reflectionEqualsByName(CREATE_PRODUCT_DTO, product, "id");
+        TestUtils.reflectionEqualsByName(CREATE_PRODUCT_DTO, product, "setId");
     }
 
     @Test
@@ -182,7 +182,7 @@ class ProductControllerTest {
         ProductResource product = objectMapper.readValue(result.getResponse().getContentAsString(), ProductResource.class);
 
         assertNotNull(product);
-        TestUtils.reflectionEqualsByName(UPDATE_PRODUCT_DTO, product, "id");
+        TestUtils.reflectionEqualsByName(UPDATE_PRODUCT_DTO, product, "setId");
     }
 
     @Test
