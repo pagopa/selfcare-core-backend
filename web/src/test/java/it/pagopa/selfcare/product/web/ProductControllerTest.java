@@ -3,8 +3,11 @@ package it.pagopa.selfcare.product.web;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.product.core.ProductService;
+import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.dao.model.Product;
+import it.pagopa.selfcare.product.web.handler.RestExceptionsHandler;
 import it.pagopa.selfcare.product.web.model.CreateProductDto;
+import it.pagopa.selfcare.product.web.model.ErrorResource;
 import it.pagopa.selfcare.product.web.model.ProductResource;
 import it.pagopa.selfcare.product.web.model.UpdateProductDto;
 import it.pagopa.selfcare.product.web.utils.TestUtils;
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,7 +33,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @WebMvcTest(value = {ProductController.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ContextConfiguration(classes = {
-        ProductController.class
+        ProductController.class,
+        RestExceptionsHandler.class
 })
 class ProductControllerTest {
 
@@ -92,7 +97,7 @@ class ProductControllerTest {
 
 
     @Test
-    void getProductNotNull() throws Exception {
+    void getProduct_exists() throws Exception {
         // given
         Mockito.when(productServiceMock.getProduct(Mockito.anyString()))
                 .thenAnswer(invocationOnMock -> {
@@ -114,19 +119,20 @@ class ProductControllerTest {
     }
 
     @Test
-    void getProductNull() throws Exception {
+    void getProduct_notExists() throws Exception {
         // given
         Mockito.when(productServiceMock.getProduct(Mockito.anyString()))
-                .thenReturn(null);
+                .thenThrow(ResourceNotFoundException.class);
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .get(BASE_URL + "/id")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andExpect(MockMvcResultMatchers.status().is(HttpStatus.NOT_FOUND.value()))
                 .andReturn();
         // then
-        assertEquals("", result.getResponse().getContentAsString());
+        ErrorResource error = objectMapper.readValue(result.getResponse().getContentAsString(), ErrorResource.class);
+        assertNotNull(error);
     }
 
     @Test
@@ -154,7 +160,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void updateProductNotNul() throws Exception {
+    void updateProduct_exists() throws Exception {
         // given
         Product prod = new Product();
         Mockito.when(productServiceMock.updateProduct(Mockito.anyString(), Mockito.any(Product.class)))
@@ -180,26 +186,29 @@ class ProductControllerTest {
     }
 
     @Test
-    void updateProductNull() throws Exception {
+    void updateProduct_notExists() throws Exception {
         // given
         Mockito.when(productServiceMock.updateProduct(Mockito.anyString(), Mockito.any(Product.class)))
-                .thenReturn(null);
+                .thenThrow(ResourceNotFoundException.class);
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .put(BASE_URL + "/id")
                         .content(objectMapper.writeValueAsString(UPDATE_PRODUCT_DTO))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andExpect(MockMvcResultMatchers.status().is(HttpStatus.NOT_FOUND.value()))
                 .andReturn();
         // then
-        TestUtils.reflectionEqualsByName(UPDATE_PRODUCT_DTO, result.getResponse().getContentAsString(), "id");
+        ErrorResource error = objectMapper.readValue(result.getResponse().getContentAsString(), ErrorResource.class);
+        assertNotNull(error);
     }
 
+
     @Test
-    void deleteProduct() throws Exception {
+    void deleteProduct_exists() throws Exception {
         // given
-        productServiceMock.deleteProduct(Mockito.anyString());
+        Mockito.doNothing()
+                .when(productServiceMock).deleteProduct(Mockito.anyString());
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .delete(BASE_URL + "/id")
@@ -209,6 +218,24 @@ class ProductControllerTest {
                 .andReturn();
         // then
         assertEquals("", result.getResponse().getContentAsString());
+    }
+
+
+    @Test
+    void deleteProduct_notExists() throws Exception {
+        // given
+        Mockito.doThrow(ResourceNotFoundException.class)
+                .when(productServiceMock).deleteProduct(Mockito.anyString());
+        // when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .delete(BASE_URL + "/id")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.status().is(HttpStatus.NOT_FOUND.value()))
+                .andReturn();
+        // then
+        ErrorResource error = objectMapper.readValue(result.getResponse().getContentAsString(), ErrorResource.class);
+        assertNotNull(error);
     }
 
 }

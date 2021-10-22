@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.product.web.handler;
 
 import feign.FeignException;
+import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.web.model.ErrorResource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -113,6 +114,15 @@ public class RestExceptionsHandler {
         } else {
             log.error(UNHANDLED_EXCEPTION, e);
         }
-        return new ResponseEntity<>(e.contentUTF8(), httpHeaders, httpStatus);
+        return new ResponseEntity<>(e.contentUTF8(), httpHeaders, httpStatus != null ? httpStatus : HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
+    @ExceptionHandler({ResourceNotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    private ErrorResource handleResourceNotFoundException(ResourceNotFoundException e) {
+        log.warn(UNHANDLED_EXCEPTION, e);
+        return new ErrorResource(e.getMessage());
     }
 }
