@@ -6,8 +6,8 @@ import it.pagopa.selfcare.product.dao.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 class ProductServiceImpl implements ProductService {
@@ -26,7 +26,8 @@ class ProductServiceImpl implements ProductService {
 
     @Override
     public Product createProduct(Product product) {
-        return repository.save(new Product(product.getLogo(), product.getTitle(), product.getDescription(), product.getUrlPublic(), product.getUrlBO()));
+        product.setActivationDateTime(OffsetDateTime.now());
+        return repository.save(product);
     }
 
     @Override
@@ -40,22 +41,19 @@ class ProductServiceImpl implements ProductService {
 
     @Override
     public Product getProduct(String id) {
-        Optional<Product> foundProduct = repository.findById(id);
-
-        return foundProduct.orElseThrow(ResourceNotFoundException::new);
+        return repository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
 
     @Override
     public Product updateProduct(String id, Product product) {
-        Optional<Product> foundProduct = repository.findById(id);
-        Product p = foundProduct.orElseThrow(ResourceNotFoundException::new);
-        p.setLogo(product.getLogo());
-        p.setTitle(product.getTitle());
-        p.setDescription(product.getDescription());
-        p.setUrlPublic(product.getUrlPublic());
-        p.setUrlBO(product.getUrlBO());
-        return repository.save(p);
+        Product foundProduct = repository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        foundProduct.setLogo(product.getLogo());
+        foundProduct.setTitle(product.getTitle());
+        foundProduct.setDescription(product.getDescription());
+        foundProduct.setUrlPublic(product.getUrlPublic());
+        foundProduct.setUrlBO(product.getUrlBO());
+        return repository.save(foundProduct);
     }
 
 }

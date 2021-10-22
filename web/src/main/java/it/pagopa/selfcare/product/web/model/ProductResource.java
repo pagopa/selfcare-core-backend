@@ -3,6 +3,8 @@ package it.pagopa.selfcare.product.web.model;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.time.OffsetDateTime;
+
 @Data
 public class ProductResource {
 
@@ -18,5 +20,7 @@ public class ProductResource {
     private String urlPublic;
     @ApiModelProperty("${swagger.product.model.urlBO}")
     private String urlBO;
+    @ApiModelProperty("${swagger.product.model.activationDateTime}")
+    private OffsetDateTime activationDateTime;
 
 }

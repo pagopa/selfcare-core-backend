@@ -17,6 +17,7 @@ public class ProductMapper {
             resource.setDescription(entity.getDescription());
             resource.setUrlPublic(entity.getUrlPublic());
             resource.setUrlBO(entity.getUrlBO());
+            resource.setActivationDateTime(entity.getActivationDateTime());
         }
 
         return resource;

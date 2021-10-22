@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.product.core;
 
 import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
+import it.pagopa.selfcare.product.core.utils.TestUtils;
 import it.pagopa.selfcare.product.dao.ProductRepository;
 import it.pagopa.selfcare.product.dao.model.Product;
 import org.junit.jupiter.api.Assertions;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -42,10 +44,7 @@ class ProductServiceImplTest {
     void getProducts_notEmptyList() {
         // given
         Mockito.when(repositoryMock.findAll())
-                .thenAnswer(invocationOnMock -> {
-                    Product product = new Product("logo", "title", "description", "urlPublic", "urlBO");
-                    return Collections.singletonList(product);
-                });
+                .thenReturn(Collections.singletonList(new Product()));
         // when
         List<Product> products = productService.getProducts();
         // then
@@ -55,13 +54,19 @@ class ProductServiceImplTest {
     @Test
     void createProduct() {
         // given
-        Product prod = new Product("logo", "title", "description", "urlPublic", "urlBO");
-        Mockito.when(repositoryMock.save(prod))
-                .thenAnswer(invocationOnMock -> new Product("logo", "title", "description", "urlPublic", "urlBO"));
+        OffsetDateTime inputActivationDateTime = OffsetDateTime.now();
+        Product input = new Product();
+        input.setActivationDateTime(inputActivationDateTime);
+        Mockito.when(repositoryMock.save(Mockito.any(Product.class)))
+                .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, Product.class));
         // when
-        Product product = productService.createProduct(prod);
+        Product output = productService.createProduct(input);
         // then
-        assertFalse(product.toString().isEmpty());
+        assertNotNull(output);
+        assertNotNull(output.getActivationDateTime());
+        if (input.getActivationDateTime() != null) {
+            assertTrue(output.getActivationDateTime().isAfter(inputActivationDateTime));
+        }
     }
 
     @Test
@@ -92,15 +97,12 @@ class ProductServiceImplTest {
     void getProduct_notNull() {
         // given
         String productId = "productId";
-        Mockito.when(repositoryMock.findById(Mockito.eq(productId)))
-                .thenAnswer(invocationOnMock -> {
-                    Product p = new Product("logo", "title", "description", "urlPublic", "urlBO");
-                    return Optional.of(p);
-                });
+        Mockito.when(repositoryMock.findById(Mockito.any()))
+                .thenAnswer(invocationOnMock -> Optional.of(new Product()));
         // when
         Product product = productService.getProduct(productId);
         // then
-        assertFalse(product.toString().isEmpty());
+        assertNotNull(product);
     }
 
     @Test
@@ -115,12 +117,9 @@ class ProductServiceImplTest {
     void updateProduct_foundProductNotNull() {
         // given
         String productId = "productId";
-        Product product = new Product("logo2", "title2", "description2", "urlPublic2", "urlBO2");
+        Product product = TestUtils.mockInstance(new Product(), "setId");
         Mockito.when(repositoryMock.findById(Mockito.eq(productId)))
-                .thenAnswer(invocationOnMock -> {
-                    Product p = new Product("logo", "title", "description", "urlPublic", "urlBO");
-                    return Optional.of(p);
-                });
+                .thenReturn(Optional.of(new Product()));
         Mockito.when(repositoryMock.save(Mockito.any()))
                 .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, Product.class));
         // when
@@ -134,10 +133,10 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void updateProduct_foundProductNull() {
+    void updateProduct_notExists() {
         // given
         String productId = "productId";
-        Product product = new Product("logo2", "title2", "description2", "urlPublic2", "urlBO2");
+        Product product = new Product();
         // when
         assertThrows(ResourceNotFoundException.class, () -> productService.updateProduct(productId, product));
         // then
