@@ -1,8 +1,8 @@
 package it.pagopa.selfcare.product.web.security;
 
-import it.pagopa.selfcare.product.core.security.Role;
+import io.jsonwebtoken.Claims;
+import it.pagopa.selfcare.product.connector.rest.PartyRestClient;
 import it.pagopa.selfcare.product.web.config.SecurityConfig;
-import it.pagopa.selfcare.product.web.handler.RestAuthenticationSuccessHandler;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,34 +11,38 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Collections;
+import java.util.Optional;
 
 
 @WebMvcTest(value = {TestController.class})
 @ContextConfiguration(classes = {
         TestController.class,
-        SecurityConfig.class,
-        RestAuthenticationSuccessHandler.class
+        SecurityConfig.class
 })
-class AuthTokenFilterTest {
+class JwtAuthenticationFilterTest {
 
     private static final String BASE_URL = "/test";
-    private static final User USER = new User("user", "", Collections.singletonList(new SimpleGrantedAuthority(Role.ROLE_USER.name())));
+    public static final UsernamePasswordAuthenticationToken USER_AUTHENTICATION =
+            new UsernamePasswordAuthenticationToken("user", "", Collections.singletonList(new SimpleGrantedAuthority(Role.ROLE_USER.name())));
 
 
     @MockBean
     private JwtService jwtServiceMock;
 
     @MockBean
-    private UserDetailsService userDetailsService;
+    private PartyRestClient partyRestClient;
+
+    @MockBean
+    private AuthenticationManager authenticationManager;
 
     @Autowired
     protected MockMvc mvc;
@@ -47,8 +51,8 @@ class AuthTokenFilterTest {
     @Test
     void testWithoutJwt() throws Exception {
         // given
-        Mockito.when(jwtServiceMock.validateJwtToken(Mockito.any()))
-                .thenReturn(false);
+        Mockito.when(jwtServiceMock.getClaims(Mockito.any()))
+                .thenReturn(Optional.empty());
         // when
         mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/")
@@ -62,10 +66,10 @@ class AuthTokenFilterTest {
     @Test
     void testWithValidJwt() throws Exception {
         // given
-        Mockito.when(jwtServiceMock.validateJwtToken(Mockito.any()))
-                .thenReturn(true);
-        Mockito.when(userDetailsService.loadUserByUsername(Mockito.any()))
-                .thenReturn(USER);
+        Mockito.when(jwtServiceMock.getClaims(Mockito.any()))
+                .thenReturn(Optional.of(Mockito.mock(Claims.class)));
+        Mockito.when(authenticationManager.authenticate(Mockito.any()))
+                .thenReturn(USER_AUTHENTICATION);
         // when
         mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/")
@@ -76,11 +80,12 @@ class AuthTokenFilterTest {
                 .andReturn();
     }
 
+
     @Test
     void testWithInvalidJwt() throws Exception {
         // given
-        Mockito.when(jwtServiceMock.validateJwtToken(Mockito.any()))
-                .thenReturn(false);
+        Mockito.when(jwtServiceMock.getClaims(Mockito.any()))
+                .thenReturn(Optional.empty());
         // when
         mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/")
@@ -96,7 +101,7 @@ class AuthTokenFilterTest {
     void testWithException() throws Exception {
         // given
         Mockito.doThrow(RuntimeException.class)
-                .when(jwtServiceMock).validateJwtToken(Mockito.any());
+                .when(jwtServiceMock).getClaims(Mockito.any());
         // when
         mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/")

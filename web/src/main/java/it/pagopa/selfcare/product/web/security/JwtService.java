@@ -1,9 +1,12 @@
 package it.pagopa.selfcare.product.web.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 /**
  * Common helper methods to work with JWT
@@ -30,8 +33,19 @@ public class JwtService {
 //                .compact();
 //    }
 
-    public String getUserNameFromJwtToken(String token) {
+    public String getSubjectFromJwtToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+    }
+
+
+    public Optional<Claims> getClaims(String token) {
+        Optional<Claims> claims = Optional.empty();
+        try {
+            claims = Optional.of(Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+        return claims;
     }
 
     public boolean validateJwtToken(String authToken) {
@@ -40,16 +54,8 @@ public class JwtService {
             try {
                 Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
                 valid = true;
-            } catch (SignatureException e) {
-                log.error("Invalid JWT signature: {}", e.getMessage());
-            } catch (MalformedJwtException e) {
-                log.error("Invalid JWT token: {}", e.getMessage());
-            } catch (ExpiredJwtException e) {
-                log.error("JWT token is expired: {}", e.getMessage());
-            } catch (UnsupportedJwtException e) {
-                log.error("JWT token is unsupported: {}", e.getMessage());
-            } catch (IllegalArgumentException e) {
-                log.error("JWT claims string is empty: {}", e.getMessage());
+            } catch (Exception e) {
+                log.error(e.getMessage());
             }
         }
 
