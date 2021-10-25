@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.TestingAuthenticationProvider;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -65,6 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         SelfCareAuthenticationProvider authenticationProvider = new SelfCareAuthenticationProvider(restClient);
         authenticationProvider.setAuthoritiesMapper(mapper);
         authenticationManagerBuilder.authenticationProvider(authenticationProvider);
+        authenticationManagerBuilder.authenticationProvider(new TestingAuthenticationProvider()); // FIXME: remove after implemented real role based authorization
     }
 
 
@@ -98,7 +100,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/products/**").hasAnyRole("USER", "ADMIN")
-//                .antMatchers("/products/**").hasRole("ADMIN")
                 .antMatchers("/products/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
@@ -116,12 +117,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 //        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
 //        return source;
-//    }
-
-    // TODO: configure default GrantedAuthority (if required)
-//    @Bean
-//    GrantedAuthorityDefaults grantedAuthorityDefaults() {
-//        return new GrantedAuthorityDefaults(""); // Remove the ROLE_ prefix
 //    }
 
 }

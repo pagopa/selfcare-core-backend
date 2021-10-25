@@ -12,7 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,8 +31,8 @@ import java.util.Optional;
 class JwtAuthenticationFilterTest {
 
     private static final String BASE_URL = "/test";
-    public static final UsernamePasswordAuthenticationToken USER_AUTHENTICATION =
-            new UsernamePasswordAuthenticationToken("user", "", Collections.singletonList(new SimpleGrantedAuthority(Role.ROLE_USER.name())));
+    public static final TestingAuthenticationToken USER_AUTHENTICATION =
+            new TestingAuthenticationToken("user", "", Collections.singletonList(new SimpleGrantedAuthority(Role.ROLE_USER.name())));
 
 
     @MockBean

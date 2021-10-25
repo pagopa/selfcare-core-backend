@@ -4,8 +4,9 @@ import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -15,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Optional;
 
 @Slf4j
@@ -37,8 +39,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Optional<Claims> claims = jwtService.getClaims(jwt);
 
             if (claims.isPresent()) {
-                UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(claims.get().getSubject(), jwt);
-                authRequest.setDetails(new JwtAuthenticationDetails(request));
+                // FIXME: remove after implemented real role based authorization
+                TestingAuthenticationToken authRequest =
+                        new TestingAuthenticationToken(claims.get().getSubject(), jwt, Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN")));
+                // FIXME: uncomment after implemented real role based authorization
+//                UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(claims.get().getSubject(), jwt);
+//                authRequest.setDetails(new JwtAuthenticationDetails(request));
                 Authentication authentication = authenticationManager.authenticate(authRequest);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

@@ -22,7 +22,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ContextConfiguration;
@@ -44,12 +44,12 @@ import java.util.UUID;
 class ProductControllerAuthTest {
 
     private static final String BASE_URL = "/products";
-    public static final UsernamePasswordAuthenticationToken USER_AUTHENTICATION =
-            new UsernamePasswordAuthenticationToken("user", "", Collections.singletonList(new SimpleGrantedAuthority(Role.ROLE_USER.name())));
-    public static final UsernamePasswordAuthenticationToken ADMIN_AUTHENTICATION =
-            new UsernamePasswordAuthenticationToken("admin", "", Collections.singletonList(new SimpleGrantedAuthority(Role.ROLE_ADMIN.name())));
-    public static final UsernamePasswordAuthenticationToken LEGAL_AUTHENTICATION =
-            new UsernamePasswordAuthenticationToken("legal", "", Collections.singletonList(new SimpleGrantedAuthority(Role.ROLE_LEGAL.name())));
+    public static final TestingAuthenticationToken USER_AUTHENTICATION =
+            new TestingAuthenticationToken("user", "", Collections.singletonList(new SimpleGrantedAuthority(Role.ROLE_USER.name())));
+    public static final TestingAuthenticationToken ADMIN_AUTHENTICATION =
+            new TestingAuthenticationToken("admin", "", Collections.singletonList(new SimpleGrantedAuthority(Role.ROLE_ADMIN.name())));
+    public static final TestingAuthenticationToken LEGAL_AUTHENTICATION =
+            new TestingAuthenticationToken("legal", "", Collections.singletonList(new SimpleGrantedAuthority(Role.ROLE_LEGAL.name())));
     private static final EnumMap<Role, Authentication> role2userMap = new EnumMap<>(Role.class) {{
         put(Role.ROLE_USER, USER_AUTHENTICATION);
         put(Role.ROLE_ADMIN, ADMIN_AUTHENTICATION);
