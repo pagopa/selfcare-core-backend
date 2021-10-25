@@ -1,0 +1,362 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "@project.parent.artifactId@",
+    "description": "The services described in this section deal with the management of the Product entity, providing the necessary methods for its creation, consultation and activation.",
+    "version": "@project.version@"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Inferred Url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "product",
+      "description": "Product's endpoints for CRUD operations"
+    }
+  ],
+  "paths": {
+    "/products/": {
+      "get": {
+        "tags": [
+          "product"
+        ],
+        "summary": "getProducts",
+        "description": "Service that returns the list of PagoPA products",
+        "operationId": "getProductsUsingGET",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProductResource"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "product"
+        ],
+        "summary": "createProduct",
+        "description": "Service that allows the insert of a new occurrence for the Product entity",
+        "operationId": "createProductUsingPOST",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResource"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "tags": [
+          "product"
+        ],
+        "summary": "getProduct",
+        "description": "Service that returns the information for a single product given its product id",
+        "operationId": "getProductUsingGET",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product's unique identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResource"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "product"
+        ],
+        "summary": "updateProduct",
+        "description": "Service that allows the update of a previously inserted occurrence of the Product entity",
+        "operationId": "updateProductUsingPUT",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product's unique identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResource"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "product"
+        ],
+        "summary": "deleteProduct",
+        "description": "Service that allows the deactivation of a specific product by an Admin user",
+        "operationId": "deleteProductUsingDELETE",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product's unique identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateProductDto": {
+        "title": "CreateProductDto",
+        "required": [
+          "description",
+          "logo",
+          "title",
+          "urlBO",
+          "urlPublic"
+        ],
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Product's description"
+          },
+          "logo": {
+            "type": "string",
+            "description": "Product's logo"
+          },
+          "title": {
+            "type": "string",
+            "description": "Product's title"
+          },
+          "urlBO": {
+            "type": "string",
+            "description": "URL that redirects to the back-office section, where is possible to manage the product"
+          },
+          "urlPublic": {
+            "type": "string",
+            "description": "URL that redirects to the public information webpage of the product"
+          }
+        }
+      },
+      "ProductResource": {
+        "title": "ProductResource",
+        "type": "object",
+        "properties": {
+          "activationDateTime": {
+            "type": "string",
+            "description": "Date the products was activated/created",
+            "format": "date-time"
+          },
+          "description": {
+            "type": "string",
+            "description": "Product's description"
+          },
+          "id": {
+            "type": "string",
+            "description": "Product's unique identifier"
+          },
+          "logo": {
+            "type": "string",
+            "description": "Product's logo"
+          },
+          "title": {
+            "type": "string",
+            "description": "Product's title"
+          },
+          "urlBO": {
+            "type": "string",
+            "description": "URL that redirects to the back-office section, where is possible to manage the product"
+          },
+          "urlPublic": {
+            "type": "string",
+            "description": "URL that redirects to the public information webpage of the product"
+          }
+        }
+      },
+      "UpdateProductDto": {
+        "title": "UpdateProductDto",
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Product's description"
+          },
+          "logo": {
+            "type": "string",
+            "description": "Product's logo"
+          },
+          "title": {
+            "type": "string",
+            "description": "Product's title"
+          },
+          "urlBO": {
+            "type": "string",
+            "description": "URL that redirects to the back-office section, where is possible to manage the product"
+          },
+          "urlPublic": {
+            "type": "string",
+            "description": "URL that redirects to the public information webpage of the product"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "description": "A bearer token in the format of a JWS and conformed to the specifications included in [RFC8725](https://tools.ietf.org/html/RFC8725)",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

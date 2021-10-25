@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SelfCareDashboardApplication {
+public class SelfCareProductApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SelfCareDashboardApplication.class, args);
+        SpringApplication.run(SelfCareProductApplication.class, args);
     }
 
 }
