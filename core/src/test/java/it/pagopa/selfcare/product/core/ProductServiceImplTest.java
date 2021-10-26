@@ -1,7 +1,7 @@
 package it.pagopa.selfcare.product.core;
 
+import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
-import it.pagopa.selfcare.product.core.utils.TestUtils;
 import it.pagopa.selfcare.product.dao.ProductRepository;
 import it.pagopa.selfcare.product.dao.model.Product;
 import org.junit.jupiter.api.Assertions;

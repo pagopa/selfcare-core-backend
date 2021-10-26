@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.product.web.security;
 
+import it.pagopa.selfcare.commons.web.security.JwtAuthenticationDetails;
 import it.pagopa.selfcare.product.connector.rest.PartyRestClient;
 import it.pagopa.selfcare.product.connector.rest.model.RelationshipInfo;
 import it.pagopa.selfcare.product.connector.rest.model.RelationshipsResponse;

@@ -14,11 +14,11 @@
     <dependencies>
         <dependency>
             <groupId>it.pagopa.selfcare</groupId>
-            <artifactId>selc-product-core</artifactId>
+            <artifactId>selc-commons-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>it.pagopa.selfcare</groupId>
+            <artifactId>selc-product-core</artifactId>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
@@ -28,10 +28,6 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
         </dependency>
     </dependencies>
 

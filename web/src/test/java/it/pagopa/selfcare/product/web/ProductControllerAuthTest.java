@@ -2,15 +2,15 @@ package it.pagopa.selfcare.product.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
+import it.pagopa.selfcare.commons.utils.TestUtils;
+import it.pagopa.selfcare.commons.web.security.JwtService;
 import it.pagopa.selfcare.product.connector.rest.PartyRestClient;
 import it.pagopa.selfcare.product.core.ProductService;
 import it.pagopa.selfcare.product.dao.model.Product;
-import it.pagopa.selfcare.product.web.config.SecurityConfig;
+import it.pagopa.selfcare.product.web.config.SecurityTestConfig;
 import it.pagopa.selfcare.product.web.model.CreateProductDto;
 import it.pagopa.selfcare.product.web.model.UpdateProductDto;
-import it.pagopa.selfcare.product.web.security.JwtService;
 import it.pagopa.selfcare.product.web.security.Role;
-import it.pagopa.selfcare.product.web.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -39,7 +39,7 @@ import java.util.UUID;
 @WebMvcTest(value = {ProductController.class})
 @ContextConfiguration(classes = {
         ProductController.class,
-        SecurityConfig.class
+        SecurityTestConfig.class
 })
 class ProductControllerAuthTest {
 

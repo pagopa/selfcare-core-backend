@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Primary;
 import java.util.TimeZone;
 
 @Configuration
-public class WebConfig {
+class WebConfig {
 
     @Bean
     @Primary
@@ -32,15 +32,5 @@ public class WebConfig {
         mapper.setTimeZone(TimeZone.getDefault());
         return mapper;
     }
-
-//    @Bean
-//    public Module javaTimeModule() {
-//        return new JavaTimeModule();
-//    }
-//
-//    @Bean
-//    public Module jdk8Module() {
-//        return new Jdk8Module();
-//    }
 
 }

@@ -20,7 +20,7 @@ import java.util.List;
  * The Class SwaggerConfig.
  */
 @Configuration
-public class SwaggerConfig {
+class SwaggerConfig {
 
     public static final String AUTH_SCHEMA_NAME = "bearerAuth";
 

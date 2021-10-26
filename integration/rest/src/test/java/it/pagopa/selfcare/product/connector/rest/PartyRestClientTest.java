@@ -5,7 +5,8 @@ import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemp
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import com.github.tomakehurst.wiremock.standalone.JsonFileMappingsSource;
 import com.github.tomakehurst.wiremock.stubbing.StubMapping;
-import it.pagopa.selfcare.product.connector.rest.config.PartyRestClientConfig;
+import it.pagopa.selfcare.commons.connector.rest.BaseFeignRestClientTest;
+import it.pagopa.selfcare.product.connector.rest.config.PartyRestClientTestConfig;
 import it.pagopa.selfcare.product.connector.rest.model.RelationshipInfo;
 import it.pagopa.selfcare.product.connector.rest.model.RelationshipsResponse;
 import lombok.SneakyThrows;
@@ -34,7 +35,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
         })
 @ContextConfiguration(
         initializers = PartyRestClientTest.RandomPortInitializer.class,
-        classes = {PartyRestClientConfig.class})
+        classes = {PartyRestClientTestConfig.class})
 public class PartyRestClientTest extends BaseFeignRestClientTest {
 
     @ClassRule

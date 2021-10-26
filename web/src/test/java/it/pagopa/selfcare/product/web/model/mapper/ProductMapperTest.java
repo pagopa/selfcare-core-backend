@@ -1,10 +1,10 @@
 package it.pagopa.selfcare.product.web.model.mapper;
 
+import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.product.dao.model.Product;
 import it.pagopa.selfcare.product.web.model.CreateProductDto;
 import it.pagopa.selfcare.product.web.model.ProductResource;
 import it.pagopa.selfcare.product.web.model.UpdateProductDto;
-import it.pagopa.selfcare.product.web.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

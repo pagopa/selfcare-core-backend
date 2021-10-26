@@ -1,8 +1,8 @@
 package it.pagopa.selfcare.product.dao;
 
-import it.pagopa.selfcare.product.dao.config.DaoConfig;
+import it.pagopa.selfcare.commons.utils.TestUtils;
+import it.pagopa.selfcare.product.dao.config.DaoTestConfig;
 import it.pagopa.selfcare.product.dao.model.Product;
-import it.pagopa.selfcare.product.dao.utils.TestUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataMongoTest
 @EnableAutoConfiguration
-@ContextConfiguration(classes = {Product.class, ProductRepository.class, DaoConfig.class})
+@ContextConfiguration(classes = {Product.class, ProductRepository.class, DaoTestConfig.class})
 class ProductRepositoryTest {
 
     @Autowired

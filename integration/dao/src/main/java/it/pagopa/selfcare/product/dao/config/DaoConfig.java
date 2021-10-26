@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 @Configuration
 @PropertySource("classpath:config/dao-config.properties")
-public class DaoConfig {
+class DaoConfig {
 
     @Bean
     public MongoCustomConversions customConversions() {
