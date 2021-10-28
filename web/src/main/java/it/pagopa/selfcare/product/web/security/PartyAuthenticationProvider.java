@@ -14,12 +14,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collections;
 
 
-public class SelfCareAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
+public class PartyAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
     private final PartyRestClient restClient;
 
 
-    public SelfCareAuthenticationProvider(PartyRestClient restClient) {
+    public PartyAuthenticationProvider(PartyRestClient restClient) {
         this.restClient = restClient;
     }
 
@@ -30,8 +30,8 @@ public class SelfCareAuthenticationProvider extends AbstractUserDetailsAuthentic
 
     @Override
     protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+        // TODO: implement real logic after deciding how to manage roles (Admin, Reviewer)
         JwtAuthenticationDetails details = (JwtAuthenticationDetails) authentication.getDetails();
-        // TODO: implement real logic
 //        RelationshipsResponse institutionRelationships = restClient.getInstitutionRelationships(details.getInstitutionId());
 
         // start mock
@@ -47,11 +47,11 @@ public class SelfCareAuthenticationProvider extends AbstractUserDetailsAuthentic
         User user = null;
         if (!institutionRelationships.isEmpty()) {
             RelationshipInfo relationshipInfo = institutionRelationships.get(0);
-            String role = relationshipInfo.getPlatformRole();
-            user = new User(username, authentication.getCredentials().toString(), Collections.singletonList(new SimpleGrantedAuthority(role)));
+            SimpleGrantedAuthority grantedAuthority = new SimpleGrantedAuthority(relationshipInfo.getPlatformRole());
+            user = new User(username, authentication.getCredentials().toString(), Collections.singletonList(grantedAuthority));
         }
         // TODO: map RelationshipsResponse to UserDetails
-//        return new User("admin", "", Collections.singletonList(new SimpleGrantedAuthority(Role.ROLE_ADMIN.name())));// TODO: implement real logic
+//        return new User("admin", "", Collections.singletonList(new SimpleGrantedAuthority(Role.ROLE_ADMIN.name())));
         return user;
     }
 

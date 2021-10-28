@@ -24,25 +24,30 @@ import static it.pagopa.selfcare.commons.web.handler.RestExceptionsHandler.UNHAN
 public class ProductExceptionsHandler {
 
     @ExceptionHandler(FeignException.class)
-    public ResponseEntity<String> handleFeignException(FeignException e) {
+    ResponseEntity<ErrorResource> handleFeignException(FeignException e) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         HttpStatus httpStatus = HttpStatus.resolve(e.status());
 
-        if (e.contentUTF8() != null && e.contentUTF8().startsWith("{\"returnMessages\":")
-                && httpStatus != null && httpStatus.is4xxClientError()) {
+        if (httpStatus != null && httpStatus.is4xxClientError()) {
             log.warn(UNHANDLED_EXCEPTION, e);
+
         } else {
             log.error(UNHANDLED_EXCEPTION, e);
         }
-        return new ResponseEntity<>(e.contentUTF8(), httpHeaders, httpStatus != null ? httpStatus : HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return new ResponseEntity<>(new ErrorResource(e.getMessage()),
+                httpHeaders,
+                httpStatus != null
+                        ? httpStatus
+                        : HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
     @ExceptionHandler({ResourceNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    private ErrorResource handleResourceNotFoundException(ResourceNotFoundException e) {
+    ErrorResource handleResourceNotFoundException(ResourceNotFoundException e) {
         log.warn(UNHANDLED_EXCEPTION, e);
         return new ErrorResource(e.getMessage());
     }

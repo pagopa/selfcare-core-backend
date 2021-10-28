@@ -3,7 +3,7 @@ package it.pagopa.selfcare.product.web.config;
 import it.pagopa.selfcare.commons.web.config.SecurityConfig;
 import it.pagopa.selfcare.commons.web.security.JwtService;
 import it.pagopa.selfcare.product.connector.rest.PartyRestClient;
-import it.pagopa.selfcare.product.web.security.SelfCareAuthenticationProvider;
+import it.pagopa.selfcare.product.web.security.PartyAuthenticationProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +32,7 @@ class ProductSecurityConfig extends SecurityConfig {
         SimpleAuthorityMapper mapper = new SimpleAuthorityMapper();
         mapper.setConvertToUpperCase(true);
         mapper.afterPropertiesSet();
-        SelfCareAuthenticationProvider authenticationProvider = new SelfCareAuthenticationProvider(restClient);
+        PartyAuthenticationProvider authenticationProvider = new PartyAuthenticationProvider(restClient);
         authenticationProvider.setAuthoritiesMapper(mapper);
         authenticationManagerBuilder.authenticationProvider(authenticationProvider);
         authenticationManagerBuilder.authenticationProvider(new TestingAuthenticationProvider()); // FIXME: remove after implemented real role based authorization
