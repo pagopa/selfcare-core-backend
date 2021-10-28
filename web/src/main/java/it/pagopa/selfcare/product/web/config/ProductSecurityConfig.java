@@ -44,6 +44,7 @@ class ProductSecurityConfig extends SecurityConfig {
         http.authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/products/**").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/products/**").hasRole("ADMIN")
+                .antMatchers("/actuator/**").permitAll()
                 .anyRequest().authenticated();
         super.configure(http);
     }
