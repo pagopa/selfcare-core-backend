@@ -1,5 +1,7 @@
 package it.pagopa.selfcare.product.dao;
 
+import it.pagopa.selfcare.commons.utils.TestUtils;
+import it.pagopa.selfcare.product.dao.config.DaoTestConfig;
 import it.pagopa.selfcare.product.dao.model.Product;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataMongoTest
 @EnableAutoConfiguration
-@ContextConfiguration(classes = {Product.class, ProductRepository.class})
+@ContextConfiguration(classes = {Product.class, ProductRepository.class, DaoTestConfig.class})
 class ProductRepositoryTest {
 
     @Autowired
@@ -31,7 +33,7 @@ class ProductRepositoryTest {
     @Test
     public void create() {
         // given
-        Product product = new Product("logo", "title", "description", "urlPublic", "urlBO");
+        Product product = TestUtils.mockInstance(new Product(), "setId");
         // when
         Product savedProduct = repository.save(product);
         // then
@@ -63,7 +65,7 @@ class ProductRepositoryTest {
     @Test
     public void update() {
         // given
-        Product product = new Product("logo", "title", "description", "urlPublic", "urlBO");
+        Product product = TestUtils.mockInstance(new Product(), "setId");
         Product savedProduct = repository.save(product);
         // when
         Optional<Product> foundProduct = repository.findById(savedProduct.getId());
@@ -79,7 +81,7 @@ class ProductRepositoryTest {
     @Test
     public void deleteById() {
         // given
-        Product product = new Product("logo", "title", "description", "urlPublic", "urlBO");
+        Product product = TestUtils.mockInstance(new Product(), "setId");
         Product savedProduct = repository.save(product);
         // when
         repository.deleteById(savedProduct.getId());

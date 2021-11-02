@@ -2,20 +2,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: msproduct
-  name: msproduct
+    app: ms-product
+  name: ms-product
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: msproduct
+      app: ms-product
   template:
     metadata:
       labels:
-        app: msproduct
+        app: ms-product
     spec:
       containers:
-        - name: msproduct
+        - name: ms-product
           image: selcdacr.azurecr.io/msproduct
           imagePullPolicy: Always
           ports:
@@ -23,6 +23,10 @@ spec:
           envFrom:
             - secretRef:
                 name: application-insights
+            - secretRef:
+                name: mongo-credentials
+            - configMapRef:
+                name: ms-product
           livenessProbe:
             httpGet:
               path: /actuator/health

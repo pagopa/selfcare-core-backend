@@ -1,36 +1,26 @@
 package it.pagopa.selfcare.product.web.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import it.pagopa.selfcare.product.dao.model.Product;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.time.OffsetDateTime;
 
 @Data
 public class ProductResource {
 
-    @Schema(description = "${swagger.product.id}")
+    @ApiModelProperty("${swagger.product.model.id}")
     private String id;
-    @Schema(description = "${swagger.product.logo}")
+    @ApiModelProperty("${swagger.product.model.logo}")
     private String logo;
-    @Schema(description = "${swagger.product.title}")
+    @ApiModelProperty("${swagger.product.model.title}")
     private String title;
-    @Schema(description = "${swagger.product.description}")
+    @ApiModelProperty("${swagger.product.model.description}")
     private String description;
-    @Schema(description = "${swagger.product.urlPublic}")
+    @ApiModelProperty("${swagger.product.model.urlPublic}")
     private String urlPublic;
-    @Schema(description = "${swagger.product.urlBO}")
+    @ApiModelProperty("${swagger.product.model.urlBO}")
     private String urlBO;
-
-
-    public static ProductResource create(Product product) {
-        ProductResource resource = new ProductResource();
-        resource.setId(product.getId());
-        resource.setLogo(product.getLogo());
-        resource.setTitle(product.getTitle());
-        resource.setDescription(product.getDescription());
-        resource.setUrlPublic(product.getUrlPublic());
-        resource.setUrlBO(product.getUrlBO());
-
-        return resource;
-    }
+    @ApiModelProperty("${swagger.product.model.activationDateTime}")
+    private OffsetDateTime activationDateTime;
 
 }

@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.OffsetDateTime;
+
 @Data
 @NoArgsConstructor
 @Document("products")
@@ -18,12 +20,6 @@ public class Product {
     private String urlPublic;
     private String urlBO;
     private String codeProduct;
+    private OffsetDateTime activationDateTime;
 
-    public Product(String logo, String title, String description, String urlPublic, String urlBO) {
-        this.logo = logo;
-        this.title = title;
-        this.description = description;
-        this.urlPublic = urlPublic;
-        this.urlBO = urlBO;
-    }
 }

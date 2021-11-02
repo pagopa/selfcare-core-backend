@@ -10,8 +10,6 @@ public interface ProductService {
 
     Product createProduct(Product product);
 
-    void deleteProducts();
-
     void deleteProduct(String id);
 
     Product getProduct(String id);
