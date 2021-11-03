@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: ms-product
-          image: selcdacr.azurecr.io/msproduct
+          image: selcdacr.azurecr.io/selfcaremsproduct
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
