@@ -31,7 +31,7 @@ class ProductServiceImpl implements ProductService {
         if (repository.existsByCode(keyCode)){
             throw new DuplicateKeyException(keyCode);
         }
-        product.setActivationDateTime(OffsetDateTime.now());
+        product.setCreationDateTime(OffsetDateTime.now());
         return repository.save(product);
     }
 

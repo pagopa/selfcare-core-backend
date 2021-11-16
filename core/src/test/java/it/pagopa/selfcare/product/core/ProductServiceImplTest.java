@@ -62,16 +62,16 @@ class ProductServiceImplTest {
                 .thenReturn(false);
         Product input = new Product();
         input.setCode("code");
-        input.setActivationDateTime(inputActivationDateTime);
+        input.setCreationDateTime(inputActivationDateTime);
         Mockito.when(repositoryMock.save(Mockito.any(Product.class)))
                 .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, Product.class));
         // when
         Product output = productService.createProduct(input);
         // then
         assertNotNull(output);
-        assertNotNull(output.getActivationDateTime());
-        if (input.getActivationDateTime() != null) {
-            assertTrue(output.getActivationDateTime().isAfter(inputActivationDateTime));
+        assertNotNull(output.getCreationDateTime());
+        if (input.getCreationDateTime() != null) {
+            assertTrue(output.getCreationDateTime().isAfter(inputActivationDateTime));
         }
         Mockito.verify(repositoryMock, Mockito.times(1)).existsByCode(Mockito.eq("code"));
         Mockito.verify(repositoryMock, Mockito.times(1)).save(Mockito.any(Product.class));
