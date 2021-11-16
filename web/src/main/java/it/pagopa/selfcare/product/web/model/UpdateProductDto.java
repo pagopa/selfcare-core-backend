@@ -17,6 +17,6 @@ public class UpdateProductDto {
     @ApiModelProperty("${swagger.product.model.urlBO}")
     private String urlBO;
     @ApiModelProperty("${swagger.product.model.code}")
-    private String code;//TODO add code attribute
+    private String code;
 
 }
