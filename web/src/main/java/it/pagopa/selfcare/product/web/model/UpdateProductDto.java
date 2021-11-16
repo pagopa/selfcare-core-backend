@@ -16,5 +16,7 @@ public class UpdateProductDto {
     private String urlPublic;
     @ApiModelProperty("${swagger.product.model.urlBO}")
     private String urlBO;
+    @ApiModelProperty("${swagger.product.model.code}")
+    private String code;
 
 }

@@ -20,7 +20,9 @@ public class ProductResource {
     private String urlPublic;
     @ApiModelProperty("${swagger.product.model.urlBO}")
     private String urlBO;
-    @ApiModelProperty("${swagger.product.model.activationDateTime}")
-    private OffsetDateTime activationDateTime;
+    @ApiModelProperty("${swagger.product.model.creationDateTime}")
+    private OffsetDateTime creationDateTime;
+    @ApiModelProperty("${swagger.product.model.code}")
+    private String code;
 
 }

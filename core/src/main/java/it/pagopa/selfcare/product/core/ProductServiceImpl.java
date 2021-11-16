@@ -4,6 +4,7 @@ import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.dao.ProductRepository;
 import it.pagopa.selfcare.product.dao.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -21,33 +22,45 @@ class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> getProducts() {
-        return repository.findAll();
+        return repository.findByEnabled(true);
     }
 
     @Override
     public Product createProduct(Product product) {
-        product.setActivationDateTime(OffsetDateTime.now());
+        String keyCode = product.getCode();
+        if (repository.existsByCode(keyCode)){
+            throw new DuplicateKeyException(keyCode);
+        }
+        product.setCreationDateTime(OffsetDateTime.now());
         return repository.save(product);
     }
 
     @Override
     public void deleteProduct(String id) {
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
-        } else {
-            throw new ResourceNotFoundException();
+
+        Product foundProduct = repository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        if (foundProduct.isEnabled()) {
+            foundProduct.setEnabled(false);
+            repository.save(foundProduct);
         }
     }
 
     @Override
     public Product getProduct(String id) {
-        return repository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        Product foundProduct = repository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        if (!foundProduct.isEnabled()) {
+            throw new ResourceNotFoundException();
+        }
+        return foundProduct;
     }
 
 
     @Override
     public Product updateProduct(String id, Product product) {
         Product foundProduct = repository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        if (!foundProduct.isEnabled()){
+            throw new ResourceNotFoundException();
+        }
         foundProduct.setLogo(product.getLogo());
         foundProduct.setTitle(product.getTitle());
         foundProduct.setDescription(product.getDescription());

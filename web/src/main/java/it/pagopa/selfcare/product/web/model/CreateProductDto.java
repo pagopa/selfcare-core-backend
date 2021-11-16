@@ -22,5 +22,8 @@ public class CreateProductDto {
     @ApiModelProperty(value = "${swagger.product.model.urlBO}", required = true)
     @JsonProperty(required = true)
     private String urlBO;
+    @ApiModelProperty(value = "${swagger.product.model.code}", required = true)
+    @JsonProperty(required = true)
+    private String code;
 
 }
