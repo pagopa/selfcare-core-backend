@@ -3,5 +3,12 @@ package it.pagopa.selfcare.product.dao;
 import it.pagopa.selfcare.product.dao.model.Product;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.List;
+
 public interface ProductRepository extends MongoRepository<Product, String> {
+
+    List<Product> findByEnabled(boolean enabled);
+
+    boolean existsByCode(String code);
+
 }

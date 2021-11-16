@@ -33,7 +33,7 @@ class ProductRepositoryTest {
     @Test
     public void create() {
         // given
-        Product product = TestUtils.mockInstance(new Product(), "setId");
+        Product product = TestUtils.mockInstance(new Product());
         // when
         Product savedProduct = repository.save(product);
         // then

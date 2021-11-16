@@ -19,7 +19,8 @@ public class Product {
     private String description;
     private String urlPublic;
     private String urlBO;
-    private String codeProduct;
+    private String code;
     private OffsetDateTime activationDateTime;
+    private boolean enabled = true;
 
 }
