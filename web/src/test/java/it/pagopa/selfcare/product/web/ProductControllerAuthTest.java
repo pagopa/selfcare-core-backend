@@ -2,6 +2,7 @@ package it.pagopa.selfcare.product.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
+import it.pagopa.selfcare.commons.base.security.Authority;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.commons.web.security.JwtService;
 import it.pagopa.selfcare.product.connector.rest.PartyRestClient;
@@ -10,7 +11,7 @@ import it.pagopa.selfcare.product.dao.model.Product;
 import it.pagopa.selfcare.product.web.config.SecurityTestConfig;
 import it.pagopa.selfcare.product.web.model.CreateProductDto;
 import it.pagopa.selfcare.product.web.model.UpdateProductDto;
-import it.pagopa.selfcare.product.web.security.Role;
+import it.pagopa.selfcare.product.web.security.PartyAuthenticationProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -31,10 +32,9 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+
+import static it.pagopa.selfcare.commons.base.security.Authority.*;
 
 @WebMvcTest(value = {ProductController.class})
 @ContextConfiguration(classes = {
@@ -44,16 +44,23 @@ import java.util.UUID;
 class ProductControllerAuthTest {
 
     private static final String BASE_URL = "/products";
-    public static final TestingAuthenticationToken USER_AUTHENTICATION =
-            new TestingAuthenticationToken("user", "", Collections.singletonList(new SimpleGrantedAuthority(Role.ROLE_USER.name())));
+    public static final TestingAuthenticationToken TECH_REF_AUTHENTICATION =
+            new TestingAuthenticationToken("user", "", Collections.singletonList(new SimpleGrantedAuthority(TECH_REF.name())));
     public static final TestingAuthenticationToken ADMIN_AUTHENTICATION =
-            new TestingAuthenticationToken("admin", "", Collections.singletonList(new SimpleGrantedAuthority(Role.ROLE_ADMIN.name())));
+            new TestingAuthenticationToken("admin", "", List.of(new SimpleGrantedAuthority(ADMIN.name()),
+                    new SimpleGrantedAuthority(LEGAL.name()),
+                    new SimpleGrantedAuthority(ADMIN_REF.name()),
+                    new SimpleGrantedAuthority(TECH_REF.name())
+            ));
     public static final TestingAuthenticationToken LEGAL_AUTHENTICATION =
-            new TestingAuthenticationToken("legal", "", Collections.singletonList(new SimpleGrantedAuthority(Role.ROLE_LEGAL.name())));
-    private static final EnumMap<Role, Authentication> role2userMap = new EnumMap<>(Role.class) {{
-        put(Role.ROLE_USER, USER_AUTHENTICATION);
-        put(Role.ROLE_ADMIN, ADMIN_AUTHENTICATION);
-        put(Role.ROLE_LEGAL, LEGAL_AUTHENTICATION);
+            new TestingAuthenticationToken("legal", "", List.of(new SimpleGrantedAuthority(LEGAL.name()),
+                    new SimpleGrantedAuthority(ADMIN_REF.name()),
+                    new SimpleGrantedAuthority(TECH_REF.name())
+            ));
+    private static final EnumMap<Authority, Authentication> role2userMap = new EnumMap<>(Authority.class) {{
+        put(TECH_REF, TECH_REF_AUTHENTICATION);
+        put(ADMIN, ADMIN_AUTHENTICATION);
+        put(LEGAL, LEGAL_AUTHENTICATION);
     }};
     private static final CreateProductDto CREATE_PRODUCT_DTO = TestUtils.mockInstance(new CreateProductDto());
     private static final UpdateProductDto UPDATE_PRODUCT_DTO = TestUtils.mockInstance(new UpdateProductDto());
@@ -72,6 +79,9 @@ class ProductControllerAuthTest {
     @MockBean
     private AuthenticationManager authenticationManager;
 
+    @MockBean
+    private PartyAuthenticationProvider partyAuthenticationProvider;
+
     @Autowired
     protected MockMvc mvc;
 
@@ -80,23 +90,22 @@ class ProductControllerAuthTest {
 
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"ROLE_ADMIN", "ROLE_USER", "ROLE_LEGAL"})
-    void getProducts_checkRole(Role role) throws Exception {
+    @EnumSource(value = Authority.class, names = {"ADMIN", "TECH_REF"})
+    void getProducts_checkRole(Authority role) throws Exception {
         // given
         Mockito.when(jwtServiceMock.getClaims(Mockito.any()))
                 .thenReturn(Optional.of(CLAIMS_MOCK));
+        Mockito.when(authenticationManager.authenticate(Mockito.any()))
+                .thenReturn(role2userMap.get(role));
         Mockito.when(authenticationManager.authenticate(Mockito.any()))
                 .thenReturn(role2userMap.get(role));
         Mockito.when(productServiceMock.getProducts())
                 .thenAnswer(invocationOnMock -> Collections.emptyList());
         ResultMatcher matcher;
         switch (role) {
-            case ROLE_ADMIN:
-            case ROLE_USER:
+            case ADMIN:
+            case TECH_REF:
                 matcher = MockMvcResultMatchers.status().is2xxSuccessful();
-                break;
-            case ROLE_LEGAL:
-                matcher = MockMvcResultMatchers.status().is(HttpStatus.FORBIDDEN.value());
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -111,12 +120,9 @@ class ProductControllerAuthTest {
                 .andReturn();
         // then
         switch (role) {
-            case ROLE_ADMIN:
-            case ROLE_USER:
+            case ADMIN:
+            case TECH_REF:
                 Mockito.verify(productServiceMock, Mockito.times(1)).getProducts();
-                break;
-            case ROLE_LEGAL:
-                Mockito.verifyNoInteractions(productServiceMock);
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -140,8 +146,8 @@ class ProductControllerAuthTest {
 
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"ROLE_ADMIN", "ROLE_USER", "ROLE_LEGAL"})
-    void getProduct_checkRole(Role role) throws Exception {
+    @EnumSource(value = Authority.class, names = {"ADMIN", "TECH_REF"})
+    void getProduct_checkRole(Authority role) throws Exception {
         // given
         Mockito.when(jwtServiceMock.getClaims(Mockito.any()))
                 .thenReturn(Optional.of(CLAIMS_MOCK));
@@ -156,12 +162,9 @@ class ProductControllerAuthTest {
                 });
         ResultMatcher matcher;
         switch (role) {
-            case ROLE_ADMIN:
-            case ROLE_USER:
+            case ADMIN:
+            case TECH_REF:
                 matcher = MockMvcResultMatchers.status().is2xxSuccessful();
-                break;
-            case ROLE_LEGAL:
-                matcher = MockMvcResultMatchers.status().is(HttpStatus.FORBIDDEN.value());
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -177,12 +180,9 @@ class ProductControllerAuthTest {
                 .andReturn();
         // then
         switch (role) {
-            case ROLE_ADMIN:
-            case ROLE_USER:
+            case ADMIN:
+            case TECH_REF:
                 Mockito.verify(productServiceMock, Mockito.times(1)).getProduct(Mockito.eq(uuid));
-                break;
-            case ROLE_LEGAL:
-                Mockito.verifyNoInteractions(productServiceMock);
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -208,8 +208,8 @@ class ProductControllerAuthTest {
 
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"ROLE_ADMIN", "ROLE_USER"})
-    void createProduct_checkRole(Role role) throws Exception {
+    @EnumSource(value = Authority.class, names = {"ADMIN", "TECH_REF"})
+    void createProduct_checkRole(Authority role) throws Exception {
         // given
         Mockito.when(jwtServiceMock.getClaims(Mockito.any()))
                 .thenReturn(Optional.of(CLAIMS_MOCK));
@@ -219,10 +219,10 @@ class ProductControllerAuthTest {
                 .thenReturn(PRODUCT);
         ResultMatcher matcher;
         switch (role) {
-            case ROLE_ADMIN:
+            case ADMIN:
                 matcher = MockMvcResultMatchers.status().is2xxSuccessful();
                 break;
-            case ROLE_USER:
+            case TECH_REF:
                 matcher = MockMvcResultMatchers.status().is(HttpStatus.FORBIDDEN.value());
                 break;
             default:
@@ -239,10 +239,10 @@ class ProductControllerAuthTest {
                 .andReturn();
         // then
         switch (role) {
-            case ROLE_ADMIN:
+            case ADMIN:
                 Mockito.verify(productServiceMock, Mockito.times(1)).createProduct(Mockito.any());
                 break;
-            case ROLE_USER:
+            case TECH_REF:
                 Mockito.verifyNoInteractions(productServiceMock);
                 break;
             default:
@@ -268,8 +268,8 @@ class ProductControllerAuthTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"ROLE_ADMIN", "ROLE_USER"})
-    void updateProduct_checkRole(Role role) throws Exception {
+    @EnumSource(value = Authority.class, names = {"ADMIN", "TECH_REF"})
+    void updateProduct_checkRole(Authority role) throws Exception {
         // given
         Mockito.when(jwtServiceMock.getClaims(Mockito.any()))
                 .thenReturn(Optional.of(CLAIMS_MOCK));
@@ -285,10 +285,10 @@ class ProductControllerAuthTest {
                 });
         ResultMatcher matcher;
         switch (role) {
-            case ROLE_ADMIN:
+            case ADMIN:
                 matcher = MockMvcResultMatchers.status().is2xxSuccessful();
                 break;
-            case ROLE_USER:
+            case TECH_REF:
                 matcher = MockMvcResultMatchers.status().is(HttpStatus.FORBIDDEN.value());
                 break;
             default:
@@ -306,11 +306,11 @@ class ProductControllerAuthTest {
                 .andReturn();
         // then
         switch (role) {
-            case ROLE_ADMIN:
+            case ADMIN:
                 Mockito.verify(productServiceMock, Mockito.times(1))
                         .updateProduct(Mockito.eq(uuid), Mockito.any());
                 break;
-            case ROLE_USER:
+            case TECH_REF:
                 Mockito.verifyNoInteractions(productServiceMock);
                 break;
             default:
@@ -336,8 +336,8 @@ class ProductControllerAuthTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Role.class, names = {"ROLE_ADMIN", "ROLE_USER"})
-    void deleteProduct_checkRole(Role role) throws Exception {
+    @EnumSource(value = Authority.class, names = {"ADMIN", "TECH_REF"})
+    void deleteProduct_checkRole(Authority role) throws Exception {
         // given
         Mockito.when(jwtServiceMock.getClaims(Mockito.any()))
                 .thenReturn(Optional.of(CLAIMS_MOCK));
@@ -349,10 +349,10 @@ class ProductControllerAuthTest {
 
         ResultMatcher matcher;
         switch (role) {
-            case ROLE_ADMIN:
+            case ADMIN:
                 matcher = MockMvcResultMatchers.status().is2xxSuccessful();
                 break;
-            case ROLE_USER:
+            case TECH_REF:
                 matcher = MockMvcResultMatchers.status().is(HttpStatus.FORBIDDEN.value());
                 break;
             default:
@@ -369,11 +369,11 @@ class ProductControllerAuthTest {
                 .andReturn();
         // then
         switch (role) {
-            case ROLE_ADMIN:
+            case ADMIN:
                 Mockito.verify(productServiceMock, Mockito.times(1))
                         .deleteProduct(Mockito.eq(uuid));
                 break;
-            case ROLE_USER:
+            case TECH_REF:
                 Mockito.verifyNoInteractions(productServiceMock);
                 break;
             default:

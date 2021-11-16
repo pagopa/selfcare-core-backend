@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Optional;
 
+import static it.pagopa.selfcare.commons.base.security.Authority.ADMIN;
+
 class PartyAuthenticationProviderTest {
 
     @Test
@@ -15,7 +17,7 @@ class PartyAuthenticationProviderTest {
     }
 
     @Test
-    void retrieveUser() {
+    void retrieveUser() {//TODO
         // given
         String username = "username";
         PartyAuthenticationProvider authenticationProvider = new PartyAuthenticationProvider(null);
@@ -28,6 +30,6 @@ class PartyAuthenticationProviderTest {
         Assertions.assertEquals(1, userDetails.getAuthorities().size());
         Optional<? extends GrantedAuthority> grantedAuthority = userDetails.getAuthorities().stream().findAny();
         Assertions.assertTrue(grantedAuthority.isPresent());
-        Assertions.assertEquals("ADMIN", grantedAuthority.get().getAuthority());
+        Assertions.assertEquals(ADMIN.name(), grantedAuthority.get().getAuthority());
     }
 }
