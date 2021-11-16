@@ -22,5 +22,7 @@ public class ProductResource {
     private String urlBO;
     @ApiModelProperty("${swagger.product.model.activationDateTime}")
     private OffsetDateTime activationDateTime;
+    @ApiModelProperty("${swagger.product.model.code}")
+    private String code;//TODO add code attribute
 
 }

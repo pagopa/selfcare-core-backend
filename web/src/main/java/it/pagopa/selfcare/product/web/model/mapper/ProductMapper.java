@@ -18,6 +18,7 @@ public class ProductMapper {
             resource.setUrlPublic(entity.getUrlPublic());
             resource.setUrlBO(entity.getUrlBO());
             resource.setActivationDateTime(entity.getActivationDateTime());
+            resource.setCode(entity.getCode());//TODO add code attribute mapping
         }
 
         return resource;
@@ -32,6 +33,7 @@ public class ProductMapper {
             product.setDescription(dto.getDescription());
             product.setUrlPublic(dto.getUrlPublic());
             product.setUrlBO(dto.getUrlBO());
+            product.setCode(dto.getCode());//TODO add code attribute
         }
 
         return product;
@@ -46,6 +48,7 @@ public class ProductMapper {
             product.setDescription(dto.getDescription());
             product.setUrlPublic(dto.getUrlPublic());
             product.setUrlBO(dto.getUrlBO());
+            product.setCode(dto.getCode());//TODO add code attribute
         }
 
         return product;
