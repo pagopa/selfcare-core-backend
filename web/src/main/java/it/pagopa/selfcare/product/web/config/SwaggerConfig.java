@@ -1,13 +1,17 @@
 package it.pagopa.selfcare.product.web.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.*;
+import springfox.documentation.service.AuthorizationScope;
+import springfox.documentation.service.HttpAuthenticationScheme;
+import springfox.documentation.service.SecurityReference;
+import springfox.documentation.service.Tag;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -36,34 +40,33 @@ class SwaggerConfig {
     public static class enConfig {
     }
 
+    private final Environment environment;
+
+
+    @Autowired
+    SwaggerConfig(Environment environment) {
+        this.environment = environment;
+    }
+
 
     @Bean
-    public Docket swaggerSpringPlugin(@Value("${swagger.title:${spring.application.name}}") String title,
-                                      @Value("${swagger.description:Api and Models}") String description,
-                                      @Value("${swagger.version:${spring.application.version}}") String version,
-                                      @Value("${swagger.product.api.description}") String productApiDesc,
-                                      @Value("${swagger.security.schema.bearer.description}") String authSchemaDesc
-    ) {
+    public Docket swaggerSpringPlugin() {
         return (new Docket(DocumentationType.OAS_30))
-                .apiInfo(apiInfo(title, description, version))
+                .apiInfo(new ApiInfoBuilder()
+                        .title(environment.getProperty("swagger.title", environment.getProperty("spring.application.name")))
+                        .description(environment.getProperty("swagger.description", "Api and Models"))
+                        .version(environment.getProperty("swagger.version", environment.getProperty("spring.application.version")))
+                        .build())
                 .select().apis(RequestHandlerSelectors.basePackage("it.pagopa.selfcare.product.web.controller")).build()
-                .tags(new Tag("product", productApiDesc))
+                .tags(new Tag("product", environment.getProperty("swagger.product.api.description")))
                 .directModelSubstitute(LocalTime.class, String.class)
-                .securityContexts(Collections.singletonList(securityContext()))
+                .securityContexts(Collections.singletonList(SecurityContext.builder()
+                        .securityReferences(defaultAuth())
+                        .build()))
                 .securitySchemes(Collections.singletonList(HttpAuthenticationScheme.JWT_BEARER_BUILDER
                         .name(AUTH_SCHEMA_NAME)
-                        .description(authSchemaDesc)
+                        .description(environment.getProperty("swagger.security.schema.bearer.description"))
                         .build()));
-    }
-
-
-    private ApiInfo apiInfo(String title, String description, String version) {
-        return new ApiInfoBuilder().title(title).description(description).version(version).build();
-    }
-
-
-    private SecurityContext securityContext() {
-        return SecurityContext.builder().securityReferences(defaultAuth()).build();
     }
 
 
