@@ -1,47 +1,41 @@
 package it.pagopa.selfcare.product.web.validator;
 
-import it.pagopa.selfcare.product.core.ProductService;
-import it.pagopa.selfcare.product.web.controller.ProductController;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import it.pagopa.selfcare.commons.web.validator.ControllerResponseValidator;
+import it.pagopa.selfcare.commons.web.validator.PointcutControllerResponseValidatorBaseTest;
+import it.pagopa.selfcare.product.web.controller.DummyController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
-@SpringBootTest(classes = {ProductController.class, ProductControllerResponseValidator.class})
-@EnableAutoConfiguration
-class ProductControllerResponseValidatorTest {
+@SpringBootTest(classes = {
+        ValidationAutoConfiguration.class,
+        DummyController.class,
+        ProductControllerResponseValidator.class})
+@EnableAspectJAutoProxy
+class ProductControllerResponseValidatorTest extends PointcutControllerResponseValidatorBaseTest {
+
+    @Autowired
+    private DummyController controller;
 
     @SpyBean
     private ProductControllerResponseValidator validatorSpy;
 
-    @Autowired
-    private ProductController controller;
 
-    @MockBean
-    private ProductService productServiceMock;
-
-    @Test
-    void controllersPointcut_returnNotVoid() {
-        // given
-        // when
-        controller.getProduct("id");
-        // then
-        Mockito.verify(validatorSpy, Mockito.times(1))
-                .validateResponse(Mockito.any(), Mockito.any());
-        Mockito.verifyNoMoreInteractions(validatorSpy);
+    @Override
+    protected ControllerResponseValidator getValidatorSpy() {
+        return validatorSpy;
     }
 
-    @Test
-    void controllersPointcut_returnVoid() {
-        // given
-        // when
-        controller.deleteProduct("id");
-        // then
-        Mockito.verify(validatorSpy, Mockito.times(1))
-                .validateResponse(Mockito.any(), Mockito.any());
-        Mockito.verifyNoMoreInteractions(validatorSpy);
+    @Override
+    protected void invokeNotVoidMethod() {
+        controller.notVoidMethod();
     }
+
+    @Override
+    protected void invokeVoidMethod() {
+        controller.voidMethod();
+    }
+
 }
