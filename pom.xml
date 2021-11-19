@@ -15,7 +15,6 @@
         <version>0.0.1-SNAPSHOT</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>it.pagopa.selfcare</groupId>
     <artifactId>selc-product</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>selc-product</name>
@@ -69,6 +68,12 @@
                 <groupId>it.pagopa.selfcare</groupId>
                 <artifactId>selc-commons-web</artifactId>
                 <version>${selc-commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>it.pagopa.selfcare</groupId>
+                <artifactId>selc-commons-web</artifactId>
+                <version>${selc-commons.version}</version>
+                <type>test-jar</type>
             </dependency>
         </dependencies>
     </dependencyManagement>
