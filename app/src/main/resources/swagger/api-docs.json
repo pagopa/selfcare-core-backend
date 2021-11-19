@@ -1,13 +1,13 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "@project.parent.artifactId@",
+    "title": "selc-product",
     "description": "The services described in this section deal with the management of the Product entity, providing the necessary methods for its creation, consultation and activation.",
-    "version": "@project.version@"
+    "version": "0.0.1-SNAPSHOT"
   },
   "servers": [
     {
-      "url": "http://localhost:8080",
+      "url": "http://localhost:80",
       "description": "Inferred Url"
     }
   ],
@@ -258,6 +258,7 @@
       "CreateProductDto": {
         "title": "CreateProductDto",
         "required": [
+          "code",
           "description",
           "logo",
           "title",
@@ -266,6 +267,10 @@
         ],
         "type": "object",
         "properties": {
+          "code": {
+            "type": "string",
+            "description": "Key code Product"
+          },
           "description": {
             "type": "string",
             "description": "Product's description"
@@ -290,9 +295,22 @@
       },
       "ProductResource": {
         "title": "ProductResource",
+        "required": [
+          "code",
+          "creationDateTime",
+          "description",
+          "id",
+          "logo",
+          "title",
+          "urlBO"
+        ],
         "type": "object",
         "properties": {
-          "activationDateTime": {
+          "code": {
+            "type": "string",
+            "description": "Key code Product"
+          },
+          "creationDateTime": {
             "type": "string",
             "description": "Date the products was activated/created",
             "format": "date-time"
@@ -325,8 +343,20 @@
       },
       "UpdateProductDto": {
         "title": "UpdateProductDto",
+        "required": [
+          "code",
+          "description",
+          "logo",
+          "title",
+          "urlBO",
+          "urlPublic"
+        ],
         "type": "object",
         "properties": {
+          "code": {
+            "type": "string",
+            "description": "Key code Product"
+          },
           "description": {
             "type": "string",
             "description": "Product's description"
