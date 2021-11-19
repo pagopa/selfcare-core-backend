@@ -1,4 +1,4 @@
-package it.pagopa.selfcare.product.web;
+package it.pagopa.selfcare.product.web.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,6 +57,7 @@ public class ProductController {
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "", notes = "${swagger.product.operation.createProduct}")
     public ProductResource createProduct(@RequestBody
+                                         @Valid
                                                  CreateProductDto product) {
         Product p = productService.createProduct(ProductMapper.fromDto(product));
         return ProductMapper.toResource(p);
@@ -69,6 +71,7 @@ public class ProductController {
                                          @PathVariable("id")
                                                  String id,
                                          @RequestBody
+                                         @Valid
                                                  UpdateProductDto product) {
         Product updatedProduct = productService.updateProduct(id, ProductMapper.fromDto(product));
         return ProductMapper.toResource(updatedProduct);
