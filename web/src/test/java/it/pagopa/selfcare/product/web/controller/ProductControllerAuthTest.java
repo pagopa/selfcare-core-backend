@@ -1,4 +1,4 @@
-package it.pagopa.selfcare.product.web;
+package it.pagopa.selfcare.product.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
@@ -9,6 +9,7 @@ import it.pagopa.selfcare.product.connector.rest.PartyRestClient;
 import it.pagopa.selfcare.product.core.ProductService;
 import it.pagopa.selfcare.product.dao.model.Product;
 import it.pagopa.selfcare.product.web.config.SecurityTestConfig;
+import it.pagopa.selfcare.product.web.controller.ProductController;
 import it.pagopa.selfcare.product.web.model.CreateProductDto;
 import it.pagopa.selfcare.product.web.model.UpdateProductDto;
 import it.pagopa.selfcare.product.web.security.PartyAuthenticationProvider;

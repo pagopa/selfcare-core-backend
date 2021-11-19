@@ -1,4 +1,4 @@
-package it.pagopa.selfcare.product.web;
+package it.pagopa.selfcare.product.web.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,6 +7,7 @@ import it.pagopa.selfcare.commons.web.model.ErrorResource;
 import it.pagopa.selfcare.product.core.ProductService;
 import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.dao.model.Product;
+import it.pagopa.selfcare.product.web.controller.ProductController;
 import it.pagopa.selfcare.product.web.handler.ProductExceptionsHandler;
 import it.pagopa.selfcare.product.web.model.CreateProductDto;
 import it.pagopa.selfcare.product.web.model.ProductResource;

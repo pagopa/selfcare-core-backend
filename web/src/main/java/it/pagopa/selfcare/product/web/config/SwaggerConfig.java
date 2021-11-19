@@ -46,7 +46,7 @@ class SwaggerConfig {
     ) {
         return (new Docket(DocumentationType.OAS_30))
                 .apiInfo(apiInfo(title, description, version))
-                .select().apis(RequestHandlerSelectors.basePackage("it.pagopa.selfcare.product.web")).build()
+                .select().apis(RequestHandlerSelectors.basePackage("it.pagopa.selfcare.product.web.controller")).build()
                 .tags(new Tag("product", productApiDesc))
                 .directModelSubstitute(LocalTime.class, String.class)
                 .securityContexts(Collections.singletonList(securityContext()))

@@ -1,22 +1,42 @@
 package it.pagopa.selfcare.product.web.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
 
 @Data
 public class UpdateProductDto {
 
-    @ApiModelProperty("${swagger.product.model.logo}")
+    @ApiModelProperty(value = "${swagger.product.model.logo}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
     private String logo;
-    @ApiModelProperty("${swagger.product.model.title}")
+
+    @ApiModelProperty(value = "${swagger.product.model.title}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
     private String title;
-    @ApiModelProperty("${swagger.product.model.description}")
+
+    @ApiModelProperty(value = "${swagger.product.model.description}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
     private String description;
-    @ApiModelProperty("${swagger.product.model.urlPublic}")
+
+    @ApiModelProperty(value = "${swagger.product.model.urlPublic}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
     private String urlPublic;
-    @ApiModelProperty("${swagger.product.model.urlBO}")
+
+    @ApiModelProperty(value = "${swagger.product.model.urlBO}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
     private String urlBO;
-    @ApiModelProperty("${swagger.product.model.code}")
+
+    @ApiModelProperty(value = "${swagger.product.model.code}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
     private String code;
 
 }
