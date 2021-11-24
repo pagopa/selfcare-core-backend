@@ -7,7 +7,6 @@ import it.pagopa.selfcare.commons.web.model.ErrorResource;
 import it.pagopa.selfcare.product.core.ProductService;
 import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.dao.model.Product;
-import it.pagopa.selfcare.product.web.controller.ProductController;
 import it.pagopa.selfcare.product.web.handler.ProductExceptionsHandler;
 import it.pagopa.selfcare.product.web.model.CreateProductDto;
 import it.pagopa.selfcare.product.web.model.ProductResource;
@@ -157,7 +156,7 @@ class ProductControllerTest {
         ProductResource product = objectMapper.readValue(result.getResponse().getContentAsString(), ProductResource.class);
         assertNotNull(product);
         assertNotNull(product.getId());
-        TestUtils.reflectionEqualsByName(CREATE_PRODUCT_DTO, product, "setId");
+        TestUtils.reflectionEqualsByName(CREATE_PRODUCT_DTO, product);
     }
 
     @Test
@@ -183,7 +182,7 @@ class ProductControllerTest {
         ProductResource product = objectMapper.readValue(result.getResponse().getContentAsString(), ProductResource.class);
 
         assertNotNull(product);
-        TestUtils.reflectionEqualsByName(UPDATE_PRODUCT_DTO, product, "setId");
+        TestUtils.reflectionEqualsByName(UPDATE_PRODUCT_DTO, product);
     }
 
     @Test

@@ -25,7 +25,7 @@ class ProductMapperTest {
         assertEquals(product.getDescription(), productResource.getDescription());
         assertEquals(product.getUrlPublic(), productResource.getUrlPublic());
         assertEquals(product.getUrlBO(), productResource.getUrlBO());
-        TestUtils.reflectionEqualsByName(product, productResource);
+        TestUtils.reflectionEqualsByName(product, productResource, "enabled");
     }
 
     @Test
@@ -45,7 +45,7 @@ class ProductMapperTest {
         Product product = ProductMapper.fromDto(dto);
         // then
         assertNull(product.getId());
-        TestUtils.reflectionEqualsByName(dto, product, "setId");
+        TestUtils.reflectionEqualsByName(dto, product);
     }
 
     @Test
@@ -65,7 +65,7 @@ class ProductMapperTest {
         Product product = ProductMapper.fromDto(dto);
         // then
         assertNull(product.getId());
-        TestUtils.reflectionEqualsByName(dto, product, "setId");
+        TestUtils.reflectionEqualsByName(dto, product);
     }
 
     @Test
