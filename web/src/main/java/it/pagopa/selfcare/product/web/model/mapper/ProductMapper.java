@@ -9,6 +9,7 @@ public class ProductMapper {
 
     public static ProductResource toResource(Product entity) {
         ProductResource resource = null;
+
         if (entity != null) {
             resource = new ProductResource();
             resource.setId(entity.getId());
@@ -19,6 +20,12 @@ public class ProductMapper {
             resource.setUrlBO(entity.getUrlBO());
             resource.setCreationDateTime(entity.getCreationDateTime());
             resource.setCode(entity.getCode());
+            resource.setEnabled(entity.isEnabled());
+            resource.setContractTemplateUpdateDateTime(entity.getContractTemplateUpdateDateTime());
+            resource.setRoleMappings(entity.getRoleMappings());
+            resource.setContractTemplatePath(entity.getContractTemplatePath());
+            resource.setContractTemplateVersion(entity.getContractTemplateVersion());
+            resource.setRoleManagementURL(entity.getRoleManagementURL());
         }
 
         return resource;
