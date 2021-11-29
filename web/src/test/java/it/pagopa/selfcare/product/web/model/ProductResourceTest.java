@@ -12,9 +12,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import java.lang.annotation.Annotation;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,6 +40,11 @@ class ProductResourceTest {
         toCheckMap.put("urlBO", NotBlank.class);
         toCheckMap.put("creationDateTime", NotNull.class);
         toCheckMap.put("code", NotBlank.class);
+        toCheckMap.put("contractTemplateUpdateDateTime", NotNull.class);
+        toCheckMap.put("roleMappings", NotNull.class);
+        toCheckMap.put("contractTemplatePath", NotBlank.class);
+        toCheckMap.put("contractTemplateVersion", NotBlank.class);
+        toCheckMap.put("roleManagementURL", NotBlank.class);
         ProductResource productResource = new ProductResource();
         productResource.setId(null);
         productResource.setLogo(null);
@@ -51,6 +54,11 @@ class ProductResourceTest {
         productResource.setUrlBO(null);
         productResource.setCreationDateTime(null);
         productResource.setCode(null);
+        productResource.setContractTemplateUpdateDateTime(null);
+        productResource.setRoleMappings(null);
+        productResource.setContractTemplatePath(null);
+        productResource.setContractTemplateVersion(null);
+        productResource.setRoleManagementURL(null);
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(productResource);
         // then
@@ -66,8 +74,11 @@ class ProductResourceTest {
     @Test
     void validateNotNullFields() {
         // given
+        ProductResource productResource = PRODUCT_RESOURCE;
+        Map<String, List<String>>map=new HashMap<>();
+        productResource.setRoleMappings(map);
         // when
-        Set<ConstraintViolation<Object>> violations = validator.validate(PRODUCT_RESOURCE);
+        Set<ConstraintViolation<Object>> violations = validator.validate(productResource);
         // then
         assertTrue(violations.isEmpty());
     }

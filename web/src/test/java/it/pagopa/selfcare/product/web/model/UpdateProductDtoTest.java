@@ -9,9 +9,11 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,6 +40,11 @@ class UpdateProductDtoTest {
         toCheckMap.put("urlPublic", NotBlank.class);
         toCheckMap.put("urlBO", NotBlank.class);
         toCheckMap.put("code", NotBlank.class);
+        toCheckMap.put("contractTemplateUpdateDateTime", NotNull.class);
+        toCheckMap.put("roleMappings", NotNull.class);
+        toCheckMap.put("contractTemplatePath", NotBlank.class);
+        toCheckMap.put("contractTemplateVersion", NotBlank.class);
+        toCheckMap.put("roleManagementURL", NotBlank.class);
         UpdateProductDto updateProductDto = new UpdateProductDto();
         updateProductDto.setLogo(null);
         updateProductDto.setTitle(null);
@@ -45,6 +52,11 @@ class UpdateProductDtoTest {
         updateProductDto.setUrlPublic(null);
         updateProductDto.setUrlBO(null);
         updateProductDto.setCode(null);
+        updateProductDto.setContractTemplateUpdateDateTime(null);
+        updateProductDto.setRoleMappings(null);
+        updateProductDto.setContractTemplatePath(null);
+        updateProductDto.setContractTemplateVersion(null);
+        updateProductDto.setRoleManagementURL(null);
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(updateProductDto);
         // then
@@ -60,6 +72,8 @@ class UpdateProductDtoTest {
     @Test
     void validateNotNullFields() {
         // given
+        Map<String, List<String>> map=new HashMap<>();
+        UPDATE_PRODUCT_DTO.setRoleMappings(map);
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(UPDATE_PRODUCT_DTO);
         // then

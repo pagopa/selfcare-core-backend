@@ -2,6 +2,7 @@ package it.pagopa.selfcare.product.web.handler;
 
 import feign.FeignException;
 import it.pagopa.selfcare.commons.web.model.ErrorResource;
+import it.pagopa.selfcare.product.core.exception.InvalidRoleMappingException;
 import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.web.controller.ProductController;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +49,15 @@ public class ProductExceptionsHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     ErrorResource handleResourceNotFoundException(ResourceNotFoundException e) {
+        log.warn(UNHANDLED_EXCEPTION, e);
+        return new ErrorResource(e.getMessage());
+    }
+
+
+    @ExceptionHandler({InvalidRoleMappingException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    ErrorResource handleInvalidRoleMappingException(InvalidRoleMappingException e) {
         log.warn(UNHANDLED_EXCEPTION, e);
         return new ErrorResource(e.getMessage());
     }

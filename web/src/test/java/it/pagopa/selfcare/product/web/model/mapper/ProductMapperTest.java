@@ -25,6 +25,12 @@ class ProductMapperTest {
         assertEquals(product.getDescription(), productResource.getDescription());
         assertEquals(product.getUrlPublic(), productResource.getUrlPublic());
         assertEquals(product.getUrlBO(), productResource.getUrlBO());
+        assertEquals(product.getCode(), productResource.getCode());
+        assertEquals(product.getContractTemplateUpdateDateTime(), productResource.getContractTemplateUpdateDateTime());
+        assertEquals(product.getContractTemplateVersion(), productResource.getContractTemplateVersion());
+        assertEquals(product.getContractTemplatePath(), productResource.getContractTemplatePath());
+        assertEquals(product.getRoleMappings(), productResource.getRoleMappings());
+        assertEquals(product.getRoleManagementURL(), productResource.getRoleManagementURL());
         TestUtils.reflectionEqualsByName(product, productResource, "enabled");
     }
 

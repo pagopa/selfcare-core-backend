@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.product.core;
 
 import it.pagopa.selfcare.commons.utils.TestUtils;
+import it.pagopa.selfcare.product.core.exception.InvalidRoleMappingException;
 import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.dao.ProductRepository;
 import it.pagopa.selfcare.product.dao.model.Product;
@@ -15,9 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.OffsetDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,12 +56,16 @@ class ProductServiceImplTest {
     @Test
     void createProduct() {
         // given
-        OffsetDateTime inputActivationDateTime = OffsetDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now();
         Mockito.when(repositoryMock.existsByCode(Mockito.eq("code")))
                 .thenReturn(false);
         Product input = new Product();
+        Map<String,List<String>> map = new HashMap<>();
+        List<String>list=new ArrayList<>();
+        list.add("v1"); list.add("v2");
+        map.put("operator",list);
+        input.setRoleMappings(map);
         input.setCode("code");
-        input.setCreationDateTime(inputActivationDateTime);
         Mockito.when(repositoryMock.save(Mockito.any(Product.class)))
                 .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, Product.class));
         // when
@@ -70,9 +73,9 @@ class ProductServiceImplTest {
         // then
         assertNotNull(output);
         assertNotNull(output.getCreationDateTime());
-        if (input.getCreationDateTime() != null) {
-            assertTrue(output.getCreationDateTime().isAfter(inputActivationDateTime));
-        }
+        assertNotNull(output.getContractTemplateUpdateDateTime());
+        assertTrue(output.getCreationDateTime().isAfter(now));
+        assertTrue(output.getContractTemplateUpdateDateTime().isAfter(now));
         Mockito.verify(repositoryMock, Mockito.times(1)).existsByCode(Mockito.eq("code"));
         Mockito.verify(repositoryMock, Mockito.times(1)).save(Mockito.any(Product.class));
         Mockito.verifyNoMoreInteractions(repositoryMock);
@@ -90,6 +93,57 @@ class ProductServiceImplTest {
             assertThrows(DuplicateKeyException.class, () -> productService.createProduct(input));
             Mockito.verify(repositoryMock, Mockito.times(1)).existsByCode(Mockito.eq("code"));
             Mockito.verifyNoMoreInteractions(repositoryMock);
+    }
+
+    @Test
+    void createProduct_NullRoleMappings(){
+        // given
+        Mockito.when(repositoryMock.existsByCode(Mockito.eq("code")))
+                .thenReturn(false);
+        Product input = new Product();
+        Map<String,List<String>> map = new HashMap<>();
+        map.put("operator",null);
+        input.setRoleMappings(map);
+        input.setCode("code");
+        // when and then
+        assertThrows(InvalidRoleMappingException.class, () -> productService.createProduct(input));
+        Mockito.verify(repositoryMock, Mockito.times(1)).existsByCode(Mockito.eq("code"));
+        Mockito.verifyNoMoreInteractions(repositoryMock);
+    }
+
+    @Test
+    void createProduct_EmptyRoleMappings(){
+        // given
+        Mockito.when(repositoryMock.existsByCode(Mockito.eq("code")))
+                .thenReturn(false);
+        Product input = new Product();
+        Map<String,List<String>> map = new HashMap<>();
+        List<String> list = new ArrayList<>();
+        map.put("operator",list);
+        input.setRoleMappings(map);
+        input.setCode("code");
+        // when and then
+        assertThrows(InvalidRoleMappingException.class, () -> productService.createProduct(input));
+        Mockito.verify(repositoryMock, Mockito.times(1)).existsByCode(Mockito.eq("code"));
+        Mockito.verifyNoMoreInteractions(repositoryMock);
+    }
+
+    @Test
+    void createProduct_RoleMappingsNotEmptyAndIncorrectPartyRoleConfig(){
+        // given
+        Mockito.when(repositoryMock.existsByCode(Mockito.eq("code")))
+                .thenReturn(false);
+        Product input = new Product();
+        Map<String,List<String>> map = new HashMap<>();
+        List<String> list = new ArrayList<>();
+        list.add("v1"); list.add("v2");
+        map.put("delegate",list);
+        input.setRoleMappings(map);
+        input.setCode("code");
+        // when and then
+        assertThrows(InvalidRoleMappingException.class, () -> productService.createProduct(input));
+        Mockito.verify(repositoryMock, Mockito.times(1)).existsByCode(Mockito.eq("code"));
+        Mockito.verifyNoMoreInteractions(repositoryMock);
     }
 
     @Test
@@ -173,12 +227,22 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void updateProduct_foundProductEnabled() {
+    void updateProduct_foundProductEnabledDiffVersionContract() {
         // given
         String productId = "productId";
         Product product = TestUtils.mockInstance(new Product(), "setId");
+
         Mockito.when(repositoryMock.findById(Mockito.eq(productId)))
                 .thenReturn(Optional.of(new Product()));
+
+        Map<String,List<String>> map = new HashMap<>();
+        List<String> list = new ArrayList<>();
+        list.add("v1"); list.add("v2");
+        map.put("operator",list);
+        product.setRoleMappings(map);
+
+        product.setContractTemplateVersion("1.2.4");
+
         Mockito.when(repositoryMock.save(Mockito.any()))
                 .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, Product.class));
         // when
@@ -189,6 +253,11 @@ class ProductServiceImplTest {
         assertEquals(savedProduct.getDescription(), product.getDescription());
         assertEquals(savedProduct.getUrlPublic(), product.getUrlPublic());
         assertEquals(savedProduct.getUrlBO(), product.getUrlBO());
+        assertEquals(savedProduct.getCode(), product.getCode());
+        assertEquals(savedProduct.getRoleMappings(), product.getRoleMappings());
+        assertEquals(savedProduct.getRoleManagementURL(), product.getRoleManagementURL());
+        assertEquals(savedProduct.getContractTemplatePath(), product.getContractTemplatePath());
+        assertEquals(savedProduct.getContractTemplateVersion(), product.getContractTemplateVersion());
         Mockito.verify(repositoryMock, Mockito.times(1)).findById(Mockito.eq(productId));
         Mockito.verify(repositoryMock, Mockito.times(1)).save(Mockito.any());
         Mockito.verifyNoMoreInteractions(repositoryMock);
