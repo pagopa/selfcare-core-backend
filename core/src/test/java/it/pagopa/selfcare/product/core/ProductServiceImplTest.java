@@ -56,7 +56,7 @@ class ProductServiceImplTest {
     @Test
     void createProduct() {
         // given
-        OffsetDateTime inputCreationDateTime = OffsetDateTime.now();
+        OffsetDateTime now = OffsetDateTime.now();
         Mockito.when(repositoryMock.existsByCode(Mockito.eq("code")))
                 .thenReturn(false);
         Product input = new Product();
@@ -66,7 +66,6 @@ class ProductServiceImplTest {
         map.put("operator",list);
         input.setRoleMappings(map);
         input.setCode("code");
-        input.setCreationDateTime(inputCreationDateTime);
         Mockito.when(repositoryMock.save(Mockito.any(Product.class)))
                 .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, Product.class));
         // when
@@ -75,9 +74,8 @@ class ProductServiceImplTest {
         assertNotNull(output);
         assertNotNull(output.getCreationDateTime());
         assertNotNull(output.getContractTemplateUpdateDateTime());
-        if (input.getCreationDateTime() != null && input.getContractTemplateUpdateDateTime() != null) {
-            assertTrue(output.getCreationDateTime().isAfter(inputCreationDateTime));
-        }
+        assertTrue(output.getCreationDateTime().isAfter(now));
+        assertTrue(output.getContractTemplateUpdateDateTime().isAfter(now));
         Mockito.verify(repositoryMock, Mockito.times(1)).existsByCode(Mockito.eq("code"));
         Mockito.verify(repositoryMock, Mockito.times(1)).save(Mockito.any(Product.class));
         Mockito.verifyNoMoreInteractions(repositoryMock);
@@ -98,7 +96,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void createProductValidateRoleMappingsNull(){
+    void createProduct_NullRoleMappings(){
         // given
         Mockito.when(repositoryMock.existsByCode(Mockito.eq("code")))
                 .thenReturn(false);
@@ -114,7 +112,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void createProductValidateRoleMappingsIsEmpty(){
+    void createProduct_EmptyRoleMappings(){
         // given
         Mockito.when(repositoryMock.existsByCode(Mockito.eq("code")))
                 .thenReturn(false);
@@ -131,7 +129,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void createProductValidateRoleMappingsNotEmptyAndPartyRole(){
+    void createProduct_RoleMappingsNotEmptyAndIncorrectPartyRoleConfig(){
         // given
         Mockito.when(repositoryMock.existsByCode(Mockito.eq("code")))
                 .thenReturn(false);
