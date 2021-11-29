@@ -52,10 +52,6 @@ public class ProductResource {
     @NotBlank
     private String code;
 
-    @ApiModelProperty(value = "${swagger.product.model.enabled}", required = true)
-    @JsonProperty(required = true)
-    private boolean enabled = true;
-
     @ApiModelProperty(value = "${swagger.product.model.contractTemplateUpdateDateTime}", required = true)
     @JsonProperty(required = true)
     @NotNull

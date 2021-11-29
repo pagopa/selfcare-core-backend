@@ -31,7 +31,6 @@ class ProductMapperTest {
         assertEquals(product.getContractTemplatePath(), productResource.getContractTemplatePath());
         assertEquals(product.getRoleMappings(), productResource.getRoleMappings());
         assertEquals(product.getRoleManagementURL(), productResource.getRoleManagementURL());
-        assertEquals(product.isEnabled(), productResource.isEnabled());
         TestUtils.reflectionEqualsByName(product, productResource, "enabled");
     }
 

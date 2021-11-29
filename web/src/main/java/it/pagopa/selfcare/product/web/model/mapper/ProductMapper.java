@@ -20,7 +20,6 @@ public class ProductMapper {
             resource.setUrlBO(entity.getUrlBO());
             resource.setCreationDateTime(entity.getCreationDateTime());
             resource.setCode(entity.getCode());
-            resource.setEnabled(entity.isEnabled());
             resource.setContractTemplateUpdateDateTime(entity.getContractTemplateUpdateDateTime());
             resource.setRoleMappings(entity.getRoleMappings());
             resource.setContractTemplatePath(entity.getContractTemplatePath());
@@ -41,6 +40,11 @@ public class ProductMapper {
             product.setUrlPublic(dto.getUrlPublic());
             product.setUrlBO(dto.getUrlBO());
             product.setCode(dto.getCode());
+            product.setContractTemplateUpdateDateTime(dto.getContractTemplateUpdateDateTime());
+            product.setRoleMappings(dto.getRoleMappings());
+            product.setContractTemplatePath(dto.getContractTemplatePath());
+            product.setContractTemplateVersion(dto.getContractTemplateVersion());
+            product.setRoleManagementURL(dto.getRoleManagementURL());
         }
 
         return product;
@@ -56,6 +60,11 @@ public class ProductMapper {
             product.setUrlPublic(dto.getUrlPublic());
             product.setUrlBO(dto.getUrlBO());
             product.setCode(dto.getCode());
+            product.setContractTemplateUpdateDateTime(dto.getContractTemplateUpdateDateTime());
+            product.setRoleMappings(dto.getRoleMappings());
+            product.setContractTemplatePath(dto.getContractTemplatePath());
+            product.setContractTemplateVersion(dto.getContractTemplateVersion());
+            product.setRoleManagementURL(dto.getRoleManagementURL());
         }
 
         return product;

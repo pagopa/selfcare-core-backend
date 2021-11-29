@@ -57,7 +57,7 @@ public class ProductExceptionsHandler {
     @ExceptionHandler({InvalidRoleMappingException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    ErrorResource handleInvalidRoleMappingException(ResourceNotFoundException e) {
+    ErrorResource handleInvalidRoleMappingException(InvalidRoleMappingException e) {
         log.warn(UNHANDLED_EXCEPTION, e);
         return new ErrorResource(e.getMessage());
     }
