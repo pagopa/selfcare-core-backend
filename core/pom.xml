@@ -16,10 +16,6 @@
             <groupId>it.pagopa.selfcare</groupId>
             <artifactId>selc-product-integration-dao</artifactId>
         </dependency>
-        <dependency>
-            <groupId>it.pagopa.selfcare</groupId>
-            <artifactId>selc-product-integration-rest</artifactId>
-        </dependency>
     </dependencies>
 
 </project>

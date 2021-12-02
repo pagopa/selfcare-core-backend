@@ -7,14 +7,16 @@ import it.pagopa.selfcare.product.web.model.ProductResource;
 import it.pagopa.selfcare.product.web.model.UpdateProductDto;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import java.time.OffsetDateTime;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ProductMapperTest {
 
     @Test
     void toResource_notNull() {
         // given
+        OffsetDateTime now = OffsetDateTime.now();
         Product product = TestUtils.mockInstance(new Product());
         // when
         ProductResource productResource = ProductMapper.toResource(product);
@@ -25,13 +27,12 @@ class ProductMapperTest {
         assertEquals(product.getDescription(), productResource.getDescription());
         assertEquals(product.getUrlPublic(), productResource.getUrlPublic());
         assertEquals(product.getUrlBO(), productResource.getUrlBO());
-        assertEquals(product.getCode(), productResource.getCode());
-        assertEquals(product.getContractTemplateUpdateDateTime(), productResource.getContractTemplateUpdateDateTime());
+        assertTrue(now.isBefore(productResource.getContractTemplateUpdatedAt()));
         assertEquals(product.getContractTemplateVersion(), productResource.getContractTemplateVersion());
         assertEquals(product.getContractTemplatePath(), productResource.getContractTemplatePath());
         assertEquals(product.getRoleMappings(), productResource.getRoleMappings());
         assertEquals(product.getRoleManagementURL(), productResource.getRoleManagementURL());
-        TestUtils.reflectionEqualsByName(product, productResource, "enabled");
+        TestUtils.reflectionEqualsByName(productResource, product);
     }
 
     @Test
@@ -50,8 +51,7 @@ class ProductMapperTest {
         // when
         Product product = ProductMapper.fromDto(dto);
         // then
-        assertNull(product.getId());
-        TestUtils.reflectionEqualsByName(dto, product);
+        TestUtils.reflectionEqualsByName(product, dto);
     }
 
     @Test
@@ -71,7 +71,7 @@ class ProductMapperTest {
         Product product = ProductMapper.fromDto(dto);
         // then
         assertNull(product.getId());
-        TestUtils.reflectionEqualsByName(dto, product);
+        TestUtils.reflectionEqualsByName(product, dto);
     }
 
     @Test

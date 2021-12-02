@@ -6,8 +6,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.OffsetDateTime;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -15,16 +15,14 @@ import java.util.Map;
 public class Product {
     @Id
     private String id;
-
     private String logo;
     private String title;
     private String description;
     private String urlPublic;
     private String urlBO;
-    private String code;
-    private OffsetDateTime creationDateTime;
-    private OffsetDateTime contractTemplateUpdateDateTime;
-    private Map<String, List<String>> roleMappings;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime contractTemplateUpdatedAt;
+    private EnumMap<PartyRole, List<String>> roleMappings;
     private String contractTemplatePath;
     private String contractTemplateVersion;
     private String roleManagementURL;

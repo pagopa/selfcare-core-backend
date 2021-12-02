@@ -9,6 +9,4 @@ public interface ProductRepository extends MongoRepository<Product, String> {
 
     List<Product> findByEnabled(boolean enabled);
 
-    boolean existsByCode(String code);
-
 }

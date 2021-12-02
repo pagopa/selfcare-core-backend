@@ -90,28 +90,6 @@ class ProductRepositoryTest {
         assertFalse(foundProduct.isPresent());
     }
 
-    @Test
-    public void existsByCode_exists() {
-        // given
-        Product product = TestUtils.mockInstance(new Product(), "setId");
-        product.setCode("Code");
-        Product savedProduct = repository.save(product);
-        // when
-        boolean exists = repository.existsByCode(savedProduct.getCode());
-        // then
-        assertTrue(exists);
-    }
-    @Test
-    public void existsByCode_notExists() {
-        // given
-        Product product = TestUtils.mockInstance(new Product(), "setId");
-        product.setCode("Code");
-        repository.save(product);
-        // when
-        boolean exists = repository.existsByCode("code2");
-        // then
-        assertFalse(exists);
-    }
 
     @Test
     public void findByEnabled_found() {

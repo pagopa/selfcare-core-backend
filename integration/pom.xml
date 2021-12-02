@@ -13,8 +13,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>dao</module>
-        <module>rest</module>
     </modules>
-
 
 </project>

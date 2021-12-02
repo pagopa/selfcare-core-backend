@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.product.web.model;
 
 import it.pagopa.selfcare.commons.utils.TestUtils;
+import it.pagopa.selfcare.product.dao.model.PartyRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,13 +12,14 @@ import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CreateProductDtoTest {
     private Validator validator;
@@ -33,25 +35,23 @@ class CreateProductDtoTest {
     void validateNullFields() {
         // given
         HashMap<String, Class<? extends Annotation>> toCheckMap = new HashMap<>();
+        toCheckMap.put("id", NotBlank.class);
         toCheckMap.put("logo", NotBlank.class);
         toCheckMap.put("title", NotBlank.class);
         toCheckMap.put("description", NotBlank.class);
         toCheckMap.put("urlPublic", NotBlank.class);
         toCheckMap.put("urlBO", NotBlank.class);
-        toCheckMap.put("code", NotBlank.class);
-        toCheckMap.put("contractTemplateUpdateDateTime", NotNull.class);
         toCheckMap.put("roleMappings", NotNull.class);
         toCheckMap.put("contractTemplatePath", NotBlank.class);
         toCheckMap.put("contractTemplateVersion", NotBlank.class);
         toCheckMap.put("roleManagementURL", NotBlank.class);
         CreateProductDto createProductDto = new CreateProductDto();
+        createProductDto.setId(null);
         createProductDto.setLogo(null);
         createProductDto.setTitle(null);
         createProductDto.setDescription(null);
         createProductDto.setUrlPublic(null);
         createProductDto.setUrlBO(null);
-        createProductDto.setCode(null);
-        createProductDto.setContractTemplateUpdateDateTime(null);
         createProductDto.setRoleMappings(null);
         createProductDto.setContractTemplatePath(null);
         createProductDto.setContractTemplateVersion(null);
@@ -72,7 +72,7 @@ class CreateProductDtoTest {
     @Test
     void validateNotNullFields() {
         // given
-        Map<String, List<String>> map=new HashMap<>();
+        EnumMap<PartyRole, List<String>> map = new EnumMap<>(PartyRole.class);
         CREATE_PRODUCT_DTO.setRoleMappings(map);
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(CREATE_PRODUCT_DTO);

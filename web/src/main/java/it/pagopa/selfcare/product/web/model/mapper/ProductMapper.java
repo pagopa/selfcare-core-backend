@@ -18,9 +18,8 @@ public class ProductMapper {
             resource.setDescription(entity.getDescription());
             resource.setUrlPublic(entity.getUrlPublic());
             resource.setUrlBO(entity.getUrlBO());
-            resource.setCreationDateTime(entity.getCreationDateTime());
-            resource.setCode(entity.getCode());
-            resource.setContractTemplateUpdateDateTime(entity.getContractTemplateUpdateDateTime());
+            resource.setCreatedAt(entity.getCreatedAt());
+            resource.setContractTemplateUpdatedAt(entity.getContractTemplateUpdatedAt());
             resource.setRoleMappings(entity.getRoleMappings());
             resource.setContractTemplatePath(entity.getContractTemplatePath());
             resource.setContractTemplateVersion(entity.getContractTemplateVersion());
@@ -34,13 +33,12 @@ public class ProductMapper {
         Product product = null;
         if (dto != null) {
             product = new Product();
+            product.setId(dto.getId());
             product.setLogo(dto.getLogo());
             product.setTitle(dto.getTitle());
             product.setDescription(dto.getDescription());
             product.setUrlPublic(dto.getUrlPublic());
             product.setUrlBO(dto.getUrlBO());
-            product.setCode(dto.getCode());
-            product.setContractTemplateUpdateDateTime(dto.getContractTemplateUpdateDateTime());
             product.setRoleMappings(dto.getRoleMappings());
             product.setContractTemplatePath(dto.getContractTemplatePath());
             product.setContractTemplateVersion(dto.getContractTemplateVersion());
@@ -59,8 +57,6 @@ public class ProductMapper {
             product.setDescription(dto.getDescription());
             product.setUrlPublic(dto.getUrlPublic());
             product.setUrlBO(dto.getUrlBO());
-            product.setCode(dto.getCode());
-            product.setContractTemplateUpdateDateTime(dto.getContractTemplateUpdateDateTime());
             product.setRoleMappings(dto.getRoleMappings());
             product.setContractTemplatePath(dto.getContractTemplatePath());
             product.setContractTemplateVersion(dto.getContractTemplateVersion());

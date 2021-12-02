@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.product.web.model;
 
 import it.pagopa.selfcare.commons.utils.TestUtils;
+import it.pagopa.selfcare.product.dao.model.PartyRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,12 +11,14 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ProductResourceTest {
 
@@ -38,9 +41,8 @@ class ProductResourceTest {
         toCheckMap.put("description", NotBlank.class);
         toCheckMap.put("urlPublic", NotBlank.class);
         toCheckMap.put("urlBO", NotBlank.class);
-        toCheckMap.put("creationDateTime", NotNull.class);
-        toCheckMap.put("code", NotBlank.class);
-        toCheckMap.put("contractTemplateUpdateDateTime", NotNull.class);
+        toCheckMap.put("createdAt", NotNull.class);
+        toCheckMap.put("contractTemplateUpdatedAt", NotNull.class);
         toCheckMap.put("roleMappings", NotNull.class);
         toCheckMap.put("contractTemplatePath", NotBlank.class);
         toCheckMap.put("contractTemplateVersion", NotBlank.class);
@@ -52,9 +54,8 @@ class ProductResourceTest {
         productResource.setDescription(null);
         productResource.setUrlPublic(null);
         productResource.setUrlBO(null);
-        productResource.setCreationDateTime(null);
-        productResource.setCode(null);
-        productResource.setContractTemplateUpdateDateTime(null);
+        productResource.setCreatedAt(null);
+        productResource.setContractTemplateUpdatedAt(null);
         productResource.setRoleMappings(null);
         productResource.setContractTemplatePath(null);
         productResource.setContractTemplateVersion(null);
@@ -75,7 +76,7 @@ class ProductResourceTest {
     void validateNotNullFields() {
         // given
         ProductResource productResource = PRODUCT_RESOURCE;
-        Map<String, List<String>>map=new HashMap<>();
+        EnumMap<PartyRole, List<String>> map = new EnumMap<>(PartyRole.class);
         productResource.setRoleMappings(map);
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(productResource);

@@ -6,6 +6,7 @@ import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.commons.web.model.ErrorResource;
 import it.pagopa.selfcare.product.core.ProductService;
 import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
+import it.pagopa.selfcare.product.dao.model.PartyRole;
 import it.pagopa.selfcare.product.dao.model.Product;
 import it.pagopa.selfcare.product.web.handler.ProductExceptionsHandler;
 import it.pagopa.selfcare.product.web.model.CreateProductDto;
@@ -26,8 +27,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,6 +43,11 @@ class ProductControllerTest {
     private static final CreateProductDto CREATE_PRODUCT_DTO = TestUtils.mockInstance(new CreateProductDto());
     private static final UpdateProductDto UPDATE_PRODUCT_DTO = TestUtils.mockInstance(new UpdateProductDto());
     private static final Product PRODUCT = TestUtils.mockInstance(new Product());
+
+    static {
+        CREATE_PRODUCT_DTO.setRoleMappings(new EnumMap<>(PartyRole.class));
+        UPDATE_PRODUCT_DTO.setRoleMappings(new EnumMap<>(PartyRole.class));
+    }
 
     @MockBean
     private ProductService productServiceMock;
@@ -139,11 +145,7 @@ class ProductControllerTest {
     void createProduct() throws Exception {
         // given
         Mockito.when(productServiceMock.createProduct(Mockito.any(Product.class)))
-                .thenAnswer(invocationOnMock -> {
-                    Product product = invocationOnMock.getArgument(0, Product.class);
-                    product.setId(UUID.randomUUID().toString());
-                    return product;
-                });
+                .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, Product.class));
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .post(BASE_URL + "/")
@@ -155,7 +157,6 @@ class ProductControllerTest {
         // then
         ProductResource product = objectMapper.readValue(result.getResponse().getContentAsString(), ProductResource.class);
         assertNotNull(product);
-        assertNotNull(product.getId());
         TestUtils.reflectionEqualsByName(CREATE_PRODUCT_DTO, product);
     }
 
