@@ -1,8 +1,8 @@
 package it.pagopa.selfcare.product.web.handler;
 
 import it.pagopa.selfcare.commons.web.model.ErrorResource;
+import it.pagopa.selfcare.product.connector.exception.ResourceAlreadyExistsException;
 import it.pagopa.selfcare.product.core.exception.InvalidRoleMappingException;
-import it.pagopa.selfcare.product.core.exception.ResourceAlreadyExistsException;
 import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.web.controller.ProductController;
 import lombok.extern.slf4j.Slf4j;

@@ -1,13 +1,14 @@
 package it.pagopa.selfcare.product.web.model.mapper;
 
-import it.pagopa.selfcare.product.dao.model.Product;
+import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.web.model.CreateProductDto;
+import it.pagopa.selfcare.product.web.model.ProductDto;
 import it.pagopa.selfcare.product.web.model.ProductResource;
 import it.pagopa.selfcare.product.web.model.UpdateProductDto;
 
 public class ProductMapper {
 
-    public static ProductResource toResource(Product entity) {
+    public static ProductResource toResource(ProductOperations entity) {
         ProductResource resource = null;
 
         if (entity != null) {
@@ -29,10 +30,10 @@ public class ProductMapper {
         return resource;
     }
 
-    public static Product fromDto(CreateProductDto dto) {
-        Product product = null;
+    public static ProductOperations fromDto(CreateProductDto dto) {
+        ProductOperations product = null;
         if (dto != null) {
-            product = new Product();
+            product = new ProductDto();
             product.setId(dto.getId());
             product.setLogo(dto.getLogo());
             product.setTitle(dto.getTitle());
@@ -48,10 +49,10 @@ public class ProductMapper {
         return product;
     }
 
-    public static Product fromDto(UpdateProductDto dto) {
-        Product product = null;
+    public static ProductOperations fromDto(UpdateProductDto dto) {
+        ProductOperations product = null;
         if (dto != null) {
-            product = new Product();
+            product = new ProductDto();
             product.setLogo(dto.getLogo());
             product.setTitle(dto.getTitle());
             product.setDescription(dto.getDescription());

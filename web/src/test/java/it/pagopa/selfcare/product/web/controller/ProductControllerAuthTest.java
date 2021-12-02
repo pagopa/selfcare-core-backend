@@ -5,11 +5,12 @@ import io.jsonwebtoken.Claims;
 import it.pagopa.selfcare.commons.base.security.Authority;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.commons.web.security.JwtService;
+import it.pagopa.selfcare.product.connector.model.PartyRole;
+import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.core.ProductService;
-import it.pagopa.selfcare.product.dao.model.PartyRole;
-import it.pagopa.selfcare.product.dao.model.Product;
 import it.pagopa.selfcare.product.web.config.SecurityTestConfig;
 import it.pagopa.selfcare.product.web.model.CreateProductDto;
+import it.pagopa.selfcare.product.web.model.ProductDto;
 import it.pagopa.selfcare.product.web.model.UpdateProductDto;
 import it.pagopa.selfcare.product.web.security.PartyAuthenticationProvider;
 import org.junit.jupiter.api.Test;
@@ -57,7 +58,7 @@ class ProductControllerAuthTest {
     }};
     private static final CreateProductDto CREATE_PRODUCT_DTO = TestUtils.mockInstance(new CreateProductDto());
     private static final UpdateProductDto UPDATE_PRODUCT_DTO = TestUtils.mockInstance(new UpdateProductDto());
-    private static final Product PRODUCT = TestUtils.mockInstance(new Product());
+    private static final ProductOperations PRODUCT = TestUtils.mockInstance(new ProductDto());
     public static final Claims CLAIMS_MOCK = Mockito.mock(Claims.class);
 
     static {
@@ -151,7 +152,7 @@ class ProductControllerAuthTest {
         Mockito.when(productServiceMock.getProduct(Mockito.anyString()))
                 .thenAnswer(invocationOnMock -> {
                     String id = invocationOnMock.getArgument(0, String.class);
-                    Product p = new Product();
+                    ProductOperations p = new ProductDto();
                     p.setId(id);
                     return p;
                 });
@@ -273,7 +274,7 @@ class ProductControllerAuthTest {
         Mockito.when(productServiceMock.updateProduct(Mockito.anyString(), Mockito.any()))
                 .thenAnswer(invocationOnMock -> {
                     String id = invocationOnMock.getArgument(0, String.class);
-                    Product product = invocationOnMock.getArgument(1, Product.class);
+                    ProductOperations product = invocationOnMock.getArgument(1, ProductOperations.class);
                     product.setId(id);
                     product.setLogo("logo1");
                     return product;

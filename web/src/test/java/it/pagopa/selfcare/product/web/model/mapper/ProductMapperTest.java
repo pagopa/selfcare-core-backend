@@ -1,8 +1,9 @@
 package it.pagopa.selfcare.product.web.model.mapper;
 
 import it.pagopa.selfcare.commons.utils.TestUtils;
-import it.pagopa.selfcare.product.dao.model.Product;
+import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.web.model.CreateProductDto;
+import it.pagopa.selfcare.product.web.model.ProductDto;
 import it.pagopa.selfcare.product.web.model.ProductResource;
 import it.pagopa.selfcare.product.web.model.UpdateProductDto;
 import org.junit.jupiter.api.Test;
@@ -16,8 +17,8 @@ class ProductMapperTest {
     @Test
     void toResource_notNull() {
         // given
-        OffsetDateTime now = OffsetDateTime.now();
-        Product product = TestUtils.mockInstance(new Product());
+        OffsetDateTime now = OffsetDateTime.now().minusSeconds(1);
+        ProductOperations product = TestUtils.mockInstance(new ProductDto());
         // when
         ProductResource productResource = ProductMapper.toResource(product);
         // then
@@ -49,7 +50,7 @@ class ProductMapperTest {
         // given
         CreateProductDto dto = TestUtils.mockInstance(new CreateProductDto());
         // when
-        Product product = ProductMapper.fromDto(dto);
+        ProductOperations product = ProductMapper.fromDto(dto);
         // then
         TestUtils.reflectionEqualsByName(product, dto);
     }
@@ -58,7 +59,7 @@ class ProductMapperTest {
     void fromCreateProductDto_null() {
         // given
         // when
-        Product product = ProductMapper.fromDto((CreateProductDto) null);
+        ProductOperations product = ProductMapper.fromDto((CreateProductDto) null);
         // then
         assertNull(product);
     }
@@ -68,7 +69,7 @@ class ProductMapperTest {
         // given
         UpdateProductDto dto = TestUtils.mockInstance(new UpdateProductDto());
         // when
-        Product product = ProductMapper.fromDto(dto);
+        ProductOperations product = ProductMapper.fromDto(dto);
         // then
         assertNull(product.getId());
         TestUtils.reflectionEqualsByName(product, dto);
@@ -78,7 +79,7 @@ class ProductMapperTest {
     void fromUpdateProductDto_null() {
         // given
         // when
-        Product product = ProductMapper.fromDto((UpdateProductDto) null);
+        ProductOperations product = ProductMapper.fromDto((UpdateProductDto) null);
         // then
         assertNull(product);
     }

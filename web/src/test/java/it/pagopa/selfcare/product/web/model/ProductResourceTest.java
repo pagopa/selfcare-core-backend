@@ -1,7 +1,7 @@
 package it.pagopa.selfcare.product.web.model;
 
 import it.pagopa.selfcare.commons.utils.TestUtils;
-import it.pagopa.selfcare.product.dao.model.PartyRole;
+import it.pagopa.selfcare.product.connector.model.PartyRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
