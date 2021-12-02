@@ -1,18 +1,18 @@
 package it.pagopa.selfcare.product.core;
 
-import it.pagopa.selfcare.product.dao.model.Product;
+import it.pagopa.selfcare.product.connector.model.ProductOperations;
 
 import java.util.List;
 
 public interface ProductService {
 
-    List<Product> getProducts();
+    List<ProductOperations> getProducts();
 
-    Product createProduct(Product product);
+    ProductOperations createProduct(ProductOperations product);
 
     void deleteProduct(String id);
 
-    Product getProduct(String id);
+    ProductOperations getProduct(String id);
 
-    Product updateProduct(String id, Product product);
+    ProductOperations updateProduct(String id, ProductOperations product);
 }

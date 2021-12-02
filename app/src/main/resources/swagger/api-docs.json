@@ -258,26 +258,52 @@
       "CreateProductDto": {
         "title": "CreateProductDto",
         "required": [
-          "code",
+          "contractTemplatePath",
+          "contractTemplateVersion",
           "description",
+          "id",
           "logo",
+          "roleManagementURL",
+          "roleMappings",
           "title",
           "urlBO",
           "urlPublic"
         ],
         "type": "object",
         "properties": {
-          "code": {
+          "contractTemplatePath": {
             "type": "string",
-            "description": "Key code Product"
+            "description": "The path of contract"
+          },
+          "contractTemplateVersion": {
+            "type": "string",
+            "description": "Version of the contract"
           },
           "description": {
             "type": "string",
             "description": "Product's description"
           },
+          "id": {
+            "type": "string",
+            "description": "Product's unique identifier"
+          },
           "logo": {
             "type": "string",
             "description": "Product's logo"
+          },
+          "roleManagementURL": {
+            "type": "string",
+            "description": "Url of the utilities management"
+          },
+          "roleMappings": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "description": "All party Role and Product Role Map"
           },
           "title": {
             "type": "string",
@@ -296,21 +322,34 @@
       "ProductResource": {
         "title": "ProductResource",
         "required": [
-          "code",
-          "creationDateTime",
+          "contractTemplatePath",
+          "contractTemplateUpdatedAt",
+          "contractTemplateVersion",
+          "createdAt",
           "description",
           "id",
           "logo",
+          "roleManagementURL",
+          "roleMappings",
           "title",
           "urlBO"
         ],
         "type": "object",
         "properties": {
-          "code": {
+          "contractTemplatePath": {
             "type": "string",
-            "description": "Key code Product"
+            "description": "The path of contract"
           },
-          "creationDateTime": {
+          "contractTemplateUpdatedAt": {
+            "type": "string",
+            "description": "Date the contract was postponed",
+            "format": "date-time"
+          },
+          "contractTemplateVersion": {
+            "type": "string",
+            "description": "Version of the contract"
+          },
+          "createdAt": {
             "type": "string",
             "description": "Date the products was activated/created",
             "format": "date-time"
@@ -326,6 +365,20 @@
           "logo": {
             "type": "string",
             "description": "Product's logo"
+          },
+          "roleManagementURL": {
+            "type": "string",
+            "description": "Url of the utilities management"
+          },
+          "roleMappings": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "description": "All party Role and Product Role Map"
           },
           "title": {
             "type": "string",
@@ -344,18 +397,25 @@
       "UpdateProductDto": {
         "title": "UpdateProductDto",
         "required": [
-          "code",
+          "contractTemplatePath",
+          "contractTemplateVersion",
           "description",
           "logo",
+          "roleManagementURL",
+          "roleMappings",
           "title",
           "urlBO",
           "urlPublic"
         ],
         "type": "object",
         "properties": {
-          "code": {
+          "contractTemplatePath": {
             "type": "string",
-            "description": "Key code Product"
+            "description": "The path of contract"
+          },
+          "contractTemplateVersion": {
+            "type": "string",
+            "description": "Version of the contract"
           },
           "description": {
             "type": "string",
@@ -364,6 +424,20 @@
           "logo": {
             "type": "string",
             "description": "Product's logo"
+          },
+          "roleManagementURL": {
+            "type": "string",
+            "description": "Url of the utilities management"
+          },
+          "roleMappings": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "description": "All party Role and Product Role Map"
           },
           "title": {
             "type": "string",

@@ -1,21 +1,24 @@
 package it.pagopa.selfcare.product.web.model.mapper;
 
 import it.pagopa.selfcare.commons.utils.TestUtils;
-import it.pagopa.selfcare.product.dao.model.Product;
+import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.web.model.CreateProductDto;
+import it.pagopa.selfcare.product.web.model.ProductDto;
 import it.pagopa.selfcare.product.web.model.ProductResource;
 import it.pagopa.selfcare.product.web.model.UpdateProductDto;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import java.time.OffsetDateTime;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ProductMapperTest {
 
     @Test
     void toResource_notNull() {
         // given
-        Product product = TestUtils.mockInstance(new Product());
+        OffsetDateTime now = OffsetDateTime.now().minusSeconds(1);
+        ProductOperations product = TestUtils.mockInstance(new ProductDto());
         // when
         ProductResource productResource = ProductMapper.toResource(product);
         // then
@@ -25,13 +28,12 @@ class ProductMapperTest {
         assertEquals(product.getDescription(), productResource.getDescription());
         assertEquals(product.getUrlPublic(), productResource.getUrlPublic());
         assertEquals(product.getUrlBO(), productResource.getUrlBO());
-        assertEquals(product.getCode(), productResource.getCode());
-        assertEquals(product.getContractTemplateUpdateDateTime(), productResource.getContractTemplateUpdateDateTime());
+        assertTrue(now.isBefore(productResource.getContractTemplateUpdatedAt()));
         assertEquals(product.getContractTemplateVersion(), productResource.getContractTemplateVersion());
         assertEquals(product.getContractTemplatePath(), productResource.getContractTemplatePath());
         assertEquals(product.getRoleMappings(), productResource.getRoleMappings());
         assertEquals(product.getRoleManagementURL(), productResource.getRoleManagementURL());
-        TestUtils.reflectionEqualsByName(product, productResource, "enabled");
+        TestUtils.reflectionEqualsByName(productResource, product);
     }
 
     @Test
@@ -48,17 +50,16 @@ class ProductMapperTest {
         // given
         CreateProductDto dto = TestUtils.mockInstance(new CreateProductDto());
         // when
-        Product product = ProductMapper.fromDto(dto);
+        ProductOperations product = ProductMapper.fromDto(dto);
         // then
-        assertNull(product.getId());
-        TestUtils.reflectionEqualsByName(dto, product);
+        TestUtils.reflectionEqualsByName(product, dto);
     }
 
     @Test
     void fromCreateProductDto_null() {
         // given
         // when
-        Product product = ProductMapper.fromDto((CreateProductDto) null);
+        ProductOperations product = ProductMapper.fromDto((CreateProductDto) null);
         // then
         assertNull(product);
     }
@@ -68,17 +69,17 @@ class ProductMapperTest {
         // given
         UpdateProductDto dto = TestUtils.mockInstance(new UpdateProductDto());
         // when
-        Product product = ProductMapper.fromDto(dto);
+        ProductOperations product = ProductMapper.fromDto(dto);
         // then
         assertNull(product.getId());
-        TestUtils.reflectionEqualsByName(dto, product);
+        TestUtils.reflectionEqualsByName(product, dto);
     }
 
     @Test
     void fromUpdateProductDto_null() {
         // given
         // when
-        Product product = ProductMapper.fromDto((UpdateProductDto) null);
+        ProductOperations product = ProductMapper.fromDto((UpdateProductDto) null);
         // then
         assertNull(product);
     }

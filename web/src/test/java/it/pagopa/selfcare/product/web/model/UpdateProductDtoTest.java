@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.product.web.model;
 
 import it.pagopa.selfcare.commons.utils.TestUtils;
+import it.pagopa.selfcare.product.connector.model.PartyRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,13 +12,13 @@ import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UpdateProductDtoTest {
 
@@ -39,8 +40,6 @@ class UpdateProductDtoTest {
         toCheckMap.put("description", NotBlank.class);
         toCheckMap.put("urlPublic", NotBlank.class);
         toCheckMap.put("urlBO", NotBlank.class);
-        toCheckMap.put("code", NotBlank.class);
-        toCheckMap.put("contractTemplateUpdateDateTime", NotNull.class);
         toCheckMap.put("roleMappings", NotNull.class);
         toCheckMap.put("contractTemplatePath", NotBlank.class);
         toCheckMap.put("contractTemplateVersion", NotBlank.class);
@@ -51,8 +50,6 @@ class UpdateProductDtoTest {
         updateProductDto.setDescription(null);
         updateProductDto.setUrlPublic(null);
         updateProductDto.setUrlBO(null);
-        updateProductDto.setCode(null);
-        updateProductDto.setContractTemplateUpdateDateTime(null);
         updateProductDto.setRoleMappings(null);
         updateProductDto.setContractTemplatePath(null);
         updateProductDto.setContractTemplateVersion(null);
@@ -72,7 +69,7 @@ class UpdateProductDtoTest {
     @Test
     void validateNotNullFields() {
         // given
-        Map<String, List<String>> map=new HashMap<>();
+        EnumMap<PartyRole, List<String>> map = new EnumMap<>(PartyRole.class);
         UPDATE_PRODUCT_DTO.setRoleMappings(map);
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(UPDATE_PRODUCT_DTO);

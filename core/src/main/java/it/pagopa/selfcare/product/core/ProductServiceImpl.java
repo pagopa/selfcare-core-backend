@@ -1,11 +1,11 @@
 package it.pagopa.selfcare.product.core;
 
+import it.pagopa.selfcare.product.connector.api.ProductConnector;
+import it.pagopa.selfcare.product.connector.model.PartyRole;
+import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.core.exception.InvalidRoleMappingException;
 import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
-import it.pagopa.selfcare.product.dao.ProductRepository;
-import it.pagopa.selfcare.product.dao.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -14,54 +14,51 @@ import java.util.List;
 @Service
 class ProductServiceImpl implements ProductService {
 
-    private final ProductRepository repository;
+    private final ProductConnector productConnector;
 
 
     @Autowired
-    public ProductServiceImpl(ProductRepository repository) {
-        this.repository = repository;
+    public ProductServiceImpl(ProductConnector productConnector) {
+        this.productConnector = productConnector;
     }
 
     @Override
-    public List<Product> getProducts() {
-        return repository.findByEnabled(true);
+    public List<ProductOperations> getProducts() {
+        return productConnector.findByEnabled(true);
     }
 
     @Override
-    public Product createProduct(Product product) {
-        String keyCode = product.getCode();
-        if (repository.existsByCode(keyCode)){
-            throw new DuplicateKeyException(keyCode);
-        }
+    public ProductOperations createProduct(ProductOperations product) {
         validateRoleMappings(product);
         OffsetDateTime now = OffsetDateTime.now();
-        product.setCreationDateTime(now);
-        product.setContractTemplateUpdateDateTime(now);
-        return repository.save(product);
+        product.setCreatedAt(now);
+        product.setContractTemplateUpdatedAt(now);
+        return productConnector.insert(product);
     }
 
-    private void validateRoleMappings(Product product) {
+    private void validateRoleMappings(ProductOperations product) {
         product.getRoleMappings().forEach((partyRole, productRoles) -> {
             if (productRoles == null
-            || productRoles.isEmpty()
-            || (productRoles.size() > 1 && !"operator".equals(partyRole))) {
-                throw new InvalidRoleMappingException();
+                    || productRoles.isEmpty()
+                    || (productRoles.size() > 1 && !PartyRole.OPERATOR.equals(partyRole))) {
+                throw new InvalidRoleMappingException(String.format("ProductOperations roles cannot be null nor empty and only '%s' Party role can have more than one ProductOperations role", PartyRole.OPERATOR.name()),
+                        new IllegalArgumentException(String.format("partyRole = %s => productRoles = %s", partyRole, productRoles)));
             }
         });
     }
 
     @Override
     public void deleteProduct(String id) {
-        Product foundProduct = repository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
         if (foundProduct.isEnabled()) {
             foundProduct.setEnabled(false);
-            repository.save(foundProduct);
+            productConnector.save(foundProduct);
         }
     }
 
     @Override
-    public Product getProduct(String id) {
-        Product foundProduct = repository.findById(id).orElseThrow(ResourceNotFoundException::new);
+    public ProductOperations getProduct(String id) {
+        ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
         if (!foundProduct.isEnabled()) {
             throw new ResourceNotFoundException();
         }
@@ -70,9 +67,9 @@ class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public Product updateProduct(String id, Product product) {
-        Product foundProduct = repository.findById(id).orElseThrow(ResourceNotFoundException::new);
-        if (!foundProduct.isEnabled()){
+    public ProductOperations updateProduct(String id, ProductOperations product) {
+        ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
+        if (!foundProduct.isEnabled()) {
             throw new ResourceNotFoundException();
         }
         validateRoleMappings(product);
@@ -81,15 +78,14 @@ class ProductServiceImpl implements ProductService {
         foundProduct.setDescription(product.getDescription());
         foundProduct.setUrlPublic(product.getUrlPublic());
         foundProduct.setUrlBO(product.getUrlBO());
-        foundProduct.setCode(product.getCode());
         foundProduct.setRoleMappings(product.getRoleMappings());
         foundProduct.setRoleManagementURL(product.getRoleManagementURL());
         foundProduct.setContractTemplatePath(product.getContractTemplatePath());
-        if (!product.getContractTemplateVersion().equals(foundProduct.getContractTemplateVersion())){
-            foundProduct.setContractTemplateUpdateDateTime(OffsetDateTime.now());
+        if (!product.getContractTemplateVersion().equals(foundProduct.getContractTemplateVersion())) {
+            foundProduct.setContractTemplateUpdatedAt(OffsetDateTime.now());
         }
         foundProduct.setContractTemplateVersion(product.getContractTemplateVersion());
-        return repository.save(foundProduct);
+        return productConnector.save(foundProduct);
     }
 
 }

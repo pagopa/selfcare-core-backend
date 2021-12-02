@@ -20,7 +20,7 @@ class PartyAuthenticationProviderTest {
     void retrieveUser() {//TODO
         // given
         String username = "username";
-        PartyAuthenticationProvider authenticationProvider = new PartyAuthenticationProvider(null);
+        PartyAuthenticationProvider authenticationProvider = new PartyAuthenticationProvider();
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, "credentials");
         // when
         UserDetails userDetails = authenticationProvider.retrieveUser(username, authentication);

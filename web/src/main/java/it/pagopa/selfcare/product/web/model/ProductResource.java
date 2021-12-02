@@ -2,13 +2,14 @@ package it.pagopa.selfcare.product.web.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
+import it.pagopa.selfcare.product.connector.model.PartyRole;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 @Data
 public class ProductResource {
@@ -45,22 +46,17 @@ public class ProductResource {
     @ApiModelProperty(value = "${swagger.product.model.creationDateTime}", required = true)
     @JsonProperty(required = true)
     @NotNull
-    private OffsetDateTime creationDateTime;
-
-    @ApiModelProperty(value = "${swagger.product.model.code}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
-    private String code;
+    private OffsetDateTime createdAt;
 
     @ApiModelProperty(value = "${swagger.product.model.contractTemplateUpdateDateTime}", required = true)
     @JsonProperty(required = true)
     @NotNull
-    private OffsetDateTime contractTemplateUpdateDateTime;
+    private OffsetDateTime contractTemplateUpdatedAt;
 
     @ApiModelProperty(value = "${swagger.product.model.roleMappings}", required = true)
     @JsonProperty(required = true)
     @NotNull
-    private Map<String, List<String>> roleMappings;
+    private EnumMap<PartyRole, List<String>> roleMappings;
 
     @ApiModelProperty(value = "${swagger.product.model.contractTemplatePath}", required = true)
     @JsonProperty(required = true)

@@ -16,6 +16,11 @@
             <groupId>it.pagopa.selfcare</groupId>
             <artifactId>selc-product-web</artifactId>
         </dependency>
+        <dependency>
+            <groupId>it.pagopa.selfcare</groupId>
+            <artifactId>selc-product-connector-dao</artifactId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>

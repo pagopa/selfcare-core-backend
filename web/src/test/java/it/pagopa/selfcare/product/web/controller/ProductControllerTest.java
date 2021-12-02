@@ -4,11 +4,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.commons.web.model.ErrorResource;
+import it.pagopa.selfcare.product.connector.model.PartyRole;
+import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.core.ProductService;
 import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
-import it.pagopa.selfcare.product.dao.model.Product;
 import it.pagopa.selfcare.product.web.handler.ProductExceptionsHandler;
 import it.pagopa.selfcare.product.web.model.CreateProductDto;
+import it.pagopa.selfcare.product.web.model.ProductDto;
 import it.pagopa.selfcare.product.web.model.ProductResource;
 import it.pagopa.selfcare.product.web.model.UpdateProductDto;
 import org.junit.jupiter.api.Test;
@@ -26,8 +28,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,7 +43,12 @@ class ProductControllerTest {
     private static final String BASE_URL = "/products";
     private static final CreateProductDto CREATE_PRODUCT_DTO = TestUtils.mockInstance(new CreateProductDto());
     private static final UpdateProductDto UPDATE_PRODUCT_DTO = TestUtils.mockInstance(new UpdateProductDto());
-    private static final Product PRODUCT = TestUtils.mockInstance(new Product());
+    private static final ProductOperations PRODUCT = TestUtils.mockInstance(new ProductDto());
+
+    static {
+        CREATE_PRODUCT_DTO.setRoleMappings(new EnumMap<>(PartyRole.class));
+        UPDATE_PRODUCT_DTO.setRoleMappings(new EnumMap<>(PartyRole.class));
+    }
 
     @MockBean
     private ProductService productServiceMock;
@@ -102,7 +109,7 @@ class ProductControllerTest {
         Mockito.when(productServiceMock.getProduct(Mockito.anyString()))
                 .thenAnswer(invocationOnMock -> {
                     String id = invocationOnMock.getArgument(0, String.class);
-                    Product p = new Product();
+                    ProductOperations p = new ProductDto();
                     p.setId(id);
                     return p;
                 });
@@ -138,12 +145,8 @@ class ProductControllerTest {
     @Test
     void createProduct() throws Exception {
         // given
-        Mockito.when(productServiceMock.createProduct(Mockito.any(Product.class)))
-                .thenAnswer(invocationOnMock -> {
-                    Product product = invocationOnMock.getArgument(0, Product.class);
-                    product.setId(UUID.randomUUID().toString());
-                    return product;
-                });
+        Mockito.when(productServiceMock.createProduct(Mockito.any(ProductOperations.class)))
+                .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, ProductOperations.class));
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .post(BASE_URL + "/")
@@ -155,18 +158,17 @@ class ProductControllerTest {
         // then
         ProductResource product = objectMapper.readValue(result.getResponse().getContentAsString(), ProductResource.class);
         assertNotNull(product);
-        assertNotNull(product.getId());
         TestUtils.reflectionEqualsByName(CREATE_PRODUCT_DTO, product);
     }
 
     @Test
     void updateProduct_exists() throws Exception {
         // given
-        Product prod = new Product();
-        Mockito.when(productServiceMock.updateProduct(Mockito.anyString(), Mockito.any(Product.class)))
+        ProductOperations prod = new ProductDto();
+        Mockito.when(productServiceMock.updateProduct(Mockito.anyString(), Mockito.any(ProductOperations.class)))
                 .thenAnswer(invocationOnMock -> {
                     String id = invocationOnMock.getArgument(0, String.class);
-                    Product product = invocationOnMock.getArgument(1, Product.class);
+                    ProductOperations product = invocationOnMock.getArgument(1, ProductOperations.class);
                     product.setId(id);
                     return product;
                 });
@@ -188,7 +190,7 @@ class ProductControllerTest {
     @Test
     void updateProduct_notExists() throws Exception {
         // given
-        Mockito.when(productServiceMock.updateProduct(Mockito.anyString(), Mockito.any(Product.class)))
+        Mockito.when(productServiceMock.updateProduct(Mockito.anyString(), Mockito.any(ProductOperations.class)))
                 .thenThrow(ResourceNotFoundException.class);
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
