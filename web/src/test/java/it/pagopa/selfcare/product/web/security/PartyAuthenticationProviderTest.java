@@ -8,12 +8,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Optional;
 
-import static it.pagopa.selfcare.commons.base.security.Authority.ADMIN;
+import static it.pagopa.selfcare.commons.base.security.SelfCareAuthority.ADMIN;
 
 class PartyAuthenticationProviderTest {
 
     @Test
     void additionalAuthenticationChecks() {
+        PartyAuthenticationProvider authenticationProvider = new PartyAuthenticationProvider();
+        Assertions.assertAll(() -> authenticationProvider.additionalAuthenticationChecks(null, null));
     }
 
     @Test

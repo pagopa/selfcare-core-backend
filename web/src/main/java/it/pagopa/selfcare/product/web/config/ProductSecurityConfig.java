@@ -13,8 +13,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
-import static it.pagopa.selfcare.commons.base.security.Authority.ADMIN;
-import static it.pagopa.selfcare.commons.base.security.Authority.LIMITED;
+import static it.pagopa.selfcare.commons.base.security.SelfCareAuthority.ADMIN;
+import static it.pagopa.selfcare.commons.base.security.SelfCareAuthority.LIMITED;
 
 @Slf4j
 @Configuration

@@ -2,7 +2,7 @@ package it.pagopa.selfcare.product.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
-import it.pagopa.selfcare.commons.base.security.Authority;
+import it.pagopa.selfcare.commons.base.security.SelfCareAuthority;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.commons.web.security.JwtService;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
@@ -35,8 +35,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.*;
 
-import static it.pagopa.selfcare.commons.base.security.Authority.ADMIN;
-import static it.pagopa.selfcare.commons.base.security.Authority.LIMITED;
+import static it.pagopa.selfcare.commons.base.security.SelfCareAuthority.ADMIN;
+import static it.pagopa.selfcare.commons.base.security.SelfCareAuthority.LIMITED;
 
 @WebMvcTest(value = {ProductController.class})
 @ContextConfiguration(classes = {
@@ -52,7 +52,7 @@ class ProductControllerAuthTest {
             new TestingAuthenticationToken("admin", "", List.of(new SimpleGrantedAuthority(ADMIN.name()),
                     new SimpleGrantedAuthority(LIMITED.name())
             ));
-    private static final EnumMap<Authority, Authentication> role2userMap = new EnumMap<>(Authority.class) {{
+    private static final EnumMap<SelfCareAuthority, Authentication> role2userMap = new EnumMap<>(SelfCareAuthority.class) {{
         put(LIMITED, LIMITED_AUTHENTICATION);
         put(ADMIN, ADMIN_AUTHENTICATION);
     }};
@@ -86,8 +86,8 @@ class ProductControllerAuthTest {
 
 
     @ParameterizedTest
-    @EnumSource(value = Authority.class, names = {"ADMIN", "LIMITED"})
-    void getProducts_checkRole(Authority role) throws Exception {
+    @EnumSource(value = SelfCareAuthority.class, names = {"ADMIN", "LIMITED"})
+    void getProducts_checkRole(SelfCareAuthority role) throws Exception {
         // given
         Mockito.when(jwtServiceMock.getClaims(Mockito.any()))
                 .thenReturn(Optional.of(CLAIMS_MOCK));
@@ -142,8 +142,8 @@ class ProductControllerAuthTest {
 
 
     @ParameterizedTest
-    @EnumSource(value = Authority.class, names = {"ADMIN", "LIMITED"})
-    void getProduct_checkRole(Authority role) throws Exception {
+    @EnumSource(value = SelfCareAuthority.class, names = {"ADMIN", "LIMITED"})
+    void getProduct_checkRole(SelfCareAuthority role) throws Exception {
         // given
         Mockito.when(jwtServiceMock.getClaims(Mockito.any()))
                 .thenReturn(Optional.of(CLAIMS_MOCK));
@@ -178,7 +178,7 @@ class ProductControllerAuthTest {
         switch (role) {
             case ADMIN:
             case LIMITED:
-                Mockito.verify(productServiceMock, Mockito.times(1)).getProduct(Mockito.eq(uuid));
+                Mockito.verify(productServiceMock, Mockito.times(1)).getProduct(uuid);
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -204,8 +204,8 @@ class ProductControllerAuthTest {
 
 
     @ParameterizedTest
-    @EnumSource(value = Authority.class, names = {"ADMIN", "LIMITED"})
-    void createProduct_checkRole(Authority role) throws Exception {
+    @EnumSource(value = SelfCareAuthority.class, names = {"ADMIN", "LIMITED"})
+    void createProduct_checkRole(SelfCareAuthority role) throws Exception {
         // given
         Mockito.when(jwtServiceMock.getClaims(Mockito.any()))
                 .thenReturn(Optional.of(CLAIMS_MOCK));
@@ -264,8 +264,8 @@ class ProductControllerAuthTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Authority.class, names = {"ADMIN", "LIMITED"})
-    void updateProduct_checkRole(Authority role) throws Exception {
+    @EnumSource(value = SelfCareAuthority.class, names = {"ADMIN", "LIMITED"})
+    void updateProduct_checkRole(SelfCareAuthority role) throws Exception {
         // given
         Mockito.when(jwtServiceMock.getClaims(Mockito.any()))
                 .thenReturn(Optional.of(CLAIMS_MOCK));
@@ -304,7 +304,7 @@ class ProductControllerAuthTest {
         switch (role) {
             case ADMIN:
                 Mockito.verify(productServiceMock, Mockito.times(1))
-                        .updateProduct(Mockito.eq(uuid), Mockito.any());
+                        .updateProduct(uuid, Mockito.any());
                 break;
             case LIMITED:
                 Mockito.verifyNoInteractions(productServiceMock);
@@ -332,8 +332,8 @@ class ProductControllerAuthTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Authority.class, names = {"ADMIN", "LIMITED"})
-    void deleteProduct_checkRole(Authority role) throws Exception {
+    @EnumSource(value = SelfCareAuthority.class, names = {"ADMIN", "LIMITED"})
+    void deleteProduct_checkRole(SelfCareAuthority role) throws Exception {
         // given
         Mockito.when(jwtServiceMock.getClaims(Mockito.any()))
                 .thenReturn(Optional.of(CLAIMS_MOCK));
@@ -367,7 +367,7 @@ class ProductControllerAuthTest {
         switch (role) {
             case ADMIN:
                 Mockito.verify(productServiceMock, Mockito.times(1))
-                        .deleteProduct(Mockito.eq(uuid));
+                        .deleteProduct(uuid);
                 break;
             case LIMITED:
                 Mockito.verifyNoInteractions(productServiceMock);

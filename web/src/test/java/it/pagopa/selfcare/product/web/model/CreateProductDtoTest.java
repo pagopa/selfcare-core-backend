@@ -39,12 +39,10 @@ class CreateProductDtoTest {
         toCheckMap.put("logo", NotBlank.class);
         toCheckMap.put("title", NotBlank.class);
         toCheckMap.put("description", NotBlank.class);
-        toCheckMap.put("urlPublic", NotBlank.class);
         toCheckMap.put("urlBO", NotBlank.class);
         toCheckMap.put("roleMappings", NotNull.class);
         toCheckMap.put("contractTemplatePath", NotBlank.class);
         toCheckMap.put("contractTemplateVersion", NotBlank.class);
-        toCheckMap.put("roleManagementURL", NotBlank.class);
         CreateProductDto createProductDto = new CreateProductDto();
         createProductDto.setId(null);
         createProductDto.setLogo(null);

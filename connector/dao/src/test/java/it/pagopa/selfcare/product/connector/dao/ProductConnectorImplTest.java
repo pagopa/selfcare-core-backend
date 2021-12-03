@@ -43,7 +43,7 @@ class ProductConnectorImplTest {
         ResourceAlreadyExistsException e = assertThrows(ResourceAlreadyExistsException.class, executable);
         assertEquals("Product id = " + entity.getId(), e.getMessage());
         Mockito.verify(repositoryMock, Mockito.times(1))
-                .insert(Mockito.eq(entity));
+                .insert(entity);
         Mockito.verifyNoMoreInteractions(repositoryMock);
     }
 
@@ -59,7 +59,7 @@ class ProductConnectorImplTest {
         // then
         Assertions.assertEquals(entity, saved);
         Mockito.verify(repositoryMock, Mockito.times(1))
-                .insert(Mockito.eq(entity));
+                .insert(entity);
         Mockito.verifyNoMoreInteractions(repositoryMock);
     }
 
@@ -75,7 +75,7 @@ class ProductConnectorImplTest {
         // then
         Assertions.assertEquals(entity, saved);
         Mockito.verify(repositoryMock, Mockito.times(1))
-                .save(Mockito.eq(entity));
+                .save(entity);
         Mockito.verifyNoMoreInteractions(repositoryMock);
     }
 
@@ -92,7 +92,7 @@ class ProductConnectorImplTest {
         // then
         Assertions.assertEquals(entity, found);
         Mockito.verify(repositoryMock, Mockito.times(1))
-                .findById(Mockito.eq(id));
+                .findById(id);
         Mockito.verifyNoMoreInteractions(repositoryMock);
     }
 
@@ -109,7 +109,7 @@ class ProductConnectorImplTest {
         // then
         Assertions.assertEquals(expected, exists);
         Mockito.verify(repositoryMock, Mockito.times(1))
-                .existsById(Mockito.eq(id));
+                .existsById(id);
         Mockito.verifyNoMoreInteractions(repositoryMock);
     }
 
@@ -141,7 +141,7 @@ class ProductConnectorImplTest {
         productConnector.deleteById(id);
         // then
         Mockito.verify(repositoryMock, Mockito.times(1))
-                .deleteById(Mockito.eq(id));
+                .deleteById(id);
         Mockito.verifyNoMoreInteractions(repositoryMock);
     }
 
@@ -158,7 +158,7 @@ class ProductConnectorImplTest {
         // then
         Assertions.assertEquals(expected, found);
         Mockito.verify(repositoryMock, Mockito.times(1))
-                .findByEnabled(Mockito.eq(enabled));
+                .findByEnabled(enabled);
         Mockito.verifyNoMoreInteractions(repositoryMock);
     }
 

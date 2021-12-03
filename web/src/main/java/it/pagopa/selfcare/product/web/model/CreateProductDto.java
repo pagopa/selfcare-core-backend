@@ -34,8 +34,6 @@ public class CreateProductDto {
     private String description;
 
     @ApiModelProperty(value = "${swagger.product.model.urlPublic}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
     private String urlPublic;
 
     @ApiModelProperty(value = "${swagger.product.model.urlBO}", required = true)
@@ -59,8 +57,6 @@ public class CreateProductDto {
     private String contractTemplateVersion;
 
     @ApiModelProperty(value = "${swagger.product.model.roleManagementURL}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
     private String roleManagementURL;
 
 }

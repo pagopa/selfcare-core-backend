@@ -10,13 +10,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 
-import static it.pagopa.selfcare.commons.base.security.Authority.ADMIN;
+import static it.pagopa.selfcare.commons.base.security.SelfCareAuthority.ADMIN;
 
 @Component
 public class PartyAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+        // Do nothing
     }
 
 

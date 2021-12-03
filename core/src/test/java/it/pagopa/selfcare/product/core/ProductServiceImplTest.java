@@ -227,7 +227,7 @@ class ProductServiceImplTest {
         // given
         String productId = "productId";
         ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId");
-        Mockito.when(productConnectorMock.findById(Mockito.eq(productId)))
+        Mockito.when(productConnectorMock.findById(productId))
                 .thenReturn(Optional.of(new DummyProduct()));
         EnumMap<PartyRole, List<String>> map = new EnumMap<>(PartyRole.class);
         List<String> list = new ArrayList<>();
@@ -250,7 +250,7 @@ class ProductServiceImplTest {
         assertEquals(savedProduct.getRoleManagementURL(), product.getRoleManagementURL());
         assertEquals(savedProduct.getContractTemplatePath(), product.getContractTemplatePath());
         assertEquals(savedProduct.getContractTemplateVersion(), product.getContractTemplateVersion());
-        Mockito.verify(productConnectorMock, Mockito.times(1)).findById(Mockito.eq(productId));
+        Mockito.verify(productConnectorMock, Mockito.times(1)).findById(productId);
         Mockito.verify(productConnectorMock, Mockito.times(1)).save(Mockito.any());
         Mockito.verifyNoMoreInteractions(productConnectorMock);
     }
