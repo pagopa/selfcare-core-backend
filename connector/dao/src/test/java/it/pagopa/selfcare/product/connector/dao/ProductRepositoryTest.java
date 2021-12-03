@@ -25,13 +25,13 @@ class ProductRepositoryTest {
 
 
     @AfterEach
-    public void clear() {
+    void clear() {
         repository.deleteAll();
     }
 
 
     @Test
-    public void create() {
+    void create() {
         // given
         ProductEntity product = TestUtils.mockInstance(new ProductEntity());
         // when
@@ -42,7 +42,7 @@ class ProductRepositoryTest {
 
 
     @Test
-    public void findAll_noProducts() {
+    void findAll_noProducts() {
         // given
         // when
         List<ProductEntity> products = repository.findAll();
@@ -52,7 +52,7 @@ class ProductRepositoryTest {
 
 
     @Test
-    public void findAll_atLeastOneProduct() {
+    void findAll_atLeastOneProduct() {
         // given
         create();
         // when
@@ -63,7 +63,7 @@ class ProductRepositoryTest {
 
 
     @Test
-    public void update() {
+    void update() {
         // given
         ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setId");
         ProductEntity savedProduct = repository.save(product);
@@ -79,7 +79,7 @@ class ProductRepositoryTest {
 
 
     @Test
-    public void deleteById() {
+    void deleteById() {
         // given
         ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setId");
         ProductEntity savedProduct = repository.save(product);
@@ -92,7 +92,7 @@ class ProductRepositoryTest {
 
 
     @Test
-    public void findByEnabled_found() {
+    void findByEnabled_found() {
         // given
         ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setId");
         repository.save(product);
@@ -104,7 +104,7 @@ class ProductRepositoryTest {
 
 
     @Test
-    public void findByEnabled_notFound() {
+    void findByEnabled_notFound() {
         // given
         ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setId");
         product.setEnabled(false);

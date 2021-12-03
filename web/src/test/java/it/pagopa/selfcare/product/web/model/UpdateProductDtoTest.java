@@ -38,12 +38,10 @@ class UpdateProductDtoTest {
         toCheckMap.put("logo", NotBlank.class);
         toCheckMap.put("title", NotBlank.class);
         toCheckMap.put("description", NotBlank.class);
-        toCheckMap.put("urlPublic", NotBlank.class);
         toCheckMap.put("urlBO", NotBlank.class);
         toCheckMap.put("roleMappings", NotNull.class);
         toCheckMap.put("contractTemplatePath", NotBlank.class);
         toCheckMap.put("contractTemplateVersion", NotBlank.class);
-        toCheckMap.put("roleManagementURL", NotBlank.class);
         UpdateProductDto updateProductDto = new UpdateProductDto();
         updateProductDto.setLogo(null);
         updateProductDto.setTitle(null);

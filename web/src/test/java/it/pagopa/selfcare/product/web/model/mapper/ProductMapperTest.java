@@ -52,6 +52,7 @@ class ProductMapperTest {
         // when
         ProductOperations product = ProductMapper.fromDto(dto);
         // then
+        assertNotNull(product);
         TestUtils.reflectionEqualsByName(product, dto);
     }
 

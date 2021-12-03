@@ -39,14 +39,12 @@ class ProductResourceTest {
         toCheckMap.put("logo", NotBlank.class);
         toCheckMap.put("title", NotBlank.class);
         toCheckMap.put("description", NotBlank.class);
-        toCheckMap.put("urlPublic", NotBlank.class);
         toCheckMap.put("urlBO", NotBlank.class);
         toCheckMap.put("createdAt", NotNull.class);
         toCheckMap.put("contractTemplateUpdatedAt", NotNull.class);
         toCheckMap.put("roleMappings", NotNull.class);
         toCheckMap.put("contractTemplatePath", NotBlank.class);
         toCheckMap.put("contractTemplateVersion", NotBlank.class);
-        toCheckMap.put("roleManagementURL", NotBlank.class);
         ProductResource productResource = new ProductResource();
         productResource.setId(null);
         productResource.setLogo(null);
