@@ -14,6 +14,8 @@ class PartyAuthenticationProviderTest {
 
     @Test
     void additionalAuthenticationChecks() {
+        PartyAuthenticationProvider authenticationProvider = new PartyAuthenticationProvider();
+        Assertions.assertAll(() -> authenticationProvider.additionalAuthenticationChecks(null, null));
     }
 
     @Test

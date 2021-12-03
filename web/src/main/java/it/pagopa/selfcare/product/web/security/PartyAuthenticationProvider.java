@@ -17,6 +17,7 @@ public class PartyAuthenticationProvider extends AbstractUserDetailsAuthenticati
 
     @Override
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+        // Do nothing
     }
 
 
