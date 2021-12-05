@@ -304,7 +304,7 @@ class ProductControllerAuthTest {
         switch (role) {
             case ADMIN:
                 Mockito.verify(productServiceMock, Mockito.times(1))
-                        .updateProduct(uuid, Mockito.any());
+                        .updateProduct(Mockito.eq(uuid), Mockito.any());
                 break;
             case LIMITED:
                 Mockito.verifyNoInteractions(productServiceMock);
