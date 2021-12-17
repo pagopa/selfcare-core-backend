@@ -3,6 +3,7 @@ package it.pagopa.selfcare.product.web.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.core.ProductService;
 import it.pagopa.selfcare.product.web.model.CreateProductDto;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -50,6 +52,16 @@ public class ProductController {
                                               String id) {
         ProductOperations product = productService.getProduct(id);
         return ProductMapper.toResource(product);
+    }
+
+
+    @GetMapping("/{id}/role-mappings")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.product.operation.getProductRoleMappings}")
+    public Map<PartyRole, List<String>> getProductRoles(@ApiParam("${swagger.product.model.id}")
+                                                        @PathVariable("id")
+                                                                String id) {
+        return productService.getProduct(id).getRoleMappings();
     }
 
 
