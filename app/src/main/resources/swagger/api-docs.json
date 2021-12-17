@@ -251,6 +251,62 @@
           }
         ]
       }
+    },
+    "/products/{id}/role-mappings": {
+      "get": {
+        "tags": [
+          "product"
+        ],
+        "summary": "getProductRoles",
+        "description": "Service that returns the information about mappings between Party's and Product's role",
+        "operationId": "getProductRolesUsingGET",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product's unique identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -303,7 +359,7 @@
                 "type": "string"
               }
             },
-            "description": "All party Role and Product Role Map"
+            "description": "Mappings between Party's and Product's role"
           },
           "title": {
             "type": "string",
@@ -378,7 +434,7 @@
                 "type": "string"
               }
             },
-            "description": "All party Role and Product Role Map"
+            "description": "Mappings between Party's and Product's role"
           },
           "title": {
             "type": "string",
@@ -437,7 +493,7 @@
                 "type": "string"
               }
             },
-            "description": "All party Role and Product Role Map"
+            "description": "Mappings between Party's and Product's role"
           },
           "title": {
             "type": "string",
