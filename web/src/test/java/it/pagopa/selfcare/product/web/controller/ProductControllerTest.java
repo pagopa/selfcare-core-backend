@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -231,6 +232,51 @@ class ProductControllerTest {
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .delete(BASE_URL + "/id")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.status().is(HttpStatus.NOT_FOUND.value()))
+                .andReturn();
+        // then
+        ErrorResource error = objectMapper.readValue(result.getResponse().getContentAsString(), ErrorResource.class);
+        assertNotNull(error);
+    }
+
+
+    @Test
+    void getProductRoles_exists() throws Exception {
+        // given
+        Mockito.when(productServiceMock.getProduct(Mockito.anyString()))
+                .thenAnswer(invocationOnMock -> {
+                    String id = invocationOnMock.getArgument(0, String.class);
+                    ProductOperations p = new ProductDto();
+                    p.setId(id);
+                    p.setRoleMappings(new EnumMap<>(Map.of(PartyRole.MANAGER, List.of("product-role"))));
+                    return p;
+                });
+        // when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                .get(BASE_URL + "/id/role-mappings")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+        // then
+        Map<String, List<String>> roles = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertNotNull(roles);
+        assertFalse(roles.isEmpty());
+    }
+
+    @Test
+    void getProductRoles_notExists() throws Exception {
+        // given
+        Mockito.when(productServiceMock.getProduct(Mockito.anyString()))
+                .thenThrow(ResourceNotFoundException.class);
+        // when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                .get(BASE_URL + "/id/role-mappings")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(MockMvcResultMatchers.status().is(HttpStatus.NOT_FOUND.value()))
