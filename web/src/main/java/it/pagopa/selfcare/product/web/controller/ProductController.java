@@ -12,6 +12,7 @@ import it.pagopa.selfcare.product.web.model.UpdateProductDto;
 import it.pagopa.selfcare.product.web.model.mapper.ProductMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,7 +21,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping(value = "/products", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "product")
 public class ProductController {
 
@@ -65,7 +66,7 @@ public class ProductController {
     }
 
 
-    @PostMapping("/")
+    @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "", notes = "${swagger.product.operation.createProduct}")
     public ProductResource createProduct(@RequestBody
@@ -76,7 +77,7 @@ public class ProductController {
     }
 
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.product.operation.updateProduct}")
     public ProductResource updateProduct(@ApiParam("${swagger.product.model.id}")
