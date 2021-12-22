@@ -20,6 +20,7 @@ public class ProductControllerResponseValidator extends ControllerResponseValida
     @Override
     @Pointcut("execution(* it.pagopa.selfcare.product.web.controller.*.*(..))")
     public void controllersPointcut() {
+        // Do nothing because is a pointcut
     }
 
 }
