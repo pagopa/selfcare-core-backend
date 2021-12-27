@@ -167,3 +167,4 @@ stages:
                       $(Pipeline.Workspace)/manifests/$(deployment).yml
                       $(Pipeline.Workspace)/manifests/service.yml
                     containers: '$(containerRegistry)/$(imageRepository):$(pomversion)'
+
