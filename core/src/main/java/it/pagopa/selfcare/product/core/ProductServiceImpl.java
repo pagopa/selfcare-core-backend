@@ -1,25 +1,44 @@
 package it.pagopa.selfcare.product.core;
 
+import it.pagopa.selfcare.product.connector.api.FileStorageConnector;
 import it.pagopa.selfcare.product.connector.api.ProductConnector;
+import it.pagopa.selfcare.product.connector.exception.FileUploadException;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
+import it.pagopa.selfcare.product.core.exception.FileValidationException;
 import it.pagopa.selfcare.product.core.exception.InvalidRoleMappingException;
 import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.util.InvalidMimeTypeException;
+import org.springframework.util.StringUtils;
 
+import java.io.InputStream;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Service
 class ProductServiceImpl implements ProductService {
-
+    public static final String LOGO_PATH_TEMPLATE = "resources/products/%s/logo.%s";
     private final ProductConnector productConnector;
 
+    private final FileStorageConnector fileStorageConnector;
+
+    private final Set<String> allowedProductLogoMimeTypes;
+    private final Set<String> allowedProductLogoExtensions;
 
     @Autowired
-    public ProductServiceImpl(ProductConnector productConnector) {
+    public ProductServiceImpl(ProductConnector productConnector,
+                              FileStorageConnector fileStorageConnector,
+                              @Value("${product.logo.allowed-mime-types}")String[] allowedProductLogoMimeTypes,
+                              @Value("${product.logo.allowed-extensions}")String[] allowedProductLogoExtensions) {
         this.productConnector = productConnector;
+        this.fileStorageConnector = fileStorageConnector;
+        this.allowedProductLogoMimeTypes = Set.of(allowedProductLogoMimeTypes);
+        this.allowedProductLogoExtensions = Set.of(allowedProductLogoExtensions);
     }
 
     @Override
@@ -88,4 +107,34 @@ class ProductServiceImpl implements ProductService {
         return productConnector.save(foundProduct);
     }
 
+    @Override
+    public void saveProductLogo(String productId, InputStream logo, String contentType, String fileName) {
+        try {
+            validate(contentType, fileName);
+
+        } catch (Exception e) {
+            throw new FileValidationException(e.getMessage(), e);
+        }
+
+        String fileExtension = StringUtils.getFilenameExtension(fileName);
+        try {
+            fileStorageConnector.uploadProductLogo(logo, String.format(LOGO_PATH_TEMPLATE, productId, fileExtension), contentType);
+
+        } catch (FileUploadException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void validate(String contentType, String fileName) {
+        Assert.notNull(fileName, "file name cannot be null");
+
+        if (!allowedProductLogoMimeTypes.contains(contentType)) {
+            throw new InvalidMimeTypeException(contentType, String.format("allowed only %s", allowedProductLogoMimeTypes));
+        }
+
+        String fileExtension = StringUtils.getFilenameExtension(fileName);
+        if (!allowedProductLogoExtensions.contains(fileExtension)) {
+            throw new IllegalArgumentException(String.format("Invalid file extension \"%s\": allowed only %s", fileExtension, allowedProductLogoExtensions));
+        }
+    }
 }

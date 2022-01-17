@@ -11,21 +11,4 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 @EnableWebSecurity
 @Import(SecurityConfig.class)
 class ProductSecurityConfig {
-//class ProductSecurityConfig extends SecurityConfig {
-//
-//    @Autowired
-//    public ProductSecurityConfig(JwtService jwtService, AuthoritiesRetriever authoritiesRetriever) {
-//        super(jwtService, authoritiesRetriever);
-//    }
-//
-//
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http.authorizeRequests()
-//                .antMatchers(HttpMethod.GET, "/products/**").hasAuthority(LIMITED.name())
-//                .antMatchers("/products/**").hasAuthority(ADMIN.name())
-//                .anyRequest().permitAll();
-//        super.configure(http);
-//    }
-
 }

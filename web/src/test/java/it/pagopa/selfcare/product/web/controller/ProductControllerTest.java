@@ -8,6 +8,7 @@ import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.core.ProductService;
 import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
+import it.pagopa.selfcare.product.web.config.WebTestConfig;
 import it.pagopa.selfcare.product.web.handler.ProductExceptionsHandler;
 import it.pagopa.selfcare.product.web.model.CreateProductDto;
 import it.pagopa.selfcare.product.web.model.ProductDto;
@@ -19,14 +20,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.util.MimeTypeUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
@@ -37,7 +43,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @WebMvcTest(value = {ProductController.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ContextConfiguration(classes = {
         ProductController.class,
-        ProductExceptionsHandler.class
+        ProductExceptionsHandler.class,
+        WebTestConfig.class
 })
 class ProductControllerTest {
 
@@ -54,12 +61,37 @@ class ProductControllerTest {
     @MockBean
     private ProductService productServiceMock;
 
+
     @Autowired
     protected MockMvc mvc;
 
     @Autowired
     protected ObjectMapper objectMapper;
 
+
+    @Test
+    void saveProductLogo() throws Exception {
+        String productId = "productId";
+        String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
+        String filename = "test.png";
+        MockMultipartFile multipartFile = new MockMultipartFile("logo", filename,
+                contentType, "test prodoct logo".getBytes(StandardCharsets.UTF_8));
+        MockMultipartHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .multipart(BASE_URL + "/" + productId + "/logo")
+                .file(multipartFile);
+        requestBuilder.with(request -> {
+            request.setMethod(HttpMethod.PUT.name());
+            return request;
+        });
+        //when
+        mvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        //then
+        Mockito.verify(productServiceMock, Mockito.times(1))
+                .saveProductLogo(Mockito.eq(productId), Mockito.any(), Mockito.eq(contentType), Mockito.eq(filename));
+        Mockito.verifyNoMoreInteractions(productServiceMock);
+
+    }
 
     @Test
     void getProducts_atLeastOneProduct() throws Exception {

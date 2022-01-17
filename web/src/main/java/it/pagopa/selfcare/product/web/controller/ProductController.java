@@ -10,16 +10,20 @@ import it.pagopa.selfcare.product.web.model.CreateProductDto;
 import it.pagopa.selfcare.product.web.model.ProductResource;
 import it.pagopa.selfcare.product.web.model.UpdateProductDto;
 import it.pagopa.selfcare.product.web.model.mapper.ProductMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping(value = "/products", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "product")
@@ -42,6 +46,21 @@ public class ProductController {
         return products.stream()
                 .map(ProductMapper::toResource)
                 .collect(Collectors.toList());
+    }
+
+    @PutMapping(value="/{id}/logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes ="${swagger.product.operation.saveProductLogo}")
+    public Object saveProductLogo(@ApiParam("${swagger.product.model.id}")
+                                  @PathVariable("id") String id,
+                                  @ApiParam("${swagger.product.model.logo}")
+                                  @RequestPart("logo")MultipartFile logo) throws IOException {
+        if(log.isDebugEnabled()){
+            log.trace("ProductController.saveProductLogo");
+            log.debug("id = {}, logo = {}", id, logo);
+        }
+        productService.saveProductLogo(id, logo.getInputStream(), logo.getContentType(), logo.getOriginalFilename());
+        return null;
     }
 
 

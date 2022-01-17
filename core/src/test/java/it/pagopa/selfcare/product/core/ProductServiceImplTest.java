@@ -1,37 +1,53 @@
 package it.pagopa.selfcare.product.core;
 
 import it.pagopa.selfcare.commons.utils.TestUtils;
+import it.pagopa.selfcare.product.connector.api.FileStorageConnector;
 import it.pagopa.selfcare.product.connector.api.ProductConnector;
+import it.pagopa.selfcare.product.connector.exception.FileUploadException;
 import it.pagopa.selfcare.product.connector.model.DummyProduct;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
+import it.pagopa.selfcare.product.core.config.CoreTestConfig;
+import it.pagopa.selfcare.product.core.exception.FileValidationException;
 import it.pagopa.selfcare.product.core.exception.InvalidRoleMappingException;
 import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.util.MimeTypeUtils;
 
+import java.io.InputStream;
 import java.time.OffsetDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith({MockitoExtension.class})
-@ContextConfiguration(classes = {ProductServiceImpl.class})
+@ExtendWith({SpringExtension.class})
+@ContextConfiguration(classes = {ProductServiceImpl.class, CoreTestConfig.class})
+@TestPropertySource(properties = {
+        "PRODUCT_LOGO_ALLOWED_MIME_TYPES:image/png, image/jpeg",
+        "PRODUCT_LOGO_ALLOWED_EXTENSIONS:png,jpeg"
+})
 class ProductServiceImplTest {
 
-    @InjectMocks
+    @Autowired
     private ProductServiceImpl productService;
 
-    @Mock
+    @MockBean
     private ProductConnector productConnectorMock;
 
+    @MockBean
+    private FileStorageConnector storageConnectorMock;
+    
+  
+    
 
     @Test
     void getProducts_emptyList() {
@@ -280,5 +296,83 @@ class ProductServiceImplTest {
         Executable executable = () -> productService.updateProduct(productId, product);
         // then
         assertThrows(ResourceNotFoundException.class, executable);
+    }
+    
+    //Logo storage tests
+    @Test
+    void storeProductLogo_nullFileName(){
+        //given
+        String productId = "prod-id";
+        InputStream logo = InputStream.nullInputStream();
+        String contentType = null;
+        String filename = null;
+        //when
+        Executable executable = () -> productService.saveProductLogo(productId,logo,contentType,filename);
+        //then
+        assertThrows(FileValidationException.class, executable);
+        Mockito.verifyNoInteractions(storageConnectorMock);
+    }
+
+    @Test
+    void storeProoductLogo_invalidMimeType(){
+        // given
+        String productId = "productId";
+        InputStream logo = InputStream.nullInputStream();
+        String contentType = MimeTypeUtils.IMAGE_GIF_VALUE;
+        String fileName = "filename";
+        // when
+        Executable executable = () -> productService.saveProductLogo(productId, logo, contentType, fileName);
+        // then
+        assertThrows(FileValidationException.class, executable);
+        Mockito.verifyNoInteractions(storageConnectorMock);
+    }
+
+    @Test
+    void storeInstitutionLogo_invalidExtension() {
+        // given
+        String productId = "productId";
+        InputStream logo = InputStream.nullInputStream();
+        String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
+        String fileName = "filename.gif";
+        // when
+        Executable executable = () -> productService.saveProductLogo(productId, logo, contentType, fileName);
+        // then
+        Assertions.assertThrows(FileValidationException.class, executable);
+        Mockito.verifyNoInteractions(storageConnectorMock);
+    }
+
+    @Test
+    void storeProductLogo_uploadExeption() throws FileUploadException {
+        //given
+        String productId = "productId";
+        InputStream logo = InputStream.nullInputStream();
+        String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
+        String fileName = "filename.png";
+        Mockito.doThrow(FileUploadException.class)
+                .when(storageConnectorMock).uploadProductLogo(Mockito.any(),Mockito.any(),Mockito.any());
+        //when
+        Executable executable = () -> productService.saveProductLogo(productId, logo, contentType, fileName);
+        //then
+        RuntimeException exception = Assertions.assertThrows(RuntimeException.class, executable);
+        Assertions.assertNotNull(exception.getCause());
+        Assertions.assertTrue(FileUploadException.class.isAssignableFrom(exception.getCause().getClass()));
+        Mockito.verify(storageConnectorMock, Mockito.times(1))
+                .uploadProductLogo(Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verifyNoMoreInteractions(storageConnectorMock);
+    }
+
+    @Test
+    void storeProductLogo() throws FileUploadException {
+        //give
+        String productId = "productId";
+        InputStream logo =  InputStream.nullInputStream();
+        String contentType =  MimeTypeUtils.IMAGE_PNG_VALUE;
+        String fileName = "filename.png";
+        //when
+        productService.saveProductLogo(productId, logo , contentType, fileName);
+        //then
+        Mockito.verify(storageConnectorMock, Mockito.times(1))
+                .uploadProductLogo(Mockito.any(), Mockito.eq("resources/products/"+productId+"/logo.png"),Mockito.eq(contentType));
+        Mockito.verifyNoMoreInteractions(storageConnectorMock);
     }
 }
