@@ -14,7 +14,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.InvalidKeyException;
 
 @Slf4j
@@ -24,39 +27,47 @@ class AzureBlobClient implements FileStorageConnector {
 
     private final String institutionsLogoContainerReference;
     private final CloudBlobClient blobClient;
+    private final String publicHost;
 
 
     AzureBlobClient(@Value("${blobStorage.connectionString}") String storageConnectionString,
-                    @Value("${blobStorage.product.logo.containerReference}") String productLogoContainerReference)
+                    @Value("${blobStorage.product.logo.containerReference}") String productLogoContainerReference,
+                    @Value("${blobStorage.product.upload.host}") String publicHost)
             throws URISyntaxException, InvalidKeyException {
         if (log.isDebugEnabled()) {
-            log.trace("AzureBlobClient.AzureBlobClient");
+            log.trace("AzureBlobClient");
             log.debug("storageConnectionString = {}, containerReference = {}",
                     storageConnectionString, productLogoContainerReference);
         }
         final CloudStorageAccount storageAccount = CloudStorageAccount.parse(storageConnectionString);
         this.blobClient = storageAccount.createCloudBlobClient();
         this.institutionsLogoContainerReference = productLogoContainerReference;
+        this.publicHost = publicHost;
     }
 
 
     @Override
-    public void uploadProductLogo(InputStream file, String fileName, String contentType) throws FileUploadException {
+    //TODO refactor return type from void to URL
+    public URL uploadProductLogo(InputStream file, String fileName, String contentType) throws FileUploadException, MalformedURLException {
         if (log.isDebugEnabled()) {
-            log.trace("AzureBlobClient.uploadInstitutionLogo");
+            log.trace("uploadInstitutionLogo");
             log.debug("fileName = {}, contentType = {}", fileName, contentType);
         }
+        URI logoUri = null;
 
         try {
             final CloudBlobContainer blobContainer = blobClient.getContainerReference(institutionsLogoContainerReference);
             final CloudBlockBlob blob = blobContainer.getBlockBlobReference(fileName);
             blob.getProperties().setContentType(contentType);
             blob.upload(file, file.available());
+            logoUri = blob.getUri();// like this https://selcdcheckoutsa.z6.web.core.windows.net/institutions/inst-id/logo.png
             log.info("Uploaded {}", fileName);
+
 
         } catch (StorageException | URISyntaxException | IOException e) {
             throw new FileUploadException(e);
         }
+        return new URL(logoUri.toURL().getProtocol(), publicHost, logoUri.toURL().getFile().substring(5));
     }
 
 }

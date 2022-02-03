@@ -36,7 +36,7 @@ public class ProductEntity implements ProductOperations {
 
     @Id
     private String id;
-    private String logo;
+    private String logo;//TODO: default to default logo url /resources/products/default/logo.png
     private String title;
     private String description;
     private String urlPublic;

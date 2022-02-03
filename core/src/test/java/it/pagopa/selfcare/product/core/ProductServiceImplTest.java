@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -24,6 +26,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.MimeTypeUtils;
 
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.time.OffsetDateTime;
 import java.util.*;
 
@@ -33,7 +39,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @ContextConfiguration(classes = {ProductServiceImpl.class, CoreTestConfig.class})
 @TestPropertySource(properties = {
         "PRODUCT_LOGO_ALLOWED_MIME_TYPES:image/png, image/jpeg",
-        "PRODUCT_LOGO_ALLOWED_EXTENSIONS:png,jpeg"
+        "PRODUCT_LOGO_ALLOWED_EXTENSIONS:png,jpeg",
+        "LOGO_STORAGE_URL:https://selcdcheckoutsa.blob.core.windows.net/$web/resources/products/default/logo.png"
 })
 class ProductServiceImplTest {
 
@@ -45,9 +52,12 @@ class ProductServiceImplTest {
 
     @MockBean
     private FileStorageConnector storageConnectorMock;
-    
-  
-    
+
+    @Captor
+    private ArgumentCaptor<ProductOperations> savedProductCaptor;
+
+
+    private static final String URL = "https://selcdcheckoutsa.blob.core.windows.net/$web/resources/products/default/logo.png";
 
     @Test
     void getProducts_emptyList() {
@@ -94,6 +104,7 @@ class ProductServiceImplTest {
         assertNotNull(output.getCreatedAt());
         assertNotNull(output.getContractTemplateUpdatedAt());
         assertTrue(output.getCreatedAt().isAfter(now));
+        assertEquals(URL, output.getLogo());
         assertTrue(output.getContractTemplateUpdatedAt().isAfter(now));
         Mockito.verify(productConnectorMock, Mockito.times(1))
                 .insert(Mockito.any(ProductOperations.class));
@@ -297,29 +308,39 @@ class ProductServiceImplTest {
         // then
         assertThrows(ResourceNotFoundException.class, executable);
     }
-    
+
     //Logo storage tests
     @Test
-    void storeProductLogo_nullFileName(){
+    void storeProductLogo_nullFileName() {
         //given
         String productId = "prod-id";
         InputStream logo = InputStream.nullInputStream();
         String contentType = null;
         String filename = null;
+        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId");
+        product.setLogo(null);
+        product.setId(productId);
+        Mockito.when(productConnectorMock.findById(Mockito.anyString()))
+                .thenReturn(Optional.of(product));
         //when
-        Executable executable = () -> productService.saveProductLogo(productId,logo,contentType,filename);
+        Executable executable = () -> productService.saveProductLogo(productId, logo, contentType, filename);
         //then
         assertThrows(FileValidationException.class, executable);
         Mockito.verifyNoInteractions(storageConnectorMock);
     }
 
     @Test
-    void storeProoductLogo_invalidMimeType(){
+    void storeProoductLogo_invalidMimeType() {
         // given
         String productId = "productId";
         InputStream logo = InputStream.nullInputStream();
         String contentType = MimeTypeUtils.IMAGE_GIF_VALUE;
         String fileName = "filename";
+        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId");
+        product.setLogo(null);
+        product.setId(productId);
+        Mockito.when(productConnectorMock.findById(Mockito.anyString()))
+                .thenReturn(Optional.of(product));
         // when
         Executable executable = () -> productService.saveProductLogo(productId, logo, contentType, fileName);
         // then
@@ -328,12 +349,17 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void storeInstitutionLogo_invalidExtension() {
+    void storeInstitutionLogo_invalidExtension() throws MalformedURLException {
         // given
         String productId = "productId";
         InputStream logo = InputStream.nullInputStream();
         String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
         String fileName = "filename.gif";
+        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId");
+        product.setLogo(null);
+        product.setId(productId);
+        Mockito.when(productConnectorMock.findById(Mockito.anyString()))
+                .thenReturn(Optional.of(product));
         // when
         Executable executable = () -> productService.saveProductLogo(productId, logo, contentType, fileName);
         // then
@@ -342,14 +368,19 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void storeProductLogo_uploadExeption() throws FileUploadException {
+    void storeProductLogo_uploadExeption() throws FileUploadException, MalformedURLException {
         //given
         String productId = "productId";
         InputStream logo = InputStream.nullInputStream();
         String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
         String fileName = "filename.png";
+        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId");
+        product.setLogo(null);
+        product.setId(productId);
+        Mockito.when(productConnectorMock.findById(Mockito.anyString()))
+                .thenReturn(Optional.of(product));
         Mockito.doThrow(FileUploadException.class)
-                .when(storageConnectorMock).uploadProductLogo(Mockito.any(),Mockito.any(),Mockito.any());
+                .when(storageConnectorMock).uploadProductLogo(Mockito.any(), Mockito.any(), Mockito.any());
         //when
         Executable executable = () -> productService.saveProductLogo(productId, logo, contentType, fileName);
         //then
@@ -362,17 +393,99 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void storeProductLogo() throws FileUploadException {
+    void storeProductLogo_nullUrl() throws FileUploadException, MalformedURLException, URISyntaxException {
         //give
         String productId = "productId";
-        InputStream logo =  InputStream.nullInputStream();
-        String contentType =  MimeTypeUtils.IMAGE_PNG_VALUE;
+        InputStream logo = InputStream.nullInputStream();
+        String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
         String fileName = "filename.png";
+        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId");
+        product.setLogo(null);
+        product.setId(productId);
+        URI uriMock = new URI("https://selcdcheckoutsa.z6.web.core.windows.net/resources/products/default/logo.png");
+        URL uriToUrl = uriMock.toURL();
+        Mockito.when(productConnectorMock.findById(Mockito.anyString()))
+                .thenReturn(Optional.of(product));
+        Mockito.when(storageConnectorMock.uploadProductLogo(Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(uriToUrl);
         //when
-        productService.saveProductLogo(productId, logo , contentType, fileName);
+        productService.saveProductLogo(productId, logo, contentType, fileName);
         //then
         Mockito.verify(storageConnectorMock, Mockito.times(1))
-                .uploadProductLogo(Mockito.any(), Mockito.eq("resources/products/"+productId+"/logo.png"),Mockito.eq(contentType));
+                .uploadProductLogo(Mockito.any(), Mockito.eq("resources/products/" + productId + "/logo.png"), Mockito.eq(contentType));
+        Mockito.verify(productConnectorMock, Mockito.times(1))
+                .findById(productId);
+        Mockito.verify(productConnectorMock, Mockito.times(1))
+                .save(Mockito.any());
         Mockito.verifyNoMoreInteractions(storageConnectorMock);
+    }
+
+    @Test
+    void storeProductLogo_defaultUrl() throws FileUploadException, MalformedURLException, URISyntaxException {
+        //give
+        String productId = "productId";
+        InputStream logo = InputStream.nullInputStream();
+        String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
+        String fileName = "filename.png";
+        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId");
+        product.setLogo("https://selcdcheckoutsa.z6.web.core.windows.net/resources/products/default/logo.png");
+        product.setId(productId);
+        URI uriMock = new URI("https://selcdcheckoutsa.z6.web.core.windows.net/resources/products/default/logo.png");
+        URL uriToUrl = uriMock.toURL();
+        Mockito.when(productConnectorMock.findById(Mockito.anyString()))
+                .thenReturn(Optional.of(product));
+        Mockito.when(storageConnectorMock.uploadProductLogo(Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(uriToUrl);
+        //when
+        productService.saveProductLogo(productId, logo, contentType, fileName);
+        //then
+        Mockito.verify(storageConnectorMock, Mockito.times(1))
+                .uploadProductLogo(Mockito.any(), Mockito.eq("resources/products/" + productId + "/logo.png"), Mockito.eq(contentType));
+        Mockito.verify(productConnectorMock, Mockito.times(1))
+                .findById(productId);
+        Mockito.verify(productConnectorMock, Mockito.times(0))
+                .save(Mockito.any());
+        Mockito.verifyNoMoreInteractions(storageConnectorMock);
+    }
+
+    @Test
+    void updateProductLogo_logoUrl() throws MalformedURLException, URISyntaxException {
+        //give
+        String productId = "productId";
+        InputStream logo = InputStream.nullInputStream();
+        String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
+        String fileName = "filename.png";
+        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId");
+        product.setLogo("https://selcdcheckoutsa.blob.core.windows.net/$web/resources/products/default/logo.png");
+        product.setId(productId);
+        Mockito.when(productConnectorMock.findById(Mockito.anyString()))
+                .thenReturn(Optional.of(product));
+        EnumMap<PartyRole, List<String>> map = new EnumMap<>(PartyRole.class);
+        List<String> list = new ArrayList<>();
+        list.add("v1");
+        list.add("v2");
+        map.put(PartyRole.OPERATOR, list);
+        URI uriMock = new URI("https://selcdcheckoutsa.z6.web.core.windows.net/resources/products/prod-1/logo.png");
+        URL uriToUrl = uriMock.toURL();
+        product.setRoleMappings(map);
+        product.setContractTemplateVersion("1.2.4");
+        Mockito.when(productConnectorMock.save(Mockito.any()))
+                .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, ProductOperations.class));
+        Mockito.when(storageConnectorMock.uploadProductLogo(Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(uriToUrl);
+        //when
+        productService.saveProductLogo(productId, logo, contentType, fileName);
+        //then
+        Mockito.verify(productConnectorMock, Mockito.times(1))
+                .save(savedProductCaptor.capture());
+        Mockito.verify(productConnectorMock, Mockito.times(1))
+                .findById(productId);
+        ProductOperations savedProduct = savedProductCaptor.getValue();
+        Assertions.assertEquals(uriToUrl.toString(), savedProduct.getLogo());
+        Mockito.verify(storageConnectorMock, Mockito.times(1))
+                .uploadProductLogo(Mockito.any(), Mockito.eq("resources/products/" + productId + "/logo.png"), Mockito.eq(contentType));
+        Mockito.verifyNoMoreInteractions(storageConnectorMock);
+        Mockito.verifyNoMoreInteractions(productConnectorMock);
+
     }
 }
