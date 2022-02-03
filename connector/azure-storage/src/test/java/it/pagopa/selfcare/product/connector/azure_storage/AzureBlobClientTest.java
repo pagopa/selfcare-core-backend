@@ -20,7 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 
-public class AzureBlobClientTest {
+class AzureBlobClientTest {
 
     @Test
     void uploadProductLogo_ok() throws URISyntaxException, InvalidKeyException, IOException, NoSuchFieldException, IllegalAccessException, StorageException {

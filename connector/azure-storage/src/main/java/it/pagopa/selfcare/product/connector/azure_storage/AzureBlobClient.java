@@ -47,7 +47,6 @@ class AzureBlobClient implements FileStorageConnector {
 
 
     @Override
-    //TODO refactor return type from void to URL
     public URL uploadProductLogo(InputStream file, String fileName, String contentType) throws FileUploadException, MalformedURLException {
         if (log.isDebugEnabled()) {
             log.trace("uploadInstitutionLogo");
