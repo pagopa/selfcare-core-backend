@@ -48,18 +48,18 @@ public class ProductController {
                 .collect(Collectors.toList());
     }
 
-    @PutMapping(value="/{id}/logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{id}/logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "", notes ="${swagger.product.operation.saveProductLogo}")
+    @ApiOperation(value = "", notes = "${swagger.product.operation.saveProductLogo}")
     public Object saveProductLogo(@ApiParam("${swagger.product.model.id}")
                                   @PathVariable("id") String id,
                                   @ApiParam("${swagger.product.model.logo}")
-                                  @RequestPart("logo")MultipartFile logo) throws IOException {
-        if(log.isDebugEnabled()){
-            log.trace("ProductController.saveProductLogo");
-            log.debug("id = {}, logo = {}", id, logo);
-        }
+                                  @RequestPart("logo") MultipartFile logo) throws IOException {
+
+        log.trace("saveProductLogo start");
+        log.debug("id = {}, logo = {}", id, logo);
         productService.saveProductLogo(id, logo.getInputStream(), logo.getContentType(), logo.getOriginalFilename());
+        log.trace("saveProductLogo end");
         return null;
     }
 
@@ -70,7 +70,10 @@ public class ProductController {
     public ProductResource getProduct(@ApiParam("${swagger.product.model.id}")
                                       @PathVariable("id")
                                               String id) {
+        log.trace("getProduct start");
+        log.debug("id = {}", id);
         ProductOperations product = productService.getProduct(id);
+        log.trace("getProduct end");
         return ProductMapper.toResource(product);
     }
 
@@ -81,6 +84,8 @@ public class ProductController {
     public Map<PartyRole, List<String>> getProductRoles(@ApiParam("${swagger.product.model.id}")
                                                         @PathVariable("id")
                                                                 String id) {
+        log.trace("getProductRoles");
+        log.debug("id = {}", id);
         return productService.getProduct(id).getRoleMappings();
     }
 
@@ -91,7 +96,10 @@ public class ProductController {
     public ProductResource createProduct(@RequestBody
                                          @Valid
                                                  CreateProductDto product) {
+        log.trace("createProduct start");
+        log.debug("product = {}", product);
         ProductOperations p = productService.createProduct(ProductMapper.fromDto(product));
+        log.trace("createProduct end");
         return ProductMapper.toResource(p);
     }
 
@@ -105,7 +113,11 @@ public class ProductController {
                                          @RequestBody
                                          @Valid
                                                  UpdateProductDto product) {
+        log.trace("updateProduct start");
+        log.debug("id = {}, product = {}", id, product);
         ProductOperations updatedProduct = productService.updateProduct(id, ProductMapper.fromDto(product));
+        log.debug("updatedProduct = {}", updatedProduct);
+        log.trace("updateProduct end");
         return ProductMapper.toResource(updatedProduct);
     }
 
@@ -116,7 +128,10 @@ public class ProductController {
     public void deleteProduct(@ApiParam("${swagger.product.model.id}")
                               @PathVariable("id")
                                       String id) {
+        log.trace("deleteProduct start");
+        log.debug("id = {}", id);
         productService.deleteProduct(id);
+        log.trace("deleteProduct end");
     }
 
 }
