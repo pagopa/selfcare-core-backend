@@ -50,25 +50,25 @@ class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductOperations> getProducts() {
-        log.trace("ProductServiceImpl.getProducts");
+        log.trace("getProducts");
         return productConnector.findByEnabled(true);
     }
 
     @Override
     public ProductOperations createProduct(ProductOperations product) {
-        log.trace("ProductServiceImpl.createProduct");
+        log.trace("createProduct");
         log.debug("product = {}", product);
         validateRoleMappings(product);
         OffsetDateTime now = OffsetDateTime.now();
         product.setCreatedAt(now);
         product.setLogo(defaultUrl);
         product.setContractTemplateUpdatedAt(now);
-        log.trace("ProductServiceImpl.createProduct end");
+        log.trace("createProduct end");
         return productConnector.insert(product);
     }
 
     private void validateRoleMappings(ProductOperations product) {
-        log.trace("ProductServiceImpl.validateRoleMappings start");
+        log.trace("validateRoleMappings start");
         log.debug("product = %s%n", product);
         product.getRoleMappings().forEach((partyRole, productRoles) -> {
             if (productRoles == null
@@ -78,12 +78,12 @@ class ProductServiceImpl implements ProductService {
                         new IllegalArgumentException(String.format("partyRole = %s => productRoles = %s", partyRole, productRoles)));
             }
         });
-        log.trace("ProductServiceImpl.validateRoleMappings end");
+        log.trace("validateRoleMappings end");
     }
 
     @Override
     public void deleteProduct(String id) {
-        log.trace("ProductServiceImpl.deleteProduct start");
+        log.trace("deleteProduct start");
         log.debug("id = {}}", id);
         ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
         if (foundProduct.isEnabled()) {
@@ -91,21 +91,21 @@ class ProductServiceImpl implements ProductService {
             productConnector.save(foundProduct);
         }
 
-        log.trace("ProductServiceImpl.deleteProduct end");
+        log.trace("deleteProduct end");
 
     }
 
 
     @Override
     public ProductOperations getProduct(String id) {
-        log.trace("ProductServiceImpl.getProduct start");
+        log.trace("getProduct start");
         log.debug("id = {}", id);
         ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
         if (!foundProduct.isEnabled()) {
             throw new ResourceNotFoundException();
         }
         log.debug("result = {}", foundProduct);
-        log.trace("ProductServiceImpl.getProduct end");
+        log.trace("getProduct end");
 
         return foundProduct;
     }
@@ -167,6 +167,8 @@ class ProductServiceImpl implements ProductService {
     }
 
     private void validate(String contentType, String fileName) {
+        log.trace("validate");
+        log.debug("contentType = {}, fileName = {}", contentType, fileName);
         Assert.notNull(fileName, "file name cannot be null");
 
         if (!allowedProductLogoMimeTypes.contains(contentType)) {
@@ -177,5 +179,6 @@ class ProductServiceImpl implements ProductService {
         if (!allowedProductLogoExtensions.contains(fileExtension)) {
             throw new IllegalArgumentException(String.format("Invalid file extension \"%s\": allowed only %s", fileExtension, allowedProductLogoExtensions));
         }
+        log.trace("validate");
     }
 }

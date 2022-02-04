@@ -34,11 +34,7 @@ class AzureBlobClient implements FileStorageConnector {
                     @Value("${blobStorage.product.logo.containerReference}") String productLogoContainerReference,
                     @Value("${blobStorage.product.upload.host}") String publicHost)
             throws URISyntaxException, InvalidKeyException {
-        if (log.isDebugEnabled()) {
-            log.trace("AzureBlobClient");
-            log.debug("storageConnectionString = {}, containerReference = {}",
-                    storageConnectionString, productLogoContainerReference);
-        }
+
         final CloudStorageAccount storageAccount = CloudStorageAccount.parse(storageConnectionString);
         this.blobClient = storageAccount.createCloudBlobClient();
         this.institutionsLogoContainerReference = productLogoContainerReference;
@@ -48,10 +44,8 @@ class AzureBlobClient implements FileStorageConnector {
 
     @Override
     public URL uploadProductLogo(InputStream file, String fileName, String contentType) throws FileUploadException, MalformedURLException {
-        if (log.isDebugEnabled()) {
-            log.trace("uploadInstitutionLogo");
-            log.debug("fileName = {}, contentType = {}", fileName, contentType);
-        }
+        log.trace("uploadInstitutionLogo start");
+        log.debug("file = {}, fileName = {}, contentType = {}%n", file, fileName, contentType);
         URI logoUri = null;
 
         try {
@@ -66,6 +60,8 @@ class AzureBlobClient implements FileStorageConnector {
         } catch (StorageException | URISyntaxException | IOException e) {
             throw new FileUploadException(e);
         }
+        log.debug("file = {}, fileName = {}, contentType = {}", file, fileName, contentType);
+        log.trace("uploadProductLogo end");
         return new URL(logoUri.toURL().getProtocol(), publicHost, logoUri.toURL().getFile().substring(5));
     }
 
