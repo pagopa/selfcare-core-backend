@@ -60,9 +60,10 @@ class AzureBlobClient implements FileStorageConnector {
         } catch (StorageException | URISyntaxException | IOException e) {
             throw new FileUploadException(e);
         }
-        log.debug("uploadProductLogo file = {}, fileName = {}, contentType = {}", file, fileName, contentType);
+        URL url = new URL(logoUri.toURL().getProtocol(), publicHost, logoUri.toURL().getFile().substring(5));
+        log.debug("uploadProductLogo url = {}", url);
         log.trace("uploadProductLogo end");
-        return new URL(logoUri.toURL().getProtocol(), publicHost, logoUri.toURL().getFile().substring(5));
+        return url;
     }
 
 }

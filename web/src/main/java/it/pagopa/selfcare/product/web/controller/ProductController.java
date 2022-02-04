@@ -43,10 +43,14 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.product.operation.getProducts}")
     public List<ProductResource> getProducts() {
+        log.trace("getProducts start");
         List<ProductOperations> products = productService.getProducts();
-        return products.stream()
+        List<ProductResource> productResources = products.stream()
                 .map(ProductMapper::toResource)
                 .collect(Collectors.toList());
+        log.debug("productResources = %s%n", productResources);
+        log.trace("getProducts end");
+        return productResources;
     }
 
     @PutMapping(value = "/{id}/logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
