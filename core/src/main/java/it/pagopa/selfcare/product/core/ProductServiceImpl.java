@@ -57,7 +57,7 @@ class ProductServiceImpl implements ProductService {
     @Override
     public ProductOperations createProduct(ProductOperations product) {
         log.trace("createProduct");
-        log.debug("product = {}", product);
+        log.debug("createProduct product = {}", product);
         validateRoleMappings(product);
         OffsetDateTime now = OffsetDateTime.now();
         product.setCreatedAt(now);
@@ -69,7 +69,7 @@ class ProductServiceImpl implements ProductService {
 
     private void validateRoleMappings(ProductOperations product) {
         log.trace("validateRoleMappings start");
-        log.debug("product = %s%n", product);
+        log.debug("validateRoleMappings product = {}", product);
         product.getRoleMappings().forEach((partyRole, productRoles) -> {
             if (productRoles == null
                     || productRoles.isEmpty()
@@ -84,7 +84,7 @@ class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProduct(String id) {
         log.trace("deleteProduct start");
-        log.debug("id = {}}", id);
+        log.debug("deleteProduct id = {}", id);
         ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
         if (foundProduct.isEnabled()) {
             foundProduct.setEnabled(false);
@@ -99,12 +99,12 @@ class ProductServiceImpl implements ProductService {
     @Override
     public ProductOperations getProduct(String id) {
         log.trace("getProduct start");
-        log.debug("id = {}", id);
+        log.debug("getProduct id = {}", id);
         ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
         if (!foundProduct.isEnabled()) {
             throw new ResourceNotFoundException();
         }
-        log.debug("result = {}", foundProduct);
+        log.debug("getProduct result = {}", foundProduct);
         log.trace("getProduct end");
 
         return foundProduct;
@@ -114,7 +114,7 @@ class ProductServiceImpl implements ProductService {
     @Override
     public ProductOperations updateProduct(String id, ProductOperations product) {
         log.trace("updateProduct start");
-        log.debug("id = {}, product = {}", id, product);
+        log.debug("updateProduct id = {}, product = {}", id, product);
         ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
         if (!foundProduct.isEnabled()) {
             throw new ResourceNotFoundException();
@@ -132,6 +132,7 @@ class ProductServiceImpl implements ProductService {
             foundProduct.setContractTemplateUpdatedAt(OffsetDateTime.now());
         }
         foundProduct.setContractTemplateVersion(product.getContractTemplateVersion());
+        log.debug("updateProduct foundProduct = {}", foundProduct);
         log.trace("updateProduct end");
         return productConnector.save(foundProduct);
     }
@@ -139,7 +140,7 @@ class ProductServiceImpl implements ProductService {
     @Override
     public void saveProductLogo(String id, InputStream logo, String contentType, String fileName) {
         log.trace("saveProductLogo start");
-        log.debug("id = {}, logo = {}, contentType = {}, fileName = {}", id, logo, contentType, fileName);
+        log.debug("saveProductLogo id = {}, logo = {}, contentType = {}, fileName = {}", id, logo, contentType, fileName);
         ProductOperations productToUpdate = getProduct(id);
         URL savedUrl = null;
         try {
@@ -162,13 +163,13 @@ class ProductServiceImpl implements ProductService {
             productToUpdate.setLogo(stringUrl);
             productConnector.save(productToUpdate);
         }
-        log.debug("updatedProduct = {}", productToUpdate);
+        log.debug("saveProductLogo updatedProduct = {}", productToUpdate);
         log.trace("saveProductLogo end");
     }
 
     private void validate(String contentType, String fileName) {
         log.trace("validate");
-        log.debug("contentType = {}, fileName = {}", contentType, fileName);
+        log.debug("validate contentType = {}, fileName = {}", contentType, fileName);
         Assert.notNull(fileName, "file name cannot be null");
 
         if (!allowedProductLogoMimeTypes.contains(contentType)) {

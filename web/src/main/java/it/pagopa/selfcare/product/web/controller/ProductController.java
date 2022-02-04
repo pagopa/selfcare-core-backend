@@ -57,7 +57,7 @@ public class ProductController {
                                   @RequestPart("logo") MultipartFile logo) throws IOException {
 
         log.trace("saveProductLogo start");
-        log.debug("id = {}, logo = {}", id, logo);
+        log.debug("saveProductLogo id = {}, logo = {}", id, logo);
         productService.saveProductLogo(id, logo.getInputStream(), logo.getContentType(), logo.getOriginalFilename());
         log.trace("saveProductLogo end");
         return null;
@@ -71,7 +71,7 @@ public class ProductController {
                                       @PathVariable("id")
                                               String id) {
         log.trace("getProduct start");
-        log.debug("id = {}", id);
+        log.debug("getProduct id = {}", id);
         ProductOperations product = productService.getProduct(id);
         log.trace("getProduct end");
         return ProductMapper.toResource(product);
@@ -85,7 +85,7 @@ public class ProductController {
                                                         @PathVariable("id")
                                                                 String id) {
         log.trace("getProductRoles");
-        log.debug("id = {}", id);
+        log.debug("getProductRoles id = {}", id);
         return productService.getProduct(id).getRoleMappings();
     }
 
@@ -97,7 +97,7 @@ public class ProductController {
                                          @Valid
                                                  CreateProductDto product) {
         log.trace("createProduct start");
-        log.debug("product = {}", product);
+        log.debug("createProduct product = {}", product);
         ProductOperations p = productService.createProduct(ProductMapper.fromDto(product));
         log.trace("createProduct end");
         return ProductMapper.toResource(p);
@@ -114,9 +114,9 @@ public class ProductController {
                                          @Valid
                                                  UpdateProductDto product) {
         log.trace("updateProduct start");
-        log.debug("id = {}, product = {}", id, product);
+        log.debug("updateProduct id = {}, product = {}", id, product);
         ProductOperations updatedProduct = productService.updateProduct(id, ProductMapper.fromDto(product));
-        log.debug("updatedProduct = {}", updatedProduct);
+        log.debug("updateProduct updatedProduct = {}", updatedProduct);
         log.trace("updateProduct end");
         return ProductMapper.toResource(updatedProduct);
     }
@@ -129,7 +129,7 @@ public class ProductController {
                               @PathVariable("id")
                                       String id) {
         log.trace("deleteProduct start");
-        log.debug("id = {}", id);
+        log.debug("deleteProduct id = {}", id);
         productService.deleteProduct(id);
         log.trace("deleteProduct end");
     }
