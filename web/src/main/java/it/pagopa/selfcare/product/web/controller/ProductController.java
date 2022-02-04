@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -73,8 +74,10 @@ public class ProductController {
         log.trace("getProduct start");
         log.debug("getProduct id = {}", id);
         ProductOperations product = productService.getProduct(id);
+        ProductResource productResource = ProductMapper.toResource(product);
+        log.debug("getProduct productResource = {}", productResource);
         log.trace("getProduct end");
-        return ProductMapper.toResource(product);
+        return productResource;
     }
 
 
@@ -84,9 +87,13 @@ public class ProductController {
     public Map<PartyRole, List<String>> getProductRoles(@ApiParam("${swagger.product.model.id}")
                                                         @PathVariable("id")
                                                                 String id) {
-        log.trace("getProductRoles");
+        log.trace("getProductRoles start");
         log.debug("getProductRoles id = {}", id);
-        return productService.getProduct(id).getRoleMappings();
+        EnumMap<PartyRole, List<String>> productRoles = productService.getProduct(id).getRoleMappings();
+        log.debug("getProductRoles productRoles = {}", productRoles);
+        log.trace("getProductRoles end");
+
+        return productRoles;
     }
 
 
@@ -99,8 +106,10 @@ public class ProductController {
         log.trace("createProduct start");
         log.debug("createProduct product = {}", product);
         ProductOperations p = productService.createProduct(ProductMapper.fromDto(product));
+        ProductResource createdProduct = ProductMapper.toResource(p);
+        log.debug("createProduct createdProduct = {}", createdProduct);
         log.trace("createProduct end");
-        return ProductMapper.toResource(p);
+        return createdProduct;
     }
 
 
@@ -116,9 +125,10 @@ public class ProductController {
         log.trace("updateProduct start");
         log.debug("updateProduct id = {}, product = {}", id, product);
         ProductOperations updatedProduct = productService.updateProduct(id, ProductMapper.fromDto(product));
-        log.debug("updateProduct updatedProduct = {}", updatedProduct);
+        ProductResource result = ProductMapper.toResource(updatedProduct);
+        log.debug("updateProduct updatedProduct = {}", result);
         log.trace("updateProduct end");
-        return ProductMapper.toResource(updatedProduct);
+        return result;
     }
 
 

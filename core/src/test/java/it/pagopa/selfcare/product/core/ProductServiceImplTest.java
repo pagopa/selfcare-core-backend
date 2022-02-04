@@ -268,7 +268,7 @@ class ProductServiceImplTest {
         // when
         ProductOperations savedProduct = productService.updateProduct(productId, product);
         // then
-        assertEquals(savedProduct.getLogo(), product.getLogo());
+        assertNull(savedProduct.getLogo());
         assertEquals(savedProduct.getTitle(), product.getTitle());
         assertEquals(savedProduct.getDescription(), product.getDescription());
         assertEquals(savedProduct.getUrlPublic(), product.getUrlPublic());

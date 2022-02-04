@@ -56,15 +56,17 @@ class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductOperations createProduct(ProductOperations product) {
-        log.trace("createProduct");
+        log.trace("createProduct start");
         log.debug("createProduct product = {}", product);
         validateRoleMappings(product);
         OffsetDateTime now = OffsetDateTime.now();
         product.setCreatedAt(now);
         product.setLogo(defaultUrl);
         product.setContractTemplateUpdatedAt(now);
+        ProductOperations insert = productConnector.insert(product);
+        log.debug("createProduct created product = {}", insert);
         log.trace("createProduct end");
-        return productConnector.insert(product);
+        return insert;
     }
 
     private void validateRoleMappings(ProductOperations product) {
@@ -90,7 +92,6 @@ class ProductServiceImpl implements ProductService {
             foundProduct.setEnabled(false);
             productConnector.save(foundProduct);
         }
-
         log.trace("deleteProduct end");
 
     }
@@ -120,7 +121,6 @@ class ProductServiceImpl implements ProductService {
             throw new ResourceNotFoundException();
         }
         validateRoleMappings(product);
-        foundProduct.setLogo(product.getLogo());
         foundProduct.setTitle(product.getTitle());
         foundProduct.setDescription(product.getDescription());
         foundProduct.setUrlPublic(product.getUrlPublic());
@@ -132,9 +132,10 @@ class ProductServiceImpl implements ProductService {
             foundProduct.setContractTemplateUpdatedAt(OffsetDateTime.now());
         }
         foundProduct.setContractTemplateVersion(product.getContractTemplateVersion());
-        log.debug("updateProduct foundProduct = {}", foundProduct);
+        ProductOperations updatedProduct = productConnector.save(foundProduct);
+        log.debug("updateProduct updatedProduct = {}", updatedProduct);
         log.trace("updateProduct end");
-        return productConnector.save(foundProduct);
+        return updatedProduct;
     }
 
     @Override
@@ -163,7 +164,7 @@ class ProductServiceImpl implements ProductService {
             productToUpdate.setLogo(stringUrl);
             productConnector.save(productToUpdate);
         }
-        log.debug("saveProductLogo updatedProduct = {}", productToUpdate);
+        log.debug("saveProductLogo productToUpdate = {}", productToUpdate);
         log.trace("saveProductLogo end");
     }
 

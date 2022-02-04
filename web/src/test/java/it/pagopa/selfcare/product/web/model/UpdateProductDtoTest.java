@@ -35,7 +35,6 @@ class UpdateProductDtoTest {
     void validateNullFields() {
         // given
         HashMap<String, Class<? extends Annotation>> toCheckMap = new HashMap<>();
-        toCheckMap.put("logo", NotBlank.class);
         toCheckMap.put("title", NotBlank.class);
         toCheckMap.put("description", NotBlank.class);
         toCheckMap.put("urlBO", NotBlank.class);
@@ -43,7 +42,6 @@ class UpdateProductDtoTest {
         toCheckMap.put("contractTemplatePath", NotBlank.class);
         toCheckMap.put("contractTemplateVersion", NotBlank.class);
         UpdateProductDto updateProductDto = new UpdateProductDto();
-        updateProductDto.setLogo(null);
         updateProductDto.setTitle(null);
         updateProductDto.setDescription(null);
         updateProductDto.setUrlPublic(null);

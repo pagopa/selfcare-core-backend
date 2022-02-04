@@ -13,10 +13,6 @@ import java.util.List;
 @Data
 public class UpdateProductDto {
 
-    @ApiModelProperty(value = "${swagger.product.model.logo}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
-    private String logo;
 
     @ApiModelProperty(value = "${swagger.product.model.title}", required = true)
     @JsonProperty(required = true)

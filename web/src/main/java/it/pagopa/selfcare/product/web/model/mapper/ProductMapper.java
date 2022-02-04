@@ -42,7 +42,6 @@ public class ProductMapper {
         if (dto != null) {
             product = new ProductDto();
             product.setId(dto.getId());
-            product.setLogo(dto.getLogo());
             product.setTitle(dto.getTitle());
             product.setDescription(dto.getDescription());
             product.setUrlPublic(dto.getUrlPublic());
@@ -63,7 +62,6 @@ public class ProductMapper {
         ProductOperations product = null;
         if (dto != null) {
             product = new ProductDto();
-            product.setLogo(dto.getLogo());
             product.setTitle(dto.getTitle());
             product.setDescription(dto.getDescription());
             product.setUrlPublic(dto.getUrlPublic());
