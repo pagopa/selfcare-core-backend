@@ -48,7 +48,7 @@ public class ProductController {
         List<ProductResource> productResources = products.stream()
                 .map(ProductMapper::toResource)
                 .collect(Collectors.toList());
-        log.debug("productResources = %s%n", productResources);
+        log.debug("getProducts result = {}", productResources);
         log.trace("getProducts end");
         return productResources;
     }
@@ -79,7 +79,7 @@ public class ProductController {
         log.debug("getProduct id = {}", id);
         ProductOperations product = productService.getProduct(id);
         ProductResource productResource = ProductMapper.toResource(product);
-        log.debug("getProduct productResource = {}", productResource);
+        log.debug("getProduct result = {}", productResource);
         log.trace("getProduct end");
         return productResource;
     }
@@ -94,7 +94,7 @@ public class ProductController {
         log.trace("getProductRoles start");
         log.debug("getProductRoles id = {}", id);
         EnumMap<PartyRole, List<String>> productRoles = productService.getProduct(id).getRoleMappings();
-        log.debug("getProductRoles productRoles = {}", productRoles);
+        log.debug("getProductRoles result = {}", productRoles);
         log.trace("getProductRoles end");
 
         return productRoles;
@@ -111,7 +111,7 @@ public class ProductController {
         log.debug("createProduct product = {}", product);
         ProductOperations p = productService.createProduct(ProductMapper.fromDto(product));
         ProductResource createdProduct = ProductMapper.toResource(p);
-        log.debug("createProduct createdProduct = {}", createdProduct);
+        log.debug("createProduct result = {}", createdProduct);
         log.trace("createProduct end");
         return createdProduct;
     }
@@ -130,7 +130,7 @@ public class ProductController {
         log.debug("updateProduct id = {}, product = {}", id, product);
         ProductOperations updatedProduct = productService.updateProduct(id, ProductMapper.fromDto(product));
         ProductResource result = ProductMapper.toResource(updatedProduct);
-        log.debug("updateProduct updatedProduct = {}", result);
+        log.debug("updateProduct result = {}", result);
         log.trace("updateProduct end");
         return result;
     }

@@ -52,7 +52,7 @@ class ProductServiceImpl implements ProductService {
     public List<ProductOperations> getProducts() {
         log.trace("getProducts start");
         List<ProductOperations> products = productConnector.findByEnabled(true);
-        log.debug("products = {}", products);
+        log.debug("getProducts result = {}", products);
         log.trace("getProducts end");
         return products;
     }
@@ -67,7 +67,7 @@ class ProductServiceImpl implements ProductService {
         product.setLogo(defaultUrl);
         product.setContractTemplateUpdatedAt(now);
         ProductOperations insert = productConnector.insert(product);
-        log.debug("createProduct created product = {}", insert);
+        log.debug("createProduct result = {}", insert);
         log.trace("createProduct end");
         return insert;
     }
@@ -96,7 +96,6 @@ class ProductServiceImpl implements ProductService {
             productConnector.save(foundProduct);
         }
         log.trace("deleteProduct end");
-
     }
 
 
@@ -136,7 +135,7 @@ class ProductServiceImpl implements ProductService {
         }
         foundProduct.setContractTemplateVersion(product.getContractTemplateVersion());
         ProductOperations updatedProduct = productConnector.save(foundProduct);
-        log.debug("updateProduct updatedProduct = {}", updatedProduct);
+        log.debug("updateProduct result = {}", updatedProduct);
         log.trace("updateProduct end");
         return updatedProduct;
     }
@@ -167,12 +166,11 @@ class ProductServiceImpl implements ProductService {
             productToUpdate.setLogo(stringUrl);
             productConnector.save(productToUpdate);
         }
-        log.debug("saveProductLogo productToUpdate = {}", productToUpdate);
         log.trace("saveProductLogo end");
     }
 
     private void validate(String contentType, String fileName) {
-        log.trace("validate");
+        log.trace("validate start");
         log.debug("validate contentType = {}, fileName = {}", contentType, fileName);
         Assert.notNull(fileName, "file name cannot be null");
 
@@ -184,6 +182,6 @@ class ProductServiceImpl implements ProductService {
         if (!allowedProductLogoExtensions.contains(fileExtension)) {
             throw new IllegalArgumentException(String.format("Invalid file extension \"%s\": allowed only %s", fileExtension, allowedProductLogoExtensions));
         }
-        log.trace("validate");
+        log.trace("validate end");
     }
 }

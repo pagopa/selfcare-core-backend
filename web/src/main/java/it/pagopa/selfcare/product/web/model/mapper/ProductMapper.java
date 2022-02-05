@@ -12,7 +12,7 @@ public class ProductMapper {
 
     public static ProductResource toResource(ProductOperations entity) {
         log.trace("toResource start");
-        log.debug("entity = {}", entity);
+        log.debug("toResource entity = {}", entity);
         ProductResource resource = null;
 
         if (entity != null) {
@@ -30,14 +30,14 @@ public class ProductMapper {
             resource.setContractTemplateVersion(entity.getContractTemplateVersion());
             resource.setRoleManagementURL(entity.getRoleManagementURL());
         }
-        log.debug("resource = {}", resource);
+        log.debug("toResource result = {}", resource);
         log.trace("toResource end");
         return resource;
     }
 
     public static ProductOperations fromDto(CreateProductDto dto) {
         log.trace("fromDto start");
-        log.debug("createProductDto = {}", dto);
+        log.debug("fromDto createProductDto = {}", dto);
         ProductOperations product = null;
         if (dto != null) {
             product = new ProductDto();
@@ -51,14 +51,14 @@ public class ProductMapper {
             product.setContractTemplateVersion(dto.getContractTemplateVersion());
             product.setRoleManagementURL(dto.getRoleManagementURL());
         }
-        log.debug("product = {}", product);
+        log.debug("fromDto result = {}", product);
         log.trace("fromDto end");
         return product;
     }
 
     public static ProductOperations fromDto(UpdateProductDto dto) {
         log.trace("fromDto start");
-        log.debug("updateProductDto = {}", dto);
+        log.debug("fromDto updateProductDto = {}", dto);
         ProductOperations product = null;
         if (dto != null) {
             product = new ProductDto();
@@ -71,7 +71,7 @@ public class ProductMapper {
             product.setContractTemplateVersion(dto.getContractTemplateVersion());
             product.setRoleManagementURL(dto.getRoleManagementURL());
         }
-        log.debug("product = {}", product);
+        log.debug("fromDto result = {}", product);
         log.trace("fromDto end");
         return product;
     }
