@@ -36,7 +36,6 @@ class CreateProductDtoTest {
         // given
         HashMap<String, Class<? extends Annotation>> toCheckMap = new HashMap<>();
         toCheckMap.put("id", NotBlank.class);
-        toCheckMap.put("logo", NotBlank.class);
         toCheckMap.put("title", NotBlank.class);
         toCheckMap.put("description", NotBlank.class);
         toCheckMap.put("urlBO", NotBlank.class);
@@ -45,7 +44,6 @@ class CreateProductDtoTest {
         toCheckMap.put("contractTemplateVersion", NotBlank.class);
         CreateProductDto createProductDto = new CreateProductDto();
         createProductDto.setId(null);
-        createProductDto.setLogo(null);
         createProductDto.setTitle(null);
         createProductDto.setDescription(null);
         createProductDto.setUrlPublic(null);

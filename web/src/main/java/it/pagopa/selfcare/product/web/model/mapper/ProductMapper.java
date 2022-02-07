@@ -5,10 +5,14 @@ import it.pagopa.selfcare.product.web.model.CreateProductDto;
 import it.pagopa.selfcare.product.web.model.ProductDto;
 import it.pagopa.selfcare.product.web.model.ProductResource;
 import it.pagopa.selfcare.product.web.model.UpdateProductDto;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ProductMapper {
 
     public static ProductResource toResource(ProductOperations entity) {
+        log.trace("toResource start");
+        log.debug("toResource entity = {}", entity);
         ProductResource resource = null;
 
         if (entity != null) {
@@ -26,16 +30,18 @@ public class ProductMapper {
             resource.setContractTemplateVersion(entity.getContractTemplateVersion());
             resource.setRoleManagementURL(entity.getRoleManagementURL());
         }
-
+        log.debug("toResource result = {}", resource);
+        log.trace("toResource end");
         return resource;
     }
 
     public static ProductOperations fromDto(CreateProductDto dto) {
+        log.trace("fromDto start");
+        log.debug("fromDto createProductDto = {}", dto);
         ProductOperations product = null;
         if (dto != null) {
             product = new ProductDto();
             product.setId(dto.getId());
-            product.setLogo(dto.getLogo());
             product.setTitle(dto.getTitle());
             product.setDescription(dto.getDescription());
             product.setUrlPublic(dto.getUrlPublic());
@@ -45,15 +51,17 @@ public class ProductMapper {
             product.setContractTemplateVersion(dto.getContractTemplateVersion());
             product.setRoleManagementURL(dto.getRoleManagementURL());
         }
-
+        log.debug("fromDto result = {}", product);
+        log.trace("fromDto end");
         return product;
     }
 
     public static ProductOperations fromDto(UpdateProductDto dto) {
+        log.trace("fromDto start");
+        log.debug("fromDto updateProductDto = {}", dto);
         ProductOperations product = null;
         if (dto != null) {
             product = new ProductDto();
-            product.setLogo(dto.getLogo());
             product.setTitle(dto.getTitle());
             product.setDescription(dto.getDescription());
             product.setUrlPublic(dto.getUrlPublic());
@@ -63,7 +71,8 @@ public class ProductMapper {
             product.setContractTemplateVersion(dto.getContractTemplateVersion());
             product.setRoleManagementURL(dto.getRoleManagementURL());
         }
-
+        log.debug("fromDto result = {}", product);
+        log.trace("fromDto end");
         return product;
     }
 

@@ -18,11 +18,6 @@ public class CreateProductDto {
     @NotBlank
     private String id;
 
-    @ApiModelProperty(value = "${swagger.product.model.logo}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
-    private String logo;
-
     @ApiModelProperty(value = "${swagger.product.model.title}", required = true)
     @JsonProperty(required = true)
     @NotBlank
