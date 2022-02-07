@@ -25,6 +25,8 @@ spec:
                 name: application-insights
             - secretRef:
                 name: mongo-credentials
+            - secretRef:
+                name: cdn-storage
             - configMapRef:
                 name: ms-product
           livenessProbe:
