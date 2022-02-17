@@ -4,7 +4,6 @@ import lombok.Data;
 
 import java.time.OffsetDateTime;
 import java.util.EnumMap;
-import java.util.List;
 
 @Data
 public class DummyProduct implements ProductOperations {
@@ -17,7 +16,7 @@ public class DummyProduct implements ProductOperations {
     private String urlBO;
     private OffsetDateTime createdAt;
     private OffsetDateTime contractTemplateUpdatedAt;
-    private EnumMap<PartyRole, List<String>> roleMappings;
+    private EnumMap<PartyRole, ? extends ProductRoleInfoOperations> roleMappings;
     private String contractTemplatePath;
     private String contractTemplateVersion;
     private String roleManagementURL;

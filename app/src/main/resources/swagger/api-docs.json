@@ -303,10 +303,7 @@
                 "schema" : {
                   "type" : "object",
                   "additionalProperties" : {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
+                    "$ref": "#/components/schemas/ProductRoleInfoRes"
                   }
                 }
               }
@@ -331,41 +328,44 @@
   "components" : {
     "schemas" : {
       "CreateProductDto" : {
-        "title" : "CreateProductDto",
-        "required" : [ "contractTemplatePath", "contractTemplateVersion", "description", "id", "logo", "roleManagementURL", "roleMappings", "title", "urlBO", "urlPublic" ],
-        "type" : "object",
-        "properties" : {
-          "contractTemplatePath" : {
-            "type" : "string",
-            "description" : "The path of contract"
+        "title": "CreateProductDto",
+        "required": [
+          "contractTemplatePath",
+          "contractTemplateVersion",
+          "description",
+          "id",
+          "roleManagementURL",
+          "roleMappings",
+          "title",
+          "urlBO",
+          "urlPublic"
+        ],
+        "type": "object",
+        "properties": {
+          "contractTemplatePath": {
+            "type": "string",
+            "description": "The path of contract"
           },
-          "contractTemplateVersion" : {
-            "type" : "string",
-            "description" : "Version of the contract"
+          "contractTemplateVersion": {
+            "type": "string",
+            "description": "Version of the contract"
           },
-          "description" : {
-            "type" : "string",
-            "description" : "Product's description"
+          "description": {
+            "type": "string",
+            "description": "Product's description"
           },
-          "id" : {
-            "type" : "string",
-            "description" : "Product's unique identifier"
+          "id": {
+            "type": "string",
+            "description": "Product's unique identifier"
           },
-          "logo" : {
-            "type" : "string",
-            "description" : "Product's logo"
-          },
-          "roleManagementURL" : {
+          "roleManagementURL": {
             "type" : "string",
             "description" : "Url of the utilities management"
           },
           "roleMappings" : {
             "type" : "object",
             "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
+              "$ref": "#/components/schemas/ProductRoleInfoReq"
             },
             "description" : "Mappings between Party's and Product's role"
           },
@@ -423,61 +423,142 @@
             "description" : "Url of the utilities management"
           },
           "roleMappings" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ProductRoleInfoRes"
             },
-            "description" : "Mappings between Party's and Product's role"
+            "description": "Mappings between Party's and Product's role"
           },
-          "title" : {
-            "type" : "string",
-            "description" : "Product's title"
+          "title": {
+            "type": "string",
+            "description": "Product's title"
           },
-          "urlBO" : {
-            "type" : "string",
-            "description" : "URL that redirects to the back-office section, where is possible to manage the product"
+          "urlBO": {
+            "type": "string",
+            "description": "URL that redirects to the back-office section, where is possible to manage the product"
           },
-          "urlPublic" : {
-            "type" : "string",
-            "description" : "URL that redirects to the public information webpage of the product"
+          "urlPublic": {
+            "type": "string",
+            "description": "URL that redirects to the public information webpage of the product"
           }
         }
       },
-      "UpdateProductDto" : {
-        "title" : "UpdateProductDto",
-        "required" : [ "contractTemplatePath", "contractTemplateVersion", "description", "logo", "roleManagementURL", "roleMappings", "title", "urlBO", "urlPublic" ],
-        "type" : "object",
-        "properties" : {
-          "contractTemplatePath" : {
-            "type" : "string",
-            "description" : "The path of contract"
+      "ProductRole": {
+        "title": "ProductRole",
+        "required": [
+          "code",
+          "description",
+          "label"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Product role internal code"
           },
-          "contractTemplateVersion" : {
-            "type" : "string",
-            "description" : "Version of the contract"
+          "description": {
+            "type": "string",
+            "description": "Product role description"
           },
-          "description" : {
-            "type" : "string",
-            "description" : "Product's description"
+          "label": {
+            "type": "string",
+            "description": "Product role label"
+          }
+        }
+      },
+      "ProductRoleInfoReq": {
+        "title": "ProductRoleInfoReq",
+        "required": [
+          "multiroleAllowed",
+          "roles"
+        ],
+        "type": "object",
+        "properties": {
+          "multiroleAllowed": {
+            "type": "boolean",
+            "description": "Flag indicating if a User can have more than one product role",
+            "example": false
           },
-          "logo" : {
-            "type" : "string",
-            "description" : "Product's logo"
+          "roles": {
+            "type": "array",
+            "description": "Available product roles",
+            "items": {
+              "$ref": "#/components/schemas/ProductRoleOperations"
+            }
+          }
+        }
+      },
+      "ProductRoleInfoRes": {
+        "title": "ProductRoleInfoRes",
+        "required": [
+          "multiroleAllowed",
+          "roles"
+        ],
+        "type": "object",
+        "properties": {
+          "multiroleAllowed": {
+            "type": "boolean",
+            "description": "Flag indicating if a User can have more than one product role",
+            "example": false
           },
-          "roleManagementURL" : {
-            "type" : "string",
-            "description" : "Url of the utilities management"
+          "roles": {
+            "type": "array",
+            "description": "Available product roles",
+            "items": {
+              "$ref": "#/components/schemas/ProductRole"
+            }
+          }
+        }
+      },
+      "ProductRoleOperations": {
+        "title": "ProductRoleOperations",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
           },
-          "roleMappings" : {
+          "description": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdateProductDto": {
+        "title": "UpdateProductDto",
+        "required": [
+          "contractTemplatePath",
+          "contractTemplateVersion",
+          "description",
+          "roleManagementURL",
+          "roleMappings",
+          "title",
+          "urlBO",
+          "urlPublic"
+        ],
+        "type": "object",
+        "properties": {
+          "contractTemplatePath": {
+            "type": "string",
+            "description": "The path of contract"
+          },
+          "contractTemplateVersion": {
+            "type": "string",
+            "description": "Version of the contract"
+          },
+          "description": {
+            "type": "string",
+            "description": "Product's description"
+          },
+          "roleManagementURL": {
+            "type": "string",
+            "description": "Url of the utilities management"
+          },
+          "roleMappings": {
             "type" : "object",
             "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
+              "$ref": "#/components/schemas/ProductRoleInfoReq"
             },
             "description" : "Mappings between Party's and Product's role"
           },

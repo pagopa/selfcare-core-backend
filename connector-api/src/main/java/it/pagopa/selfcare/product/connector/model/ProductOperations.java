@@ -2,7 +2,6 @@ package it.pagopa.selfcare.product.connector.model;
 
 import java.time.OffsetDateTime;
 import java.util.EnumMap;
-import java.util.List;
 
 public interface ProductOperations {
 
@@ -38,9 +37,9 @@ public interface ProductOperations {
 
     void setContractTemplateUpdatedAt(OffsetDateTime contractTemplateUpdatedAt);
 
-    EnumMap<PartyRole, List<String>> getRoleMappings();
+    EnumMap<PartyRole, ? extends ProductRoleInfoOperations> getRoleMappings();
 
-    void setRoleMappings(EnumMap<PartyRole, List<String>> roleMappings);
+    void setRoleMappings(EnumMap<PartyRole, ? extends ProductRoleInfoOperations> roleMappings);
 
     String getContractTemplatePath();
 

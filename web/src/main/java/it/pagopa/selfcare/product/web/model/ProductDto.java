@@ -3,11 +3,11 @@ package it.pagopa.selfcare.product.web.model;
 
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
+import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
 import lombok.Data;
 
 import java.time.OffsetDateTime;
 import java.util.EnumMap;
-import java.util.List;
 
 @Data
 public class ProductDto implements ProductOperations {
@@ -20,7 +20,7 @@ public class ProductDto implements ProductOperations {
     private String urlBO;
     private OffsetDateTime createdAt;
     private OffsetDateTime contractTemplateUpdatedAt;
-    private EnumMap<PartyRole, List<String>> roleMappings;
+    private EnumMap<PartyRole, ? extends ProductRoleInfoOperations> roleMappings;
     private String contractTemplatePath;
     private String contractTemplateVersion;
     private String roleManagementURL;

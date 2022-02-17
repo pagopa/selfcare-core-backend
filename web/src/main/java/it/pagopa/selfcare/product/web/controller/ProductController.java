@@ -8,6 +8,7 @@ import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.core.ProductService;
 import it.pagopa.selfcare.product.web.model.CreateProductDto;
 import it.pagopa.selfcare.product.web.model.ProductResource;
+import it.pagopa.selfcare.product.web.model.ProductRoleInfo;
 import it.pagopa.selfcare.product.web.model.UpdateProductDto;
 import it.pagopa.selfcare.product.web.model.mapper.ProductMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -88,12 +89,12 @@ public class ProductController {
     @GetMapping("/{id}/role-mappings")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.product.operation.getProductRoleMappings}")
-    public Map<PartyRole, List<String>> getProductRoles(@ApiParam("${swagger.product.model.id}")
-                                                        @PathVariable("id")
-                                                                String id) {
+    public Map<PartyRole, ProductRoleInfo> getProductRoles(@ApiParam("${swagger.product.model.id}")
+                                                           @PathVariable("id")
+                                                                   String id) {
         log.trace("getProductRoles start");
         log.debug("getProductRoles id = {}", id);
-        EnumMap<PartyRole, List<String>> productRoles = productService.getProduct(id).getRoleMappings();
+        EnumMap<PartyRole, ProductRoleInfo> productRoles = ProductMapper.toRoleMappings(productService.getProduct(id).getRoleMappings());
         log.debug("getProductRoles result = {}", productRoles);
         log.trace("getProductRoles end");
 

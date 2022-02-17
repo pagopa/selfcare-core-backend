@@ -1,11 +1,12 @@
 package it.pagopa.selfcare.product.web.model.mapper;
 
+import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
-import it.pagopa.selfcare.product.web.model.CreateProductDto;
-import it.pagopa.selfcare.product.web.model.ProductDto;
-import it.pagopa.selfcare.product.web.model.ProductResource;
-import it.pagopa.selfcare.product.web.model.UpdateProductDto;
+import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
+import it.pagopa.selfcare.product.web.model.*;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.EnumMap;
 
 @Slf4j
 public class ProductMapper {
@@ -25,7 +26,7 @@ public class ProductMapper {
             resource.setUrlBO(entity.getUrlBO());
             resource.setCreatedAt(entity.getCreatedAt());
             resource.setContractTemplateUpdatedAt(entity.getContractTemplateUpdatedAt());
-            resource.setRoleMappings(entity.getRoleMappings());
+            resource.setRoleMappings(toRoleMappings(entity.getRoleMappings()));
             resource.setContractTemplatePath(entity.getContractTemplatePath());
             resource.setContractTemplateVersion(entity.getContractTemplateVersion());
             resource.setRoleManagementURL(entity.getRoleManagementURL());
@@ -74,6 +75,18 @@ public class ProductMapper {
         log.debug("fromDto result = {}", product);
         log.trace("fromDto end");
         return product;
+    }
+
+
+    public static EnumMap<PartyRole, ProductRoleInfo> toRoleMappings(EnumMap<PartyRole, ? extends ProductRoleInfoOperations> roleMappings) {
+        EnumMap<PartyRole, ProductRoleInfo> result;
+        if (roleMappings == null) {
+            result = null;
+        } else {
+            result = new EnumMap<>(PartyRole.class);
+            roleMappings.forEach((key, value) -> result.put(key, new ProductRoleInfo(value)));
+        }
+        return result;
     }
 
 }
