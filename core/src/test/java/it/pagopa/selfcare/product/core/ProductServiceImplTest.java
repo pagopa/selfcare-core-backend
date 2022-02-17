@@ -430,6 +430,46 @@ class ProductServiceImplTest {
         Mockito.verifyNoMoreInteractions(productConnectorMock);
     }
 
+
+    @Test
+    void updateProduct_foundProductEnabledSameVersionContract() {
+        // given
+        String productId = "productId";
+        String contractTemplateVersion = "1.2.4";
+        Mockito.when(productConnectorMock.findById(productId))
+                .thenAnswer(invocationOnMock -> {
+                    DummyProduct foundProductMock = new DummyProduct();
+                    foundProductMock.setId(invocationOnMock.getArgument(0, String.class));
+                    foundProductMock.setContractTemplateVersion(contractTemplateVersion);
+                    return Optional.of(foundProductMock);
+                });
+        EnumMap<PartyRole, DummyProductRoleInfo> map = new EnumMap<>(PartyRole.class);
+        List<DummyProductRole> list = new ArrayList<>();
+        list.add(TestUtils.mockInstance(new DummyProductRole(), 1));
+        list.add(TestUtils.mockInstance(new DummyProductRole(), 2));
+        map.put(PartyRole.OPERATOR, new DummyProductRoleInfo(true, list));
+        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setContractTemplateVersion");
+        product.setRoleMappings(map);
+        product.setContractTemplateVersion(contractTemplateVersion);
+        Mockito.when(productConnectorMock.save(Mockito.any()))
+                .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, ProductOperations.class));
+        // when
+        ProductOperations savedProduct = productService.updateProduct(productId, product);
+        // then
+        assertNull(savedProduct.getLogo());
+        assertEquals(savedProduct.getTitle(), product.getTitle());
+        assertEquals(savedProduct.getDescription(), product.getDescription());
+        assertEquals(savedProduct.getUrlPublic(), product.getUrlPublic());
+        assertEquals(savedProduct.getUrlBO(), product.getUrlBO());
+        assertEquals(savedProduct.getRoleMappings(), product.getRoleMappings());
+        assertEquals(savedProduct.getRoleManagementURL(), product.getRoleManagementURL());
+        assertEquals(savedProduct.getContractTemplatePath(), product.getContractTemplatePath());
+        assertEquals(savedProduct.getContractTemplateVersion(), product.getContractTemplateVersion());
+        Mockito.verify(productConnectorMock, Mockito.times(1)).findById(productId);
+        Mockito.verify(productConnectorMock, Mockito.times(1)).save(Mockito.any());
+        Mockito.verifyNoMoreInteractions(productConnectorMock);
+    }
+
     @Test
     void updateProduct_foundProductNotEnabled() {
         // given
