@@ -10,12 +10,10 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ProductResourceTest {
 
     private Validator validator;
-    private static final ProductResource PRODUCT_RESOURCE = TestUtils.mockInstance(new ProductResource());
 
     @BeforeEach
     void setUp() {
@@ -42,7 +39,7 @@ class ProductResourceTest {
         toCheckMap.put("urlBO", NotBlank.class);
         toCheckMap.put("createdAt", NotNull.class);
         toCheckMap.put("contractTemplateUpdatedAt", NotNull.class);
-        toCheckMap.put("roleMappings", NotNull.class);
+        toCheckMap.put("roleMappings", NotEmpty.class);
         toCheckMap.put("contractTemplatePath", NotBlank.class);
         toCheckMap.put("contractTemplateVersion", NotBlank.class);
         ProductResource productResource = new ProductResource();
@@ -73,11 +70,20 @@ class ProductResourceTest {
     @Test
     void validateNotNullFields() {
         // given
-        ProductResource productResource = PRODUCT_RESOURCE;
-        EnumMap<PartyRole, List<String>> map = new EnumMap<>(PartyRole.class);
-        productResource.setRoleMappings(map);
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+        for (PartyRole partyRole : PartyRole.values()) {
+            ProductRoleInfo productRoleInfo = new ProductRoleInfo();
+            List<ProductRole> roles = new ArrayList<>();
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+            productRoleInfo.setRoles(roles);
+            productRoleInfo.setMultiroleAllowed(true);
+            roleMappings.put(partyRole, productRoleInfo);
+        }
+        ProductResource product = TestUtils.mockInstance(new ProductResource(), "setRoleMappings");
+        product.setRoleMappings(roleMappings);
         // when
-        Set<ConstraintViolation<Object>> violations = validator.validate(productResource);
+        Set<ConstraintViolation<Object>> violations = validator.validate(product);
         // then
         assertTrue(violations.isEmpty());
     }

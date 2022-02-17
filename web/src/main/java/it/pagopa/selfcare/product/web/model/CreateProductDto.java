@@ -4,13 +4,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import lombok.Data;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 import java.util.EnumMap;
-import java.util.List;
 
 @Data
+@Validated
 public class CreateProductDto {
 
     @ApiModelProperty(value = "${swagger.product.model.id}", required = true)
@@ -38,8 +40,9 @@ public class CreateProductDto {
 
     @ApiModelProperty(value = "${swagger.product.model.roleMappings}", required = true)
     @JsonProperty(required = true)
-    @NotNull
-    private EnumMap<PartyRole, List<String>> roleMappings;
+    @NotEmpty
+    @Valid
+    private EnumMap<PartyRole, ProductRoleInfo> roleMappings;
 
     @ApiModelProperty(value = "${swagger.product.model.contractTemplatePath}", required = true)
     @JsonProperty(required = true)

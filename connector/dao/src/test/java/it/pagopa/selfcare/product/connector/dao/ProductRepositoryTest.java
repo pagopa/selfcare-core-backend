@@ -3,6 +3,7 @@ package it.pagopa.selfcare.product.connector.dao;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.product.connector.dao.config.DaoTestConfig;
 import it.pagopa.selfcare.product.connector.dao.model.ProductEntity;
+import it.pagopa.selfcare.product.connector.model.PartyRole;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +36,17 @@ class ProductRepositoryTest {
     @Test
     void create() {
         // given
-        ProductEntity product = TestUtils.mockInstance(new ProductEntity());
+        ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setRoleMappings");
+        EnumMap<PartyRole, ProductEntity.ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+        for (PartyRole partyRole : PartyRole.values()) {
+            List<ProductEntity.ProductRole> roles = new ArrayList<>();
+            roles.add(TestUtils.mockInstance(new ProductEntity.ProductRole(), 1));
+            roles.add(TestUtils.mockInstance(new ProductEntity.ProductRole(), 2));
+            ProductEntity.ProductRoleInfo productRoleInfo = new ProductEntity.ProductRoleInfo();
+            productRoleInfo.setRoles(roles);
+            roleMappings.put(partyRole, productRoleInfo);
+        }
+        product.setRoleMappings(roleMappings);
         // when
         ProductEntity savedProduct = repository.save(product);
         // then
@@ -88,6 +101,30 @@ class ProductRepositoryTest {
         // then
         Optional<ProductEntity> foundProduct = repository.findById(savedProduct.getId());
         assertFalse(foundProduct.isPresent());
+    }
+
+
+    @Test
+    void findById_found() {
+        // given
+        ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setRoleMappings");
+        EnumMap<PartyRole, ProductEntity.ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+        for (PartyRole partyRole : PartyRole.values()) {
+            List<ProductEntity.ProductRole> roles = new ArrayList<>();
+            roles.add(TestUtils.mockInstance(new ProductEntity.ProductRole(), 1));
+            roles.add(TestUtils.mockInstance(new ProductEntity.ProductRole(), 2));
+            ProductEntity.ProductRoleInfo productRoleInfo = new ProductEntity.ProductRoleInfo();
+            productRoleInfo.setRoles(roles);
+            roleMappings.put(partyRole, productRoleInfo);
+        }
+        product.setRoleMappings(roleMappings);
+        repository.save(product);
+        // when
+        Optional<ProductEntity> result = repository.findById(product.getId());
+        // then
+        assertTrue(result.isPresent());
+        assertNotNull(result.get().getRoleMappings());
+        assertEquals(PartyRole.values().length, result.get().getRoleMappings().keySet().size());
     }
 
 
