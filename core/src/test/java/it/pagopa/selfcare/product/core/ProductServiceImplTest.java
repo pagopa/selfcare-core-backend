@@ -94,36 +94,6 @@ class ProductServiceImplTest {
 
 
     @Test
-    void createProduct_notNullProduct() {
-        // given
-        OffsetDateTime now = OffsetDateTime.now().minusSeconds(1);
-        String id = "id";
-        ProductOperations input = new DummyProduct();
-        EnumMap<PartyRole, DummyProductRoleInfo> map = new EnumMap<>(PartyRole.class);
-        List<DummyProductRole> list = new ArrayList<>();
-        list.add(TestUtils.mockInstance(new DummyProductRole(), 1));
-        list.add(TestUtils.mockInstance(new DummyProductRole(), 2));
-        map.put(PartyRole.OPERATOR, new DummyProductRoleInfo(true, list));
-        input.setRoleMappings(map);
-        input.setId(id);
-        Mockito.when(productConnectorMock.insert(Mockito.any(ProductOperations.class)))
-                .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, ProductOperations.class));
-        // when
-        ProductOperations output = productService.createProduct(input);
-        // then
-        assertNotNull(output);
-        assertNotNull(output.getCreatedAt());
-        assertNotNull(output.getContractTemplateUpdatedAt());
-        assertTrue(output.getCreatedAt().isAfter(now));
-        assertEquals(URL, output.getLogo());
-        assertTrue(output.getContractTemplateUpdatedAt().isAfter(now));
-        Mockito.verify(productConnectorMock, Mockito.times(1))
-                .insert(Mockito.any(ProductOperations.class));
-        Mockito.verifyNoMoreInteractions(productConnectorMock);
-    }
-
-
-    @Test
     void createProduct_nullRoleMappings() {
         // given
         String id = "id";
@@ -210,7 +180,7 @@ class ProductServiceImplTest {
 
 
     @Test
-    void createProduct_RoleMappingsNotEmptyAndIncorrectPartyRoleConfig() {
+    void createProduct_incorrectMultiProductRoleConfig() {
         // given
         String id = "id";
         ProductOperations input = new DummyProduct();
@@ -228,6 +198,58 @@ class ProductServiceImplTest {
         assertEquals(String.format("Only '%s' Party-role can have more than one Product-role", PartyRole.OPERATOR.name()), e.getMessage());
         Mockito.verifyNoInteractions(productConnectorMock);
     }
+
+
+    @Test
+    void createProduct_correctMultiProductRoleConfig() {
+        // given
+        String id = "id";
+        ProductOperations input = new DummyProduct();
+        EnumMap<PartyRole, DummyProductRoleInfo> map = new EnumMap<>(PartyRole.class);
+        List<DummyProductRole> list = new ArrayList<>();
+        list.add(TestUtils.mockInstance(new DummyProductRole(), 1));
+        list.add(TestUtils.mockInstance(new DummyProductRole(), 2));
+        map.put(PartyRole.OPERATOR, new DummyProductRoleInfo(true, list));
+        input.setRoleMappings(map);
+        input.setId(id);
+        // when
+        Executable executable = () -> productService.createProduct(input);
+        // then
+        assertDoesNotThrow(executable);
+        Mockito.verify(productConnectorMock, Mockito.times(1))
+                .insert(Mockito.any(ProductOperations.class));
+        Mockito.verifyNoMoreInteractions(productConnectorMock);
+    }
+
+
+    @Test
+    void createProduct_ok() {
+        // given
+        OffsetDateTime now = OffsetDateTime.now().minusSeconds(1);
+        String id = "id";
+        ProductOperations input = new DummyProduct();
+        EnumMap<PartyRole, DummyProductRoleInfo> map = new EnumMap<>(PartyRole.class);
+        List<DummyProductRole> list = new ArrayList<>();
+        list.add(TestUtils.mockInstance(new DummyProductRole(), 1));
+        map.put(PartyRole.MANAGER, new DummyProductRoleInfo(true, list));
+        input.setRoleMappings(map);
+        input.setId(id);
+        Mockito.when(productConnectorMock.insert(Mockito.any(ProductOperations.class)))
+                .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, ProductOperations.class));
+        // when
+        ProductOperations output = productService.createProduct(input);
+        // then
+        assertNotNull(output);
+        assertNotNull(output.getCreatedAt());
+        assertNotNull(output.getContractTemplateUpdatedAt());
+        assertTrue(output.getCreatedAt().isAfter(now));
+        assertEquals(URL, output.getLogo());
+        assertTrue(output.getContractTemplateUpdatedAt().isAfter(now));
+        Mockito.verify(productConnectorMock, Mockito.times(1))
+                .insert(Mockito.any(ProductOperations.class));
+        Mockito.verifyNoMoreInteractions(productConnectorMock);
+    }
+
 
     @Test
     void deleteProduct_existEnabled() {

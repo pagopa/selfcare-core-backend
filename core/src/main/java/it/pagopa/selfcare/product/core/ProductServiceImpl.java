@@ -30,6 +30,7 @@ import java.util.Set;
 class ProductServiceImpl implements ProductService {
 
     private static final String LOGO_PATH_TEMPLATE = "resources/products/%s/logo.%s";
+    private static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product id is required";
 
     private final ProductConnector productConnector;
     private final FileStorageConnector fileStorageConnector;
@@ -90,11 +91,12 @@ class ProductServiceImpl implements ProductService {
         log.trace("validateRoleMappings end");
     }
 
+
     @Override
     public void deleteProduct(String id) {
         log.trace("deleteProduct start");
         log.debug("deleteProduct id = {}", id);
-        Assert.hasText(id, "A product id is required");
+        Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
         ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
         if (foundProduct.isEnabled()) {
             foundProduct.setEnabled(false);
@@ -108,7 +110,7 @@ class ProductServiceImpl implements ProductService {
     public ProductOperations getProduct(String id) {
         log.trace("getProduct start");
         log.debug("getProduct id = {}", id);
-        Assert.hasText(id, "A product id is required");
+        Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
         ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
         if (!foundProduct.isEnabled()) {
             throw new ResourceNotFoundException();
@@ -124,7 +126,7 @@ class ProductServiceImpl implements ProductService {
     public ProductOperations updateProduct(String id, ProductOperations product) {
         log.trace("updateProduct start");
         log.debug("updateProduct id = {}, product = {}", id, product);
-        Assert.hasText(id, "A product id is required");
+        Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
         Assert.notNull(product, "A product is required");
         ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
         if (!foundProduct.isEnabled()) {
@@ -152,7 +154,7 @@ class ProductServiceImpl implements ProductService {
     public void saveProductLogo(String id, InputStream logo, String contentType, String fileName) {
         log.trace("saveProductLogo start");
         log.debug("saveProductLogo id = {}, logo = {}, contentType = {}, fileName = {}", id, logo, contentType, fileName);
-        Assert.hasText(id, "A product id is required");
+        Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
         ProductOperations productToUpdate = getProduct(id);
         try {
             validate(contentType, fileName);
