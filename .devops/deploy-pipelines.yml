@@ -4,7 +4,7 @@
 
 parameters:
   - name: 'skipBuild'
-    displayName: 'If skip build and proceed to deploy the docker image previously built'
+    displayName: 'Check this flag to skip build and proceed to deploy a docker image previously built'
     type: boolean
     default: false
 
@@ -92,7 +92,7 @@ stages:
   - stage: 'Build'
     displayName: 'Build_and_Pusblih_to_${{ variables.environment }}'
     dependsOn: Release
-    condition: and(succeeded(), not(skipBuild))
+    condition: and(succeeded(), not(parameters.skipBuild))
     variables:
       pomversion: $[ stageDependencies.Release.POM.outputs['getpomversion.outputpomversion'] ]
     jobs:
@@ -136,7 +136,7 @@ stages:
   - stage: 'Serving_helm'
     displayName: 'Serving_Helm'
     dependsOn: Build
-    condition: or(succeeded(), skipBuild)
+    condition: or(succeeded(), parameters.skipBuild)
     jobs:
       - job: Serving_helm
         displayName: Serving_helm
