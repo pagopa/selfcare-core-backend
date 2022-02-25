@@ -185,6 +185,5 @@ stages:
                     releaseName: $(K8S_IMAGE_REPOSITORY_NAME)
                     valueFile: "$(helmValues)"
                     install: true
-                    recreate: true
                     waitForExecution: true
                     arguments: "--timeout 2m0s"
