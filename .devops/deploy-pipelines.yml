@@ -92,7 +92,7 @@ stages:
   - stage: 'Build'
     displayName: 'Build_and_Pusblih_to_${{ variables.environment }}'
     dependsOn: Release
-    condition: and(succeeded(), not(parameters.skipBuild))
+    condition: and(succeeded(), not(${{ parameters.skipBuild }} ))
     variables:
       pomversion: $[ stageDependencies.Release.POM.outputs['getpomversion.outputpomversion'] ]
     jobs:
@@ -136,7 +136,7 @@ stages:
   - stage: 'Serving_helm'
     displayName: 'Serving_Helm'
     dependsOn: Build
-    condition: or(succeeded(), parameters.skipBuild)
+    condition: or(succeeded(), ${{ parameters.skipBuild }} )
     jobs:
       - job: Serving_helm
         displayName: Serving_helm
