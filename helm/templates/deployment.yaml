@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "selfcare-ms-product.fullname" . }}
+  name: {{ include "this.fullname" . }}
   namespace: {{ .Values.namespace }}
   labels:
-    {{- include "selfcare-ms-product.labels" . | nindent 4 }}
+    {{- include "this.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "selfcare-ms-product.selectorLabels" . | nindent 6 }}
+      {{- include "this.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -20,13 +20,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "selfcare-ms-product.selectorLabels" . | nindent 8 }}
+        {{- include "this.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "selfcare-ms-product.serviceAccountName" . }}
+      serviceAccountName: {{ include "this.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -43,7 +43,7 @@ spec:
             - secretRef:
                 name: cdn-
             - configMapRef:
-                name: {{ include "selfcare-ms-product.fullname" . }}
+                name: {{ include "this.fullname" . }}
           ports:
             - name: http
               containerPort: {{ .Values.containers.portNumber }}
