@@ -170,3 +170,4 @@ stages:
                     install: true
                     recreate: true
                     waitForExecution: true
+                    arguments: "--timeout 120"
