@@ -154,7 +154,7 @@ stages:
   - stage: 'Deploy'
     displayName: 'Deploy_to_${{ variables.environment }}'
     dependsOn: "Serving_helm"
-    condition: succeeded()
+    condition: or(succeeded(), ${{ parameters.skipBuild }} )
     variables:
       pomversion: $[ stageDependencies.Release.POM.outputs['getpomversion.outputpomversion'] ]
     jobs:
