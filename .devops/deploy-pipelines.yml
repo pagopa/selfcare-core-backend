@@ -183,7 +183,7 @@ stages:
                     chartPath: $(Pipeline.Workspace)/helm
                     chartName: $(K8S_IMAGE_REPOSITORY_NAME)
                     releaseName: $(K8S_IMAGE_REPOSITORY_NAME)
-                    valueFile: "$(helmValues)"
+                    valueFile: "$(Build.Repository.LocalPath)/$(helmValues)"
                     install: true
                     waitForExecution: true
                     arguments: "--timeout 2m0s"
