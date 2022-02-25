@@ -35,7 +35,7 @@ variables:
 
   # Image Repository Name
   imageRepository: '$(K8S_IMAGE_REPOSITORY_NAME)'
-  deployNamespace: selc-tmp # FIXME '$(DEPLOY_NAMESPACE)'
+  deployNamespace: default # FIXME '$(DEPLOY_NAMESPACE)'
   settingsXmlROsecureFileName: '$(SETTINGS_XML_RO_SECURE_FILE_NAME)'
 
 
