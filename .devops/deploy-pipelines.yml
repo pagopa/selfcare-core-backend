@@ -2,6 +2,12 @@
 # Build and push image to Azure Container Registry; Deploy to Azure Kubernetes Service
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
+parameters:
+  - name: 'skipBuild'
+    displayName: 'If skip build and proceed to deploy the docker image previously built'
+    type: boolean
+    default: false
+
 trigger:
   branches:
     include:
@@ -86,7 +92,7 @@ stages:
   - stage: 'Build'
     displayName: 'Build_and_Pusblih_to_${{ variables.environment }}'
     dependsOn: Release
-    condition: succeeded()
+    condition: and(succeeded(), not(skipBuild))
     variables:
       pomversion: $[ stageDependencies.Release.POM.outputs['getpomversion.outputpomversion'] ]
     jobs:
@@ -126,6 +132,17 @@ stages:
                 $(Build.BuildId)
                 latest
                 $(pomversion)
+
+  - stage: 'Serving_helm'
+    displayName: 'Serving_Helm'
+    dependsOn: Build
+    condition: or(succeeded(), skipBuild)
+    jobs:
+      - job: Serving_helm
+        displayName: Serving_helm
+        pool:
+          vmImage: $(vmImageNameDefault)
+        steps:
           - task: PublishPipelineArtifact@1
             displayName: 'Publish Atrifact manifests'
             condition: succeeded()
@@ -136,7 +153,7 @@ stages:
 
   - stage: 'Deploy'
     displayName: 'Deploy_to_${{ variables.environment }}'
-    dependsOn: ['Release', 'Build']
+    dependsOn: "Serving_helm"
     condition: succeeded()
     variables:
       pomversion: $[ stageDependencies.Release.POM.outputs['getpomversion.outputpomversion'] ]
