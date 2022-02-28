@@ -14,7 +14,7 @@ image:
 
 imagePullSecrets: []
 nameOverride: ""
-fullnameOverride: "selfcare-ms-product"
+fullnameOverride: "ms-product"
 
 serviceAccount:
   # Specifies whether a service account should be created
