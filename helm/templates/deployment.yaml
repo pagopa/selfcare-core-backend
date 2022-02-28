@@ -41,7 +41,9 @@ spec:
             - secretRef:
                 name: mongo-credentials
             - secretRef:
-                name: cdn-
+                name: cdn-storage
+            - configMapRef:
+                name: common
             - configMapRef:
                 name: {{ include "this.fullname" . }}
           ports:
