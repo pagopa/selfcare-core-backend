@@ -3,10 +3,10 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 parameters:
-  - name: 'skipBuild'
-    displayName: 'Check this flag to skip build and proceed to deploy a docker image previously built'
+  - name: 'executeBuild'
+    displayName: 'Remove this flag to skip build and proceed to deploy a docker image previously built'
     type: boolean
-    default: false
+    default: true
 
 trigger:
   branches:
@@ -44,7 +44,6 @@ variables:
     dockerRegistryServiceConnection: '$(UAT_CONTAINER_REGISTRY_SERVICE_CONN)'
     kubernetesServiceConnection: '$(UAT_KUBERNETES_SERVICE_CONN)'
     containerRegistry: '$(UAT_CONTAINER_REGISTRY_NAME)'
-    helmValues: values-uat.yaml
     selfHostedAgentPool: $(UAT_AGENT_POOL)
     mavenGoals: 'package'
     settingsXmlsecureFileName: '$(SETTINGS_XML_RO_SECURE_FILE_NAME)'
@@ -54,7 +53,6 @@ variables:
     dockerRegistryServiceConnection: '$(PROD_CONTAINER_REGISTRY_SERVICE_CONN)'
     kubernetesServiceConnection: '$(PROD_KUBERNETES_SERVICE_CONN)'
     containerRegistry: '$(PROD_CONTAINER_REGISTRY_NAME)'
-    helmValues: values-prod.yaml
     selfHostedAgentPool: $(PROD_AGENT_POOL)
     mavenGoals: 'package'
     settingsXmlsecureFileName: '$(SETTINGS_XML_RO_SECURE_FILE_NAME)'
@@ -64,7 +62,6 @@ variables:
     dockerRegistryServiceConnection: '$(DEV_CONTAINER_REGISTRY_SERVICE_CONN)'
     kubernetesServiceConnection: '$(DEV_KUBERNETES_SERVICE_CONN)'
     containerRegistry: '$(DEV_CONTAINER_REGISTRY_NAME)'
-    helmValues: values-dev.yaml
     selfHostedAgentPool: $(DEV_AGENT_POOL)
     mavenGoals: 'package'
     settingsXmlsecureFileName: '$(SETTINGS_XML_RO_SECURE_FILE_NAME)'
@@ -92,7 +89,7 @@ stages:
   - stage: 'Build'
     displayName: 'Build_and_Pusblih_to_${{ variables.environment }}'
     dependsOn: Release
-    condition: and(succeeded(), not(${{ parameters.skipBuild }} ))
+    condition: and(succeeded(), ${{ parameters.executeBuild }} )
     variables:
       pomversion: $[ stageDependencies.Release.POM.outputs['getpomversion.outputpomversion'] ]
     jobs:
@@ -136,7 +133,7 @@ stages:
   - stage: 'Serving_helm'
     displayName: 'Serving_Helm'
     dependsOn: Build
-    condition: or(succeeded(), ${{ parameters.skipBuild }} )
+    condition: or(succeeded(), not(${{ parameters.executeBuild }}) )
     jobs:
       - job: Serving_helm
         displayName: Serving_helm
@@ -144,7 +141,7 @@ stages:
           vmImage: $(vmImageNameDefault)
         steps:
           - task: PublishPipelineArtifact@1
-            displayName: 'Publish Atrifact manifests'
+            displayName: 'Publish Artifact manifests'
             condition: succeeded()
             inputs:
               targetPath: '$(Build.Repository.LocalPath)/helm'
@@ -154,7 +151,7 @@ stages:
   - stage: 'Deploy'
     displayName: 'Deploy_to_${{ variables.environment }}'
     dependsOn: "Serving_helm"
-    condition: or(succeeded(), ${{ parameters.skipBuild }} )
+    condition: or(succeeded(), not(${{ parameters.executeBuild }}) )
     variables:
       pomversion: $[ stageDependencies.Release.POM.outputs['getpomversion.outputpomversion'] ]
     jobs:
@@ -183,7 +180,7 @@ stages:
                     chartPath: $(Pipeline.Workspace)/helm
                     chartName: $(K8S_IMAGE_REPOSITORY_NAME)
                     releaseName: $(K8S_IMAGE_REPOSITORY_NAME)
-                    valueFile: "$(Pipeline.Workspace)/helm/$(helmValues)"
+                    valueFile: "$(Pipeline.Workspace)/helm/values-${{ lower(variables.environment) }}.yaml"
                     install: true
                     waitForExecution: true
                     arguments: "--timeout 2m0s"
