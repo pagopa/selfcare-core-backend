@@ -16,15 +16,6 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: "ms-product"
 
-serviceAccount:
-  # Specifies whether a service account should be created
-  create: false
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: ""
-
 containers:
   portNumber: 8080
 
@@ -91,8 +82,3 @@ affinity: {}
 config:
   MONGODB_NAME: selcProduct
   APPLICATIONINSIGHTS_ROLE_NAME: "ms-product"
-
-configEnvSpecific:
-  JAVA_TOOL_OPTIONS: "-javaagent:/applicationinsights-agent.jar"
-  APPLICATIONINSIGHTS_INSTRUMENTATION_LOGGING_LEVEL: "OFF"
-  MS_PRODUCT_LOG_LEVEL: "DEBUG"

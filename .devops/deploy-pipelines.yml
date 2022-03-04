@@ -130,13 +130,13 @@ stages:
                 latest
                 $(pomversion)
 
-  - stage: 'Serving_helm'
-    displayName: 'Serving_Helm'
+  - stage: 'Publish_artifact_helm'
+    displayName: 'Publish_artifact_Helm'
     dependsOn: Build
     condition: or(succeeded(), not(${{ parameters.executeBuild }}) )
     jobs:
-      - job: Serving_helm
-        displayName: Serving_helm
+      - job: Publish_artifact_helm
+        displayName: Publish_artifact_helm
         pool:
           vmImage: $(vmImageNameDefault)
         steps:
@@ -150,7 +150,7 @@ stages:
 
   - stage: 'Deploy'
     displayName: 'Deploy_to_${{ variables.environment }}'
-    dependsOn: "Serving_helm"
+    dependsOn: "Publish_artifact_helm"
     condition: or(succeeded(), not(${{ parameters.executeBuild }}) )
     variables:
       pomversion: $[ stageDependencies.Release.POM.outputs['getpomversion.outputpomversion'] ]
