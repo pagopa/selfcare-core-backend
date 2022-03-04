@@ -15,6 +15,7 @@ spec:
   template:
     metadata:
       annotations:
+        deploymentTime: {{ now | date "2006-01-02T15:04:05" }} # TODO remove me when each build will have a different tag
         checksum/config: {{ include (print $.Template.BasePath "/configmaps.yaml") . | sha256sum }}
       {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
