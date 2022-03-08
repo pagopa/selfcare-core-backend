@@ -194,4 +194,4 @@ stages:
                     kind: deployment
                     name: 'ms-product' # TODO uncomment when variable available'$(deploymentName)'
                     mergeStrategy: strategic
-                    patch: ${{ format('\{"spec":\{"template":\{"metadata":\{"annotations":\{"deploymentTime":"{0}"\}\}\}\}\}', '$(Get-Date -format yyyyMMdd-Hmmss)') }}
+                    patch: ${{ join('{"spec":{"template":{"metadata":{"annotations":{"deploymentTime":"', '$(Get-Date -format yyyyMMdd-Hmmss)', '"}}}}}') }}
