@@ -192,6 +192,6 @@ stages:
                     namespace: '$(deployNamespace)'
                     action: patch
                     kind: deployment
-                    name: '$(deploymentName)'
+                    name: 'ms-product' # TODO uncomment when variable available'$(deploymentName)'
                     mergeStrategy: strategic
                     patch: '{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"deploymentTime\":\"$(Date:yyyyMMddThhmmss)\"}}}}}'
