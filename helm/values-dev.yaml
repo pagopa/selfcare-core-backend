@@ -13,4 +13,3 @@ configEnvSpecific:
   APPLICATIONINSIGHTS_INSTRUMENTATION_LOGGING_LEVEL: "OFF"
   MS_PRODUCT_LOG_LEVEL: "DEBUG"
   LOGO_STORAGE_URL: "https://selcdcheckoutsa.z6.web.core.windows.net/resources/products/default/logo.png"
-  PUBLIC_FILE_STORAGE_BASE_URL: "https://selcdcheckoutsa.z6.web.core.windows.net"
