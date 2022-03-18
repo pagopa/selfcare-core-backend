@@ -34,11 +34,9 @@ class ProductExceptionsHandlerTest {
     @Test
     void handleInvalidRoleMappingException() {
         // given
-        InvalidRoleMappingException mockException = Mockito.mock(InvalidRoleMappingException.class);
-        Mockito.when(mockException.getMessage())
-                .thenReturn(DETAIL_MESSAGE);
+        InvalidRoleMappingException invalidRoleMappingException = new InvalidRoleMappingException(DETAIL_MESSAGE);
         // when
-        ErrorResource response = handler.handleInvalidRoleMappingException(mockException);
+        ErrorResource response = handler.handleInvalidRoleMappingException(invalidRoleMappingException);
         // then
         assertNotNull(response);
         assertEquals(DETAIL_MESSAGE, response.getMessage());

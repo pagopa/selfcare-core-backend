@@ -10,10 +10,7 @@ import it.pagopa.selfcare.product.core.ProductService;
 import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.web.config.WebTestConfig;
 import it.pagopa.selfcare.product.web.handler.ProductExceptionsHandler;
-import it.pagopa.selfcare.product.web.model.CreateProductDto;
-import it.pagopa.selfcare.product.web.model.ProductDto;
-import it.pagopa.selfcare.product.web.model.ProductResource;
-import it.pagopa.selfcare.product.web.model.UpdateProductDto;
+import it.pagopa.selfcare.product.web.model.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.util.MimeTypeUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -49,13 +43,22 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProductControllerTest {
 
     private static final String BASE_URL = "/products";
-    private static final CreateProductDto CREATE_PRODUCT_DTO = TestUtils.mockInstance(new CreateProductDto());
-    private static final UpdateProductDto UPDATE_PRODUCT_DTO = TestUtils.mockInstance(new UpdateProductDto());
-    private static final ProductOperations PRODUCT = TestUtils.mockInstance(new ProductDto());
+    private static final CreateProductDto CREATE_PRODUCT_DTO = TestUtils.mockInstance(new CreateProductDto(), "setRoleMappings");
+    private static final UpdateProductDto UPDATE_PRODUCT_DTO = TestUtils.mockInstance(new UpdateProductDto(), "setRoleMappings");
 
     static {
-        CREATE_PRODUCT_DTO.setRoleMappings(new EnumMap<>(PartyRole.class));
-        UPDATE_PRODUCT_DTO.setRoleMappings(new EnumMap<>(PartyRole.class));
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+        for (PartyRole partyRole : PartyRole.values()) {
+            ProductRoleInfo productRoleInfo = new ProductRoleInfo();
+            List<ProductRole> roles = new ArrayList<>();
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+            productRoleInfo.setRoles(roles);
+            productRoleInfo.setMultiroleAllowed(true);
+            roleMappings.put(partyRole, productRoleInfo);
+        }
+        CREATE_PRODUCT_DTO.setRoleMappings(roleMappings);
+        UPDATE_PRODUCT_DTO.setRoleMappings(roleMappings);
     }
 
     @MockBean
@@ -96,8 +99,19 @@ class ProductControllerTest {
     @Test
     void getProducts_atLeastOneProduct() throws Exception {
         // given
+        ProductOperations product = TestUtils.mockInstance(new ProductDto(), "setRoleMappings");
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+        for (PartyRole partyRole : PartyRole.values()) {
+            ProductRoleInfo productRoleInfo = new ProductRoleInfo();
+            List<ProductRole> roles = new ArrayList<>();
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+            productRoleInfo.setRoles(roles);
+            roleMappings.put(partyRole, productRoleInfo);
+        }
+        product.setRoleMappings(roleMappings);
         Mockito.when(productServiceMock.getProducts())
-                .thenReturn(Collections.singletonList(PRODUCT));
+                .thenReturn(Collections.singletonList(product));
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/")
@@ -142,9 +156,19 @@ class ProductControllerTest {
         Mockito.when(productServiceMock.getProduct(Mockito.anyString()))
                 .thenAnswer(invocationOnMock -> {
                     String id = invocationOnMock.getArgument(0, String.class);
-                    ProductOperations p = new ProductDto();
-                    p.setId(id);
-                    return p;
+                    ProductOperations product = TestUtils.mockInstance(new ProductDto(), "setId", "setRoleMappings");
+                    product.setId(id);
+                    EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+                    for (PartyRole partyRole : PartyRole.values()) {
+                        ProductRoleInfo productRoleInfo = new ProductRoleInfo();
+                        List<ProductRole> roles = new ArrayList<>();
+                        roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+                        roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+                        productRoleInfo.setRoles(roles);
+                        roleMappings.put(partyRole, productRoleInfo);
+                    }
+                    product.setRoleMappings(roleMappings);
+                    return product;
                 });
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
@@ -197,7 +221,6 @@ class ProductControllerTest {
     @Test
     void updateProduct_exists() throws Exception {
         // given
-        ProductOperations prod = new ProductDto();
         Mockito.when(productServiceMock.updateProduct(Mockito.anyString(), Mockito.any(ProductOperations.class)))
                 .thenAnswer(invocationOnMock -> {
                     String id = invocationOnMock.getArgument(0, String.class);
@@ -280,10 +303,19 @@ class ProductControllerTest {
         Mockito.when(productServiceMock.getProduct(Mockito.anyString()))
                 .thenAnswer(invocationOnMock -> {
                     String id = invocationOnMock.getArgument(0, String.class);
-                    ProductOperations p = new ProductDto();
-                    p.setId(id);
-                    p.setRoleMappings(new EnumMap<>(Map.of(PartyRole.MANAGER, List.of("product-role"))));
-                    return p;
+                    ProductOperations product = TestUtils.mockInstance(new ProductDto(), "setId", "setRoleMappings");
+                    product.setId(id);
+                    EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+                    for (PartyRole partyRole : PartyRole.values()) {
+                        ProductRoleInfo productRoleInfo = new ProductRoleInfo();
+                        List<ProductRole> roles = new ArrayList<>();
+                        roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+                        roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+                        productRoleInfo.setRoles(roles);
+                        roleMappings.put(partyRole, productRoleInfo);
+                    }
+                    product.setRoleMappings(roleMappings);
+                    return product;
                 });
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
@@ -293,7 +325,7 @@ class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
         // then
-        Map<String, List<String>> roles = objectMapper.readValue(
+        Map<String, ProductRoleInfo> roles = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 new TypeReference<>() {
                 });

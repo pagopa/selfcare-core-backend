@@ -5,6 +5,7 @@ import it.pagopa.selfcare.product.connector.api.ProductConnector;
 import it.pagopa.selfcare.product.connector.exception.FileUploadException;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
+import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
 import it.pagopa.selfcare.product.core.exception.FileValidationException;
 import it.pagopa.selfcare.product.core.exception.InvalidRoleMappingException;
 import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
@@ -20,17 +21,19 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.OffsetDateTime;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Set;
 
 @Slf4j
 @Service
 class ProductServiceImpl implements ProductService {
-    public static final String LOGO_PATH_TEMPLATE = "resources/products/%s/logo.%s";
+
+    private static final String LOGO_PATH_TEMPLATE = "resources/products/%s/logo.%s";
+    private static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product id is required";
+
     private final ProductConnector productConnector;
-
     private final FileStorageConnector fileStorageConnector;
-
     private final Set<String> allowedProductLogoMimeTypes;
     private final Set<String> allowedProductLogoExtensions;
     private final String defaultUrl;
@@ -61,7 +64,8 @@ class ProductServiceImpl implements ProductService {
     public ProductOperations createProduct(ProductOperations product) {
         log.trace("createProduct start");
         log.debug("createProduct product = {}", product);
-        validateRoleMappings(product);
+        Assert.notNull(product, "A product is required");
+        validateRoleMappings(product.getRoleMappings());
         OffsetDateTime now = OffsetDateTime.now();
         product.setCreatedAt(now);
         product.setLogo(defaultUrl);
@@ -72,24 +76,27 @@ class ProductServiceImpl implements ProductService {
         return insert;
     }
 
-    private void validateRoleMappings(ProductOperations product) {
+    private void validateRoleMappings(EnumMap<PartyRole, ? extends ProductRoleInfoOperations> roleMappings) {
         log.trace("validateRoleMappings start");
-        log.debug("validateRoleMappings product = {}", product);
-        product.getRoleMappings().forEach((partyRole, productRoles) -> {
-            if (productRoles == null
-                    || productRoles.isEmpty()
-                    || (productRoles.size() > 1 && !PartyRole.OPERATOR.equals(partyRole))) {
-                throw new InvalidRoleMappingException(String.format("ProductOperations roles cannot be null nor empty and only '%s' Party role can have more than one ProductOperations role", PartyRole.OPERATOR.name()),
-                        new IllegalArgumentException(String.format("partyRole = %s => productRoles = %s", partyRole, productRoles)));
+        log.debug("validateRoleMappings roleMappings = {}", roleMappings);
+        Assert.notEmpty(roleMappings, "A product role mappings is required");
+        roleMappings.forEach((partyRole, productRoleInfo) -> {
+            Assert.notNull(productRoleInfo, "A product role info is required");
+            Assert.notEmpty(productRoleInfo.getRoles(), "At least one Product role are required");
+            if (productRoleInfo.getRoles().size() > 1 && !PartyRole.OPERATOR.equals(partyRole)) {
+                throw new InvalidRoleMappingException(String.format("Only '%s' Party-role can have more than one Product-role", PartyRole.OPERATOR.name()),
+                        new IllegalArgumentException(String.format("partyRole = %s => productRoleInfo = %s", partyRole, productRoleInfo)));
             }
         });
         log.trace("validateRoleMappings end");
     }
 
+
     @Override
     public void deleteProduct(String id) {
         log.trace("deleteProduct start");
         log.debug("deleteProduct id = {}", id);
+        Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
         ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
         if (foundProduct.isEnabled()) {
             foundProduct.setEnabled(false);
@@ -103,6 +110,7 @@ class ProductServiceImpl implements ProductService {
     public ProductOperations getProduct(String id) {
         log.trace("getProduct start");
         log.debug("getProduct id = {}", id);
+        Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
         ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
         if (!foundProduct.isEnabled()) {
             throw new ResourceNotFoundException();
@@ -118,11 +126,13 @@ class ProductServiceImpl implements ProductService {
     public ProductOperations updateProduct(String id, ProductOperations product) {
         log.trace("updateProduct start");
         log.debug("updateProduct id = {}, product = {}", id, product);
+        Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
+        Assert.notNull(product, "A product is required");
         ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
         if (!foundProduct.isEnabled()) {
             throw new ResourceNotFoundException();
         }
-        validateRoleMappings(product);
+        validateRoleMappings(product.getRoleMappings());
         foundProduct.setTitle(product.getTitle());
         foundProduct.setDescription(product.getDescription());
         foundProduct.setUrlPublic(product.getUrlPublic());
@@ -144,8 +154,8 @@ class ProductServiceImpl implements ProductService {
     public void saveProductLogo(String id, InputStream logo, String contentType, String fileName) {
         log.trace("saveProductLogo start");
         log.debug("saveProductLogo id = {}, logo = {}, contentType = {}, fileName = {}", id, logo, contentType, fileName);
+        Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
         ProductOperations productToUpdate = getProduct(id);
-        URL savedUrl = null;
         try {
             validate(contentType, fileName);
 
@@ -154,6 +164,7 @@ class ProductServiceImpl implements ProductService {
         }
 
         String fileExtension = StringUtils.getFilenameExtension(fileName);
+        URL savedUrl;
         try {
             savedUrl = fileStorageConnector.uploadProductLogo(logo, String.format(LOGO_PATH_TEMPLATE, id, fileExtension), contentType);
 
