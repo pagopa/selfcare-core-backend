@@ -21,5 +21,6 @@ public class DummyProduct implements ProductOperations {
     private String contractTemplateVersion;
     private String roleManagementURL;
     private boolean enabled = true;
+    private String parent;
 
 }

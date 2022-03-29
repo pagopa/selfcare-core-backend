@@ -57,4 +57,5 @@ public class CreateProductDto {
     @ApiModelProperty(value = "${swagger.product.model.roleManagementURL}", required = true)
     private String roleManagementURL;
 
+
 }

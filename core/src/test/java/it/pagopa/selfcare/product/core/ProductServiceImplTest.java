@@ -69,13 +69,17 @@ class ProductServiceImplTest {
     @Test
     void getProducts_notEmptyList() {
         // given
-        Mockito.when(productConnectorMock.findByEnabled(Mockito.anyBoolean()))
-                .thenReturn(Collections.singletonList(new DummyProduct()));
+        String parent = null;
+        boolean enabled = true;
+        DummyProduct product = TestUtils.mockInstance(new DummyProduct(), "setParent");
+        Mockito.when(productConnectorMock.findByParentAndEnabled(Mockito.any(), Mockito.anyBoolean()))
+                .thenReturn(List.of(product));
         // when
         List<ProductOperations> products = productService.getProducts();
         // then
         assertEquals(1, products.size());
-        Mockito.verify(productConnectorMock, Mockito.times(1)).findByEnabled(Mockito.anyBoolean());
+        Mockito.verify(productConnectorMock, Mockito.times(1))
+                .findByParentAndEnabled(parent, enabled);
         Mockito.verifyNoMoreInteractions(productConnectorMock);
     }
 

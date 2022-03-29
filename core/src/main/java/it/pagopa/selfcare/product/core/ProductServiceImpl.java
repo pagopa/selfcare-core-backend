@@ -54,7 +54,7 @@ class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductOperations> getProducts() {
         log.trace("getProducts start");
-        List<ProductOperations> products = productConnector.findByEnabled(true);
+        List<ProductOperations> products = productConnector.findByParentAndEnabled(null, true);
         log.debug("getProducts result = {}", products);
         log.trace("getProducts end");
         return products;

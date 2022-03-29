@@ -30,6 +30,9 @@ public class ProductMapper {
             resource.setContractTemplatePath(entity.getContractTemplatePath());
             resource.setContractTemplateVersion(entity.getContractTemplateVersion());
             resource.setRoleManagementURL(entity.getRoleManagementURL());
+            if (entity.getParent() != null) {
+                resource.setParent(entity.getParent());
+            }
         }
         log.debug("toResource result = {}", resource);
         log.trace("toResource end");

@@ -57,4 +57,8 @@ public interface ProductOperations {
 
     void setEnabled(boolean enabled);
 
+    void setParent(String parent);
+
+    String getParent();
+
 }

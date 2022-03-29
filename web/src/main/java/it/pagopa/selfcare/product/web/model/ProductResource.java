@@ -72,4 +72,7 @@ public class ProductResource {
     @ApiModelProperty(value = "${swagger.product.model.roleManagementURL}", required = true)
     private String roleManagementURL;
 
+    @ApiModelProperty(value = "${swagger.product.model.parentProduct}")
+    private String parent;
+
 }
