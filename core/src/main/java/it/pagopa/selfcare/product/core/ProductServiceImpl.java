@@ -17,6 +17,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.InvalidMimeTypeException;
 import org.springframework.util.StringUtils;
 
+import javax.validation.ValidationException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -65,10 +66,14 @@ class ProductServiceImpl implements ProductService {
         log.trace("createProduct start");
         log.debug("createProduct product = {}", product);
         Assert.notNull(product, "A product is required");
-        validateRoleMappings(product.getRoleMappings());
+        if (product.getParent() == null) {
+            validateRoleMappings(product.getRoleMappings());
+            product.setLogo(defaultUrl);
+        } else if (!productConnector.existsById(product.getParent())) {
+            throw new ValidationException("Parent not found", new ResourceNotFoundException("For id = " + product.getParent()));
+        }
         OffsetDateTime now = OffsetDateTime.now();
         product.setCreatedAt(now);
-        product.setLogo(defaultUrl);
         product.setContractTemplateUpdatedAt(now);
         ProductOperations insert = productConnector.insert(product);
         log.debug("createProduct result = {}", insert);
@@ -132,7 +137,9 @@ class ProductServiceImpl implements ProductService {
         if (!foundProduct.isEnabled()) {
             throw new ResourceNotFoundException();
         }
-        validateRoleMappings(product.getRoleMappings());
+        if (foundProduct.getParent() == null) {
+            validateRoleMappings(product.getRoleMappings());
+        }
         foundProduct.setTitle(product.getTitle());
         foundProduct.setDescription(product.getDescription());
         foundProduct.setUrlPublic(product.getUrlPublic());
@@ -144,6 +151,7 @@ class ProductServiceImpl implements ProductService {
             foundProduct.setContractTemplateUpdatedAt(OffsetDateTime.now());
         }
         foundProduct.setContractTemplateVersion(product.getContractTemplateVersion());
+
         ProductOperations updatedProduct = productConnector.save(foundProduct);
         log.debug("updateProduct result = {}", updatedProduct);
         log.trace("updateProduct end");
@@ -156,6 +164,9 @@ class ProductServiceImpl implements ProductService {
         log.debug("saveProductLogo id = {}, logo = {}, contentType = {}, fileName = {}", id, logo, contentType, fileName);
         Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
         ProductOperations productToUpdate = getProduct(id);
+        if (productToUpdate.getParent() != null) {
+            throw new ValidationException("Given product Id = " + id + " is of a subProduct");
+        }
         try {
             validate(contentType, fileName);
 

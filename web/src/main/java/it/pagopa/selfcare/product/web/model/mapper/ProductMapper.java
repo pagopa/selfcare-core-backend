@@ -60,6 +60,19 @@ public class ProductMapper {
         return product;
     }
 
+    public static ProductOperations fromDto(CreateSubProductDto dto) {
+        ProductOperations product = null;
+        if (dto != null) {
+            product = new ProductDto();
+            product.setId(dto.getId());
+            product.setTitle(dto.getTitle());
+            product.setContractTemplatePath(dto.getContractTemplatePath());
+            product.setContractTemplateVersion(dto.getContractTemplateVersion());
+            product.setParent(dto.getParent());
+        }
+        return product;
+    }
+
     public static ProductOperations fromDto(UpdateProductDto dto) {
         log.trace("fromDto start");
         log.debug("fromDto updateProductDto = {}", dto);
@@ -80,6 +93,16 @@ public class ProductMapper {
         return product;
     }
 
+    public static ProductOperations fromDto(UpdateSubProductDto dto) {
+        ProductOperations product = null;
+        if (dto != null) {
+            product = new ProductDto();
+            product.setTitle(dto.getTitle());
+            product.setContractTemplatePath(dto.getContractTemplatePath());
+            product.setContractTemplateVersion(dto.getContractTemplateVersion());
+        }
+        return product;
+    }
 
     public static EnumMap<PartyRole, ProductRoleInfo> toRoleMappings(EnumMap<PartyRole, ? extends ProductRoleInfoOperations> roleMappings) {
         EnumMap<PartyRole, ProductRoleInfo> result;
