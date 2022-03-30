@@ -68,7 +68,6 @@ public class ProductMapper {
             product.setTitle(dto.getTitle());
             product.setContractTemplatePath(dto.getContractTemplatePath());
             product.setContractTemplateVersion(dto.getContractTemplateVersion());
-            product.setParent(dto.getParent());
         }
         return product;
     }

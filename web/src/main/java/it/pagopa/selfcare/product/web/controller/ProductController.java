@@ -125,7 +125,9 @@ public class ProductController {
                                                     CreateSubProductDto product) {
         log.trace("createProduct start");
         log.debug("createProduct product = {}", product);
-        ProductOperations p = productService.createProduct(ProductMapper.fromDto(product));
+        ProductOperations productOps = ProductMapper.fromDto(product);
+        productOps.setParent(id);
+        ProductOperations p = productService.createProduct(productOps);
         ProductResource createdProduct = ProductMapper.toResource(p);
         log.debug("createProduct result = {}", createdProduct);
         log.trace("createProduct end");

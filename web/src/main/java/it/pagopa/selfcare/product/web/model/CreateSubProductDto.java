@@ -28,8 +28,4 @@ public class CreateSubProductDto {
     @NotBlank
     private String title;
 
-    @ApiModelProperty(value = "${swagger.product.model.parentProduct}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
-    private String parent;
 }

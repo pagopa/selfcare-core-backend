@@ -35,13 +35,11 @@ class CreateSubProductDtoTest {
         toCheckMap.put("title", NotBlank.class);
         toCheckMap.put("contractTemplatePath", NotBlank.class);
         toCheckMap.put("contractTemplateVersion", NotBlank.class);
-        toCheckMap.put("parent", NotBlank.class);
         CreateSubProductDto createSubProductDto = new CreateSubProductDto();
         createSubProductDto.setId(null);
         createSubProductDto.setTitle(null);
         createSubProductDto.setContractTemplatePath(null);
         createSubProductDto.setContractTemplateVersion(null);
-        createSubProductDto.setParent(null);
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(createSubProductDto);
         // then

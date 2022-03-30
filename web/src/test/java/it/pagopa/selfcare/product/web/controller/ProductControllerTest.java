@@ -237,6 +237,7 @@ class ProductControllerTest {
         // then
         ProductResource product = objectMapper.readValue(result.getResponse().getContentAsString(), ProductResource.class);
         assertNotNull(product);
+        assertEquals(productId, product.getParent());
         TestUtils.reflectionEqualsByName(CREATE_SUB_PRODUCT_DTO, product);
     }
 
