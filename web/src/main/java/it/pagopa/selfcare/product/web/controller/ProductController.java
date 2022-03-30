@@ -118,7 +118,9 @@ public class ProductController {
     @PostMapping(value = "/{id}/sub-products", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "", notes = "${swagger.product.operation.createProduct}")
-    public ProductResource createSubProduct(@RequestBody
+    public ProductResource createSubProduct(@ApiParam("${swagger.product.model.id}")
+                                            @PathVariable("id") String id,
+                                            @RequestBody
                                             @Valid
                                                     CreateSubProductDto product) {
         log.trace("createProduct start");

@@ -90,6 +90,26 @@ class ProductMapperTest {
     }
 
     @Test
+    void fromCreateSubProductDto_notNull() {
+        //given
+        CreateSubProductDto dto = TestUtils.mockInstance(new CreateSubProductDto());
+        // when
+        ProductOperations product = ProductMapper.fromDto(dto);
+        // then
+        assertNotNull(product);
+        TestUtils.reflectionEqualsByName(product, dto);
+    }
+
+    @Test
+    void fromCreateSubProduct_null() {
+        //given
+        //when
+        ProductOperations product = ProductMapper.fromDto((CreateSubProductDto) null);
+        // then
+        assertNull(product);
+    }
+
+    @Test
     void fromUpdateProductDto_notNull() {
         // given
         UpdateProductDto dto = TestUtils.mockInstance(new UpdateProductDto(), "setRoleMappings");
@@ -116,6 +136,26 @@ class ProductMapperTest {
         // when
         ProductOperations product = ProductMapper.fromDto((UpdateProductDto) null);
         // then
+        assertNull(product);
+    }
+
+    @Test
+    void fromUpdateSubProduct_notNull() {
+        //given
+        UpdateSubProductDto updateSubProductDto = TestUtils.mockInstance(new UpdateSubProductDto());
+        //when
+        ProductOperations productOperations = ProductMapper.fromDto(updateSubProductDto);
+        //then
+        assertNull(productOperations.getId());
+        TestUtils.reflectionEqualsByName(productOperations, updateSubProductDto);
+    }
+
+    @Test
+    void fromUpdateSubProduct_null() {
+        //given
+        //when
+        ProductOperations product = ProductMapper.fromDto((UpdateSubProductDto) null);
+        //then
         assertNull(product);
     }
 
