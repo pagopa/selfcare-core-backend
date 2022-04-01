@@ -56,8 +56,11 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.product.operation.getProductsTree}")
     public List<ProductTreeResource> getProductsTree() {
+        log.trace("getProductsTree start");
         List<ProductOperations> products = productService.getProducts(false);
         List<ProductTreeResource> result = ProductMapper.toTreeResource(products);
+        log.debug("getProductsTree result = {}", result);
+        log.trace("getProductsTree end");
         return result;
     }
 
