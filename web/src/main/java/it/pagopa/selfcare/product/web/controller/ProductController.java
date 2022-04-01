@@ -42,13 +42,23 @@ public class ProductController {
     @ApiOperation(value = "", notes = "${swagger.product.operation.getProducts}")
     public List<ProductResource> getProducts() {
         log.trace("getProducts start");
-        List<ProductOperations> products = productService.getProducts();
+        List<ProductOperations> products = productService.getProducts(true);
         List<ProductResource> productResources = products.stream()
                 .map(ProductMapper::toResource)
                 .collect(Collectors.toList());
         log.debug("getProducts result = {}", productResources);
         log.trace("getProducts end");
         return productResources;
+    }
+
+
+    @GetMapping("/tree")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.product.operation.getProductsTree}")
+    public List<ProductTreeResource> getProductsTree() {
+        List<ProductOperations> products = productService.getProducts(false);
+        List<ProductTreeResource> result = ProductMapper.toTreeResource(products);
+        return result;
     }
 
     @PutMapping(value = "/{id}/logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -82,7 +92,7 @@ public class ProductController {
         return productResource;
     }
 
-
+    //TODO verify if its necessary to return a 404 in case of null rolemappings
     @GetMapping("/{id}/role-mappings")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.product.operation.getProductRoleMappings}")
@@ -126,7 +136,7 @@ public class ProductController {
         log.trace("createProduct start");
         log.debug("createProduct product = {}", product);
         ProductOperations productOps = ProductMapper.fromDto(product);
-        productOps.setParent(id);
+        productOps.setParentId(id);
         ProductOperations p = productService.createProduct(productOps);
         ProductResource createdProduct = ProductMapper.toResource(p);
         log.debug("createProduct result = {}", createdProduct);

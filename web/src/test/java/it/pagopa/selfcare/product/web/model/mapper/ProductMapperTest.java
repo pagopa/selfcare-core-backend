@@ -189,4 +189,44 @@ class ProductMapperTest {
         assertIterableEquals(roleMappings.entrySet(), result.entrySet());
     }
 
+    @Test
+    void toTreeResource_null() {
+        //given
+        List<ProductOperations> model = null;
+        //when
+        List<ProductTreeResource> resource = ProductMapper.toTreeResource(model);
+        //then
+        assertNull(resource);
+    }
+
+    @Test
+    void toTreeResource_notNull() {
+        //given
+        ProductOperations node = TestUtils.mockInstance(new ProductDto(), "setParentId", "setId");
+        node.setId("parentId");
+        ProductOperations children = TestUtils.mockInstance(new ProductDto(), "setParentId");
+        children.setParentId(node.getId());
+        //when
+        List<ProductTreeResource> resource = ProductMapper.toTreeResource(List.of(node, children));
+        //then
+        assertNotNull(resource);
+        assertEquals(1, resource.size());
+        TestUtils.reflectionEqualsByName(node, resource.get(0).getNode());
+        TestUtils.reflectionEqualsByName(children, resource.get(0).getChildren().get(0));
+    }
+
+    @Test
+    void toTreeResource_notNull_noChildren() {
+        //given
+        ProductOperations node = TestUtils.mockInstance(new ProductDto(), "setParentId", "setId");
+        node.setId("parentId");
+        //when
+        List<ProductTreeResource> resource = ProductMapper.toTreeResource(List.of(node));
+        //then
+        assertNotNull(resource);
+        assertEquals(1, resource.size());
+        TestUtils.reflectionEqualsByName(node, resource.get(0).getNode());
+
+    }
+
 }

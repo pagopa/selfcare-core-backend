@@ -53,9 +53,14 @@ class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductOperations> getProducts() {
+    public List<ProductOperations> getProducts(boolean rootOnly) {
         log.trace("getProducts start");
-        List<ProductOperations> products = productConnector.findByParentAndEnabled(null, true);
+        List<ProductOperations> products;
+        if (rootOnly) {
+            products = productConnector.findByParentAndEnabled(null, true);
+        } else {
+            products = productConnector.findByEnabled(true);
+        }
         log.debug("getProducts result = {}", products);
         log.trace("getProducts end");
         return products;
@@ -66,11 +71,11 @@ class ProductServiceImpl implements ProductService {
         log.trace("createProduct start");
         log.debug("createProduct product = {}", product);
         Assert.notNull(product, "A product is required");
-        if (product.getParent() == null) {
+        if (product.getParentId() == null) {
             validateRoleMappings(product.getRoleMappings());
             product.setLogo(defaultUrl);
-        } else if (!productConnector.existsById(product.getParent())) {
-            throw new ValidationException("Parent not found", new ResourceNotFoundException("For id = " + product.getParent()));
+        } else if (!productConnector.existsById(product.getParentId())) {
+            throw new ValidationException("Parent not found", new ResourceNotFoundException("For id = " + product.getParentId()));
         }
         OffsetDateTime now = OffsetDateTime.now();
         product.setCreatedAt(now);
@@ -137,7 +142,7 @@ class ProductServiceImpl implements ProductService {
         if (!foundProduct.isEnabled()) {
             throw new ResourceNotFoundException();
         }
-        if (foundProduct.getParent() == null) {
+        if (foundProduct.getParentId() == null) {
             validateRoleMappings(product.getRoleMappings());
         }
         foundProduct.setTitle(product.getTitle());
@@ -164,7 +169,7 @@ class ProductServiceImpl implements ProductService {
         log.debug("saveProductLogo id = {}, logo = {}, contentType = {}, fileName = {}", id, logo, contentType, fileName);
         Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
         ProductOperations productToUpdate = getProduct(id);
-        if (productToUpdate.getParent() != null) {
+        if (productToUpdate.getParentId() != null) {
             throw new ValidationException("Given product Id = " + id + " is of a subProduct");
         }
         try {

@@ -59,28 +59,63 @@ class ProductServiceImplTest {
 
 
     @Test
-    void getProducts_emptyList() {
-        // given and when
-        List<ProductOperations> products = productService.getProducts();
+    void getProducts_emptyListRootOnly() {
+        // given
+        String parent = null;
+        boolean enabled = true;
+        // when
+        List<ProductOperations> products = productService.getProducts(true);
         // then
         assertTrue(products.isEmpty());
+        Mockito.verify(productConnectorMock, Mockito.times(1))
+                .findByParentAndEnabled(parent, enabled);
+        Mockito.verifyNoMoreInteractions(productConnectorMock);
     }
 
 
     @Test
-    void getProducts_notEmptyList() {
+    void getProducts_notEmptyListRootOnly() {
         // given
         String parent = null;
         boolean enabled = true;
-        DummyProduct product = TestUtils.mockInstance(new DummyProduct(), "setParent");
+        DummyProduct product = TestUtils.mockInstance(new DummyProduct(), "setParentId");
         Mockito.when(productConnectorMock.findByParentAndEnabled(Mockito.any(), Mockito.anyBoolean()))
                 .thenReturn(List.of(product));
         // when
-        List<ProductOperations> products = productService.getProducts();
+        List<ProductOperations> products = productService.getProducts(true);
         // then
         assertEquals(1, products.size());
         Mockito.verify(productConnectorMock, Mockito.times(1))
                 .findByParentAndEnabled(parent, enabled);
+        Mockito.verifyNoMoreInteractions(productConnectorMock);
+    }
+
+    @Test
+    void getProducts_emptyListAll() {
+        //given
+        boolean enabled = true;
+        // when
+        List<ProductOperations> products = productService.getProducts(false);
+        // then
+        assertTrue(products.isEmpty());
+        Mockito.verify(productConnectorMock, Mockito.times(1))
+                .findByEnabled(enabled);
+        Mockito.verifyNoMoreInteractions(productConnectorMock);
+    }
+
+    @Test
+    void getProducts_notEmptyAll() {
+        // given
+        boolean enabled = true;
+        DummyProduct product = TestUtils.mockInstance(new DummyProduct());
+        Mockito.when(productConnectorMock.findByEnabled(Mockito.anyBoolean()))
+                .thenReturn(List.of(product));
+        // when
+        List<ProductOperations> products = productService.getProducts(false);
+        // then
+        assertEquals(1, products.size());
+        Mockito.verify(productConnectorMock, Mockito.times(1))
+                .findByEnabled(enabled);
         Mockito.verifyNoMoreInteractions(productConnectorMock);
     }
 
@@ -96,7 +131,6 @@ class ProductServiceImplTest {
         Assertions.assertEquals("A product is required", e.getMessage());
         Mockito.verifyNoInteractions(productConnectorMock);
     }
-
 
 
     @Test
@@ -263,7 +297,7 @@ class ProductServiceImplTest {
         String id = "id";
         ProductOperations input = new DummyProduct();
         input.setId(id);
-        input.setParent("parent");
+        input.setParentId("parentId");
         input.setContractTemplatePath("templatePath");
         input.setContractTemplateVersion("contractVersion");
         input.setTitle("title");
@@ -286,9 +320,9 @@ class ProductServiceImplTest {
         assertEquals(input.getId(), capturedOps.getId());
         assertEquals(input.getContractTemplateVersion(), capturedOps.getContractTemplateVersion());
         assertEquals(input.getTitle(), capturedOps.getTitle());
-        assertEquals(input.getParent(), capturedOps.getParent());
+        assertEquals(input.getParentId(), capturedOps.getParentId());
         Mockito.verify(productConnectorMock, Mockito.times(1))
-                .existsById(input.getParent());
+                .existsById(input.getParentId());
         Mockito.verifyNoMoreInteractions(productConnectorMock);
     }
 
@@ -299,7 +333,7 @@ class ProductServiceImplTest {
         String id = "id";
         ProductOperations input = new DummyProduct();
         input.setId(id);
-        input.setParent("parent");
+        input.setParentId("parentId");
         input.setContractTemplatePath("templatePath");
         input.setContractTemplateVersion("contractVersion");
         input.setTitle("title");
@@ -311,7 +345,7 @@ class ProductServiceImplTest {
         Executable executable = () -> productService.createProduct(input);
         //then
         ValidationException e = assertThrows(ValidationException.class, executable);
-        assertEquals("For id = " + input.getParent(), e.getCause().getMessage());
+        assertEquals("For id = " + input.getParentId(), e.getCause().getMessage());
         Mockito.verify(productConnectorMock, Mockito.times(1))
                 .existsById(Mockito.any());
         Mockito.verifyNoMoreInteractions(productConnectorMock);
@@ -467,7 +501,7 @@ class ProductServiceImplTest {
     void updateProduct_foundProductEnabledDiffVersionContract() {
         // given
         String productId = "productId";
-        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setParent");
+        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setParentId");
         Mockito.when(productConnectorMock.findById(productId))
                 .thenReturn(Optional.of(new DummyProduct()));
         EnumMap<PartyRole, DummyProductRoleInfo> map = new EnumMap<>(PartyRole.class);
@@ -517,7 +551,7 @@ class ProductServiceImplTest {
         ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId",
                 "setRoleMappings",
                 "setContractTemplateVersion",
-                "setParent");
+                "setParentId");
         product.setRoleMappings(map);
         product.setContractTemplateVersion(contractTemplateVersion);
         Mockito.when(productConnectorMock.save(Mockito.any()))
@@ -579,7 +613,7 @@ class ProductServiceImplTest {
                     DummyProduct foundProductMock = new DummyProduct();
                     foundProductMock.setId(invocationOnMock.getArgument(0, String.class));
                     foundProductMock.setContractTemplateVersion(contractTemplateVersion);
-                    foundProductMock.setParent(parentId);
+                    foundProductMock.setParentId(parentId);
                     return Optional.of(foundProductMock);
                 });
         ProductOperations product = TestUtils.mockInstance(new DummyProduct(),
@@ -631,7 +665,7 @@ class ProductServiceImplTest {
         InputStream logo = InputStream.nullInputStream();
         String contentType = null;
         String filename = null;
-        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setParent");
+        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setParentId");
         product.setLogo(null);
         product.setId(productId);
         Mockito.when(productConnectorMock.findById(Mockito.anyString()))
@@ -650,7 +684,7 @@ class ProductServiceImplTest {
         InputStream logo = InputStream.nullInputStream();
         String contentType = MimeTypeUtils.IMAGE_GIF_VALUE;
         String fileName = "filename";
-        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setParent");
+        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setParentId");
         product.setLogo(null);
         product.setId(productId);
         Mockito.when(productConnectorMock.findById(Mockito.anyString()))
@@ -689,7 +723,7 @@ class ProductServiceImplTest {
         InputStream logo = InputStream.nullInputStream();
         String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
         String fileName = "filename.gif";
-        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setParent");
+        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setParentId");
         product.setLogo(null);
         product.setId(productId);
         Mockito.when(productConnectorMock.findById(Mockito.anyString()))
@@ -708,7 +742,7 @@ class ProductServiceImplTest {
         InputStream logo = InputStream.nullInputStream();
         String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
         String fileName = "filename.png";
-        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setParent");
+        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setParentId");
         product.setLogo(null);
         product.setId(productId);
         Mockito.when(productConnectorMock.findById(Mockito.anyString()))
@@ -733,7 +767,7 @@ class ProductServiceImplTest {
         InputStream logo = InputStream.nullInputStream();
         String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
         String fileName = "filename.png";
-        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setParent");
+        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setParentId");
         product.setLogo(null);
         product.setId(productId);
         URI uriMock = new URI("https://selcdcheckoutsa.z6.web.core.windows.net/resources/products/default/logo.png");
@@ -761,7 +795,7 @@ class ProductServiceImplTest {
         InputStream logo = InputStream.nullInputStream();
         String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
         String fileName = "filename.png";
-        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setParent");
+        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setParentId");
         product.setLogo("https://selcdcheckoutsa.z6.web.core.windows.net/resources/products/default/logo.png");
         product.setId(productId);
         URI uriMock = new URI("https://selcdcheckoutsa.z6.web.core.windows.net/resources/products/default/logo.png");
@@ -789,7 +823,7 @@ class ProductServiceImplTest {
         InputStream logo = InputStream.nullInputStream();
         String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
         String fileName = "filename.png";
-        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setParent", "setRoleMappings");
+        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setParentId", "setRoleMappings");
         product.setLogo("https://selcdcheckoutsa.blob.core.windows.net/$web/resources/products/default/logo.png");
         product.setId(productId);
         Mockito.when(productConnectorMock.findById(Mockito.anyString()))

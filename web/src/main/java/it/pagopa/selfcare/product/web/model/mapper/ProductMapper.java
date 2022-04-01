@@ -7,6 +7,9 @@ import it.pagopa.selfcare.product.web.model.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class ProductMapper {
@@ -30,8 +33,8 @@ public class ProductMapper {
             resource.setContractTemplatePath(entity.getContractTemplatePath());
             resource.setContractTemplateVersion(entity.getContractTemplateVersion());
             resource.setRoleManagementURL(entity.getRoleManagementURL());
-            if (entity.getParent() != null) {
-                resource.setParent(entity.getParent());
+            if (entity.getParentId() != null) {
+                resource.setParentId(entity.getParentId());
             }
         }
         log.debug("toResource result = {}", resource);
@@ -112,6 +115,28 @@ public class ProductMapper {
             roleMappings.forEach((key, value) -> result.put(key, new ProductRoleInfo(value)));
         }
         return result;
+    }
+
+    public static List<ProductTreeResource> toTreeResource(List<ProductOperations> model) {
+        List<ProductTreeResource> resources = null;
+        if (model != null) {
+            Map<String, List<ProductOperations>> collect = model.stream()
+                    .filter(productOperations -> productOperations.getParentId() != null)
+                    .collect(Collectors.groupingBy(ProductOperations::getParentId, Collectors.toList()));
+            resources = model.stream()
+                    .filter(productOperations -> productOperations.getParentId() == null)
+                    .map(productOperations -> {
+                        ProductTreeResource productTreeResource = new ProductTreeResource();
+                        productTreeResource.setNode(ProductMapper.toResource(productOperations));
+                        if (collect.get(productOperations.getId()) != null) {
+                            productTreeResource.setChildren(collect.get(productOperations.getId()).stream()
+                                    .map(ProductMapper::toResource)
+                                    .collect(Collectors.toList()));
+                        }
+                        return productTreeResource;
+                    }).collect(Collectors.toList());
+        }
+        return resources;
     }
 
 }

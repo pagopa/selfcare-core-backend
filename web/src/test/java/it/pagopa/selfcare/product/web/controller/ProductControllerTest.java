@@ -101,7 +101,7 @@ class ProductControllerTest {
     @Test
     void getProducts_atLeastOneProduct() throws Exception {
         // given
-        ProductOperations product = TestUtils.mockInstance(new ProductDto(), "setRoleMappings", "setParent");
+        ProductOperations product = TestUtils.mockInstance(new ProductDto(), "setRoleMappings", "setParentId");
         EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
         for (PartyRole partyRole : PartyRole.values()) {
             ProductRoleInfo productRoleInfo = new ProductRoleInfo();
@@ -112,7 +112,7 @@ class ProductControllerTest {
             roleMappings.put(partyRole, productRoleInfo);
         }
         product.setRoleMappings(roleMappings);
-        Mockito.when(productServiceMock.getProducts())
+        Mockito.when(productServiceMock.getProducts(true))
                 .thenReturn(Collections.singletonList(product));
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
@@ -133,7 +133,7 @@ class ProductControllerTest {
     @Test
     void getProducts_noProducts() throws Exception {
         // given
-        Mockito.when(productServiceMock.getProducts())
+        Mockito.when(productServiceMock.getProducts(true))
                 .thenReturn(Collections.emptyList());
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
@@ -237,7 +237,7 @@ class ProductControllerTest {
         // then
         ProductResource product = objectMapper.readValue(result.getResponse().getContentAsString(), ProductResource.class);
         assertNotNull(product);
-        assertEquals(productId, product.getParent());
+        assertEquals(productId, product.getParentId());
         TestUtils.reflectionEqualsByName(CREATE_SUB_PRODUCT_DTO, product);
     }
 
@@ -395,5 +395,34 @@ class ProductControllerTest {
         ErrorResource error = objectMapper.readValue(result.getResponse().getContentAsString(), ErrorResource.class);
         assertNotNull(error);
     }
+
+    @Test
+    void getProductsTree() throws Exception {
+        //given
+        ProductOperations node = TestUtils.mockInstance(new ProductDto(), "setParentId", "setId");
+        node.setId("parentId");
+        ProductOperations children = TestUtils.mockInstance(new ProductDto(), "setParentId");
+        children.setParentId(node.getId());
+        Mockito.when(productServiceMock.getProducts(Mockito.anyBoolean()))
+                .thenReturn(List.of(node, children));
+        //when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                .get(BASE_URL + "/tree")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .andReturn();
+        //then
+        List<ProductTreeResource> treeResources = objectMapper.readValue(result.getResponse().getContentAsString(),
+                new TypeReference<>() {
+                });
+        assertNotNull(treeResources);
+        assertEquals(1, treeResources.size());
+        Mockito.verify(productServiceMock, Mockito.times(1))
+                .getProducts(false);
+        Mockito.verifyNoMoreInteractions(productServiceMock);
+
+    }
+
 
 }

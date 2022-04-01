@@ -36,7 +36,7 @@ public class ProductEntity implements ProductOperations {
         contractTemplateVersion = product.getContractTemplateVersion();
         roleManagementURL = product.getRoleManagementURL();
         enabled = product.isEnabled();
-        parent = product.getParent();
+        parentId = product.getParentId();
     }
 
     @Id
@@ -53,7 +53,7 @@ public class ProductEntity implements ProductOperations {
     private String contractTemplateVersion;
     private String roleManagementURL;
     private boolean enabled = true;
-    private String parent;
+    private String parentId;
 
 
     @Data

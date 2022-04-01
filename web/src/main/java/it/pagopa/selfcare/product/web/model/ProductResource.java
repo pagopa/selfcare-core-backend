@@ -18,9 +18,7 @@ public class ProductResource {
     @NotBlank
     private String id;
 
-    @ApiModelProperty(value = "${swagger.product.model.logo}", required = true)
-//    @JsonProperty(required = true)
-//    @NotBlank
+    @ApiModelProperty(value = "${swagger.product.model.logo}", required = false)
     private String logo;
 
     @ApiModelProperty(value = "${swagger.product.model.title}", required = true)
@@ -28,17 +26,13 @@ public class ProductResource {
     @NotBlank
     private String title;
 
-    @ApiModelProperty(value = "${swagger.product.model.description}", required = true)
-//    @JsonProperty(required = true)
-//    @NotBlank
+    @ApiModelProperty(value = "${swagger.product.model.description}", required = false)
     private String description;
 
     @ApiModelProperty("${swagger.product.model.urlPublic}")
     private String urlPublic;
 
-    @ApiModelProperty(value = "${swagger.product.model.urlBO}", required = true)
-    @JsonProperty(required = true)
-//    @NotBlank
+    @ApiModelProperty(value = "${swagger.product.model.urlBO}", required = false)
     private String urlBO;
 
     @ApiModelProperty(value = "${swagger.product.model.creationDateTime}", required = true)
@@ -51,10 +45,8 @@ public class ProductResource {
     @NotNull
     private OffsetDateTime contractTemplateUpdatedAt;
 
-    @ApiModelProperty(value = "${swagger.product.model.roleMappings}", required = true)
+    @ApiModelProperty(value = "${swagger.product.model.roleMappings}", required = false)
     @JsonProperty(required = true)
-//    @NotEmpty
-//    @Valid
     private EnumMap<PartyRole, ProductRoleInfo> roleMappings;
 
     @ApiModelProperty(value = "${swagger.product.model.contractTemplatePath}", required = true)
@@ -67,10 +59,10 @@ public class ProductResource {
     @NotBlank
     private String contractTemplateVersion;
 
-    @ApiModelProperty(value = "${swagger.product.model.roleManagementURL}", required = true)
+    @ApiModelProperty(value = "${swagger.product.model.roleManagementURL}", required = false)
     private String roleManagementURL;
 
     @ApiModelProperty(value = "${swagger.product.model.parentProduct}")
-    private String parent;
+    private String parentId;
 
 }

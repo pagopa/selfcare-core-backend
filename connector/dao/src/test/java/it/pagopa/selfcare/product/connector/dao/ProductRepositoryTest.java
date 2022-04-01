@@ -158,7 +158,7 @@ class ProductRepositoryTest {
         ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setId");
         repository.save(product);
         //when
-        List<ProductEntity> result = repository.findByParentAndEnabled("setParent", true);
+        List<ProductEntity> result = repository.findByParentIdAndEnabled("setParentId", true);
         //then
         assertFalse(result.isEmpty());
     }
@@ -167,10 +167,10 @@ class ProductRepositoryTest {
     void findByParentAndEnabled_notFound() {
         //given
         ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setId");
-        product.setParent("differentParent");
+        product.setParentId("differentParent");
         repository.save(product);
         //when
-        List<ProductEntity> result = repository.findByParentAndEnabled("setParent", true);
+        List<ProductEntity> result = repository.findByParentIdAndEnabled("setParentId", true);
         //then
         assertTrue(result.isEmpty());
     }
@@ -178,10 +178,10 @@ class ProductRepositoryTest {
     @Test
     void findByParentAndEnabled_parentNull() {
         //given
-        ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setId", "setParent");
+        ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setId", "setParentId");
         repository.save(product);
         //when
-        List<ProductEntity> result = repository.findByParentAndEnabled(null, true);
+        List<ProductEntity> result = repository.findByParentIdAndEnabled(null, true);
         //then
         assertFalse(result.isEmpty());
     }
