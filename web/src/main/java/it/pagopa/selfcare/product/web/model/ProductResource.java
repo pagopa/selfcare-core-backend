@@ -5,11 +5,12 @@ import io.swagger.annotations.ApiModelProperty;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import lombok.Data;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.OffsetDateTime;
 import java.util.EnumMap;
-import java.util.List;
 
 @Data
 public class ProductResource {
@@ -54,8 +55,9 @@ public class ProductResource {
 
     @ApiModelProperty(value = "${swagger.product.model.roleMappings}", required = true)
     @JsonProperty(required = true)
-    @NotNull
-    private EnumMap<PartyRole, List<String>> roleMappings;
+    @NotEmpty
+    @Valid
+    private EnumMap<PartyRole, ProductRoleInfo> roleMappings;
 
     @ApiModelProperty(value = "${swagger.product.model.contractTemplatePath}", required = true)
     @JsonProperty(required = true)

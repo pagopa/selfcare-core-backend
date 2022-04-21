@@ -8,51 +8,62 @@ import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.core.ProductService;
 import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
+import it.pagopa.selfcare.product.web.config.WebTestConfig;
 import it.pagopa.selfcare.product.web.handler.ProductExceptionsHandler;
-import it.pagopa.selfcare.product.web.model.CreateProductDto;
-import it.pagopa.selfcare.product.web.model.ProductDto;
-import it.pagopa.selfcare.product.web.model.ProductResource;
-import it.pagopa.selfcare.product.web.model.UpdateProductDto;
+import it.pagopa.selfcare.product.web.model.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.util.MimeTypeUtils;
 
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @WebMvcTest(value = {ProductController.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ContextConfiguration(classes = {
         ProductController.class,
-        ProductExceptionsHandler.class
+        ProductExceptionsHandler.class,
+        WebTestConfig.class
 })
 class ProductControllerTest {
 
     private static final String BASE_URL = "/products";
-    private static final CreateProductDto CREATE_PRODUCT_DTO = TestUtils.mockInstance(new CreateProductDto());
-    private static final UpdateProductDto UPDATE_PRODUCT_DTO = TestUtils.mockInstance(new UpdateProductDto());
-    private static final ProductOperations PRODUCT = TestUtils.mockInstance(new ProductDto());
+    private static final CreateProductDto CREATE_PRODUCT_DTO = TestUtils.mockInstance(new CreateProductDto(), "setRoleMappings");
+    private static final UpdateProductDto UPDATE_PRODUCT_DTO = TestUtils.mockInstance(new UpdateProductDto(), "setRoleMappings");
 
     static {
-        CREATE_PRODUCT_DTO.setRoleMappings(new EnumMap<>(PartyRole.class));
-        UPDATE_PRODUCT_DTO.setRoleMappings(new EnumMap<>(PartyRole.class));
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+        for (PartyRole partyRole : PartyRole.values()) {
+            ProductRoleInfo productRoleInfo = new ProductRoleInfo();
+            List<ProductRole> roles = new ArrayList<>();
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+            productRoleInfo.setRoles(roles);
+            productRoleInfo.setMultiroleAllowed(true);
+            roleMappings.put(partyRole, productRoleInfo);
+        }
+        CREATE_PRODUCT_DTO.setRoleMappings(roleMappings);
+        UPDATE_PRODUCT_DTO.setRoleMappings(roleMappings);
     }
 
     @MockBean
     private ProductService productServiceMock;
+
 
     @Autowired
     protected MockMvc mvc;
@@ -62,10 +73,45 @@ class ProductControllerTest {
 
 
     @Test
+    void saveProductLogo() throws Exception {
+        String productId = "productId";
+        String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
+        String filename = "test.png";
+        MockMultipartFile multipartFile = new MockMultipartFile("logo", filename,
+                contentType, "test prodoct logo".getBytes(StandardCharsets.UTF_8));
+        MockMultipartHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .multipart(BASE_URL + "/" + productId + "/logo")
+                .file(multipartFile);
+        requestBuilder.with(request -> {
+            request.setMethod(HttpMethod.PUT.name());
+            return request;
+        });
+        //when
+        mvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isOk());
+        //then
+        Mockito.verify(productServiceMock, Mockito.times(1))
+                .saveProductLogo(Mockito.eq(productId), Mockito.any(), Mockito.eq(contentType), Mockito.eq(filename));
+        Mockito.verifyNoMoreInteractions(productServiceMock);
+
+    }
+
+    @Test
     void getProducts_atLeastOneProduct() throws Exception {
         // given
+        ProductOperations product = TestUtils.mockInstance(new ProductDto(), "setRoleMappings");
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+        for (PartyRole partyRole : PartyRole.values()) {
+            ProductRoleInfo productRoleInfo = new ProductRoleInfo();
+            List<ProductRole> roles = new ArrayList<>();
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+            productRoleInfo.setRoles(roles);
+            roleMappings.put(partyRole, productRoleInfo);
+        }
+        product.setRoleMappings(roleMappings);
         Mockito.when(productServiceMock.getProducts())
-                .thenReturn(Collections.singletonList(PRODUCT));
+                .thenReturn(Collections.singletonList(product));
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/")
@@ -110,9 +156,19 @@ class ProductControllerTest {
         Mockito.when(productServiceMock.getProduct(Mockito.anyString()))
                 .thenAnswer(invocationOnMock -> {
                     String id = invocationOnMock.getArgument(0, String.class);
-                    ProductOperations p = new ProductDto();
-                    p.setId(id);
-                    return p;
+                    ProductOperations product = TestUtils.mockInstance(new ProductDto(), "setId", "setRoleMappings");
+                    product.setId(id);
+                    EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+                    for (PartyRole partyRole : PartyRole.values()) {
+                        ProductRoleInfo productRoleInfo = new ProductRoleInfo();
+                        List<ProductRole> roles = new ArrayList<>();
+                        roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+                        roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+                        productRoleInfo.setRoles(roles);
+                        roleMappings.put(partyRole, productRoleInfo);
+                    }
+                    product.setRoleMappings(roleMappings);
+                    return product;
                 });
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
@@ -165,7 +221,6 @@ class ProductControllerTest {
     @Test
     void updateProduct_exists() throws Exception {
         // given
-        ProductOperations prod = new ProductDto();
         Mockito.when(productServiceMock.updateProduct(Mockito.anyString(), Mockito.any(ProductOperations.class)))
                 .thenAnswer(invocationOnMock -> {
                     String id = invocationOnMock.getArgument(0, String.class);
@@ -248,10 +303,19 @@ class ProductControllerTest {
         Mockito.when(productServiceMock.getProduct(Mockito.anyString()))
                 .thenAnswer(invocationOnMock -> {
                     String id = invocationOnMock.getArgument(0, String.class);
-                    ProductOperations p = new ProductDto();
-                    p.setId(id);
-                    p.setRoleMappings(new EnumMap<>(Map.of(PartyRole.MANAGER, List.of("product-role"))));
-                    return p;
+                    ProductOperations product = TestUtils.mockInstance(new ProductDto(), "setId", "setRoleMappings");
+                    product.setId(id);
+                    EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+                    for (PartyRole partyRole : PartyRole.values()) {
+                        ProductRoleInfo productRoleInfo = new ProductRoleInfo();
+                        List<ProductRole> roles = new ArrayList<>();
+                        roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+                        roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+                        productRoleInfo.setRoles(roles);
+                        roleMappings.put(partyRole, productRoleInfo);
+                    }
+                    product.setRoleMappings(roleMappings);
+                    return product;
                 });
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
@@ -261,7 +325,7 @@ class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
                 .andReturn();
         // then
-        Map<String, List<String>> roles = objectMapper.readValue(
+        Map<String, ProductRoleInfo> roles = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 new TypeReference<>() {
                 });

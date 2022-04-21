@@ -1,14 +1,16 @@
 package it.pagopa.selfcare.product.web.model.mapper;
 
 import it.pagopa.selfcare.commons.utils.TestUtils;
+import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
-import it.pagopa.selfcare.product.web.model.CreateProductDto;
-import it.pagopa.selfcare.product.web.model.ProductDto;
-import it.pagopa.selfcare.product.web.model.ProductResource;
-import it.pagopa.selfcare.product.web.model.UpdateProductDto;
+import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
+import it.pagopa.selfcare.product.web.model.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,7 +20,18 @@ class ProductMapperTest {
     void toResource_notNull() {
         // given
         OffsetDateTime now = OffsetDateTime.now().minusSeconds(1);
-        ProductOperations product = TestUtils.mockInstance(new ProductDto());
+        ProductOperations product = TestUtils.mockInstance(new ProductDto(), "setRoleMappings");
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+        for (PartyRole partyRole : PartyRole.values()) {
+            ProductRoleInfo productRoleInfo = new ProductRoleInfo();
+            List<ProductRole> roles = new ArrayList<>();
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+            productRoleInfo.setRoles(roles);
+            productRoleInfo.setMultiroleAllowed(true);
+            roleMappings.put(partyRole, productRoleInfo);
+        }
+        product.setRoleMappings(roleMappings);
         // when
         ProductResource productResource = ProductMapper.toResource(product);
         // then
@@ -39,8 +52,9 @@ class ProductMapperTest {
     @Test
     void toResource_null() {
         // given
+        ProductOperations entity = null;
         // when
-        ProductResource productResource = ProductMapper.toResource(null);
+        ProductResource productResource = ProductMapper.toResource(entity);
         // then
         assertNull(productResource);
     }
@@ -48,7 +62,17 @@ class ProductMapperTest {
     @Test
     void fromCreateProductDto_notNull() {
         // given
-        CreateProductDto dto = TestUtils.mockInstance(new CreateProductDto());
+        CreateProductDto dto = TestUtils.mockInstance(new CreateProductDto(), "setRoleMappings");
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+        for (PartyRole partyRole : PartyRole.values()) {
+            ProductRoleInfo productRoleInfo = new ProductRoleInfo();
+            List<ProductRole> roles = new ArrayList<>();
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+            productRoleInfo.setRoles(roles);
+            roleMappings.put(partyRole, productRoleInfo);
+        }
+        dto.setRoleMappings(roleMappings);
         // when
         ProductOperations product = ProductMapper.fromDto(dto);
         // then
@@ -68,7 +92,17 @@ class ProductMapperTest {
     @Test
     void fromUpdateProductDto_notNull() {
         // given
-        UpdateProductDto dto = TestUtils.mockInstance(new UpdateProductDto());
+        UpdateProductDto dto = TestUtils.mockInstance(new UpdateProductDto(), "setRoleMappings");
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+        for (PartyRole partyRole : PartyRole.values()) {
+            ProductRoleInfo productRoleInfo = new ProductRoleInfo();
+            List<ProductRole> roles = new ArrayList<>();
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+            productRoleInfo.setRoles(roles);
+            roleMappings.put(partyRole, productRoleInfo);
+        }
+        dto.setRoleMappings(roleMappings);
         // when
         ProductOperations product = ProductMapper.fromDto(dto);
         // then
@@ -84,4 +118,35 @@ class ProductMapperTest {
         // then
         assertNull(product);
     }
+
+    @Test
+    void toRoleMappings_null() {
+        // given
+        EnumMap<PartyRole, ? extends ProductRoleInfoOperations> roleMappings = null;
+        // when
+        EnumMap<PartyRole, ProductRoleInfo> result = ProductMapper.toRoleMappings(roleMappings);
+        // then
+        assertNull(result);
+    }
+
+    @Test
+    void toRoleMappings_notNull() {
+        // given
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+        for (PartyRole partyRole : PartyRole.values()) {
+            ProductRoleInfo productRoleInfo = new ProductRoleInfo();
+            List<ProductRole> roles = new ArrayList<>();
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+            productRoleInfo.setRoles(roles);
+            productRoleInfo.setMultiroleAllowed(true);
+            roleMappings.put(partyRole, productRoleInfo);
+        }
+        // when
+        EnumMap<PartyRole, ProductRoleInfo> result = ProductMapper.toRoleMappings(roleMappings);
+        // then
+        assertNotNull(result);
+        assertIterableEquals(roleMappings.entrySet(), result.entrySet());
+    }
+
 }
