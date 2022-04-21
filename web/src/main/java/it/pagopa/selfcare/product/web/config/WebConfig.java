@@ -1,21 +1,12 @@
 package it.pagopa.selfcare.product.web.config;
 
 import it.pagopa.selfcare.commons.web.config.BaseWebConfig;
-import it.pagopa.selfcare.commons.web.handler.RestExceptionsHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.web.servlet.HandlerInterceptor;
-
-import java.util.Collection;
+import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@Import(RestExceptionsHandler.class)
-class WebConfig extends BaseWebConfig {
-
-    @Autowired
-    WebConfig(Collection<HandlerInterceptor> interceptors) {
-        super(interceptors);
-    }
-
+@PropertySource("classpath:config/web-config.properties")
+@Import(BaseWebConfig.class)
+class WebConfig {
 }

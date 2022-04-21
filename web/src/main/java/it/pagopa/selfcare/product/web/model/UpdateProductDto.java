@@ -5,18 +5,14 @@ import io.swagger.annotations.ApiModelProperty;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import lombok.Data;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 import java.util.EnumMap;
-import java.util.List;
 
 @Data
 public class UpdateProductDto {
 
-    @ApiModelProperty(value = "${swagger.product.model.logo}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
-    private String logo;
 
     @ApiModelProperty(value = "${swagger.product.model.title}", required = true)
     @JsonProperty(required = true)
@@ -38,8 +34,9 @@ public class UpdateProductDto {
 
     @ApiModelProperty(value = "${swagger.product.model.roleMappings}", required = true)
     @JsonProperty(required = true)
-    @NotNull
-    private EnumMap<PartyRole, List<String>> roleMappings;
+    @NotEmpty
+    @Valid
+    private EnumMap<PartyRole, ProductRoleInfo> roleMappings;
 
     @ApiModelProperty(value = "${swagger.product.model.contractTemplatePath}", required = true)
     @JsonProperty(required = true)
