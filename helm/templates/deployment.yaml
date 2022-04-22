@@ -42,6 +42,8 @@ spec:
             - secretRef:
                 name: cdn-storage
             - configMapRef:
+                name: jwt
+            - configMapRef:
                 name: common
             - configMapRef:
                 name: {{ include "this.fullname" . }}
