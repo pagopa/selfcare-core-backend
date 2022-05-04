@@ -22,6 +22,7 @@
     <description>Microservice to manage Self Care Product</description>
 
     <properties>
+        <selc-commons.version>1.3.2</selc-commons.version>
         <selc-commons.version>1.3.4</selc-commons.version>
     </properties>
 

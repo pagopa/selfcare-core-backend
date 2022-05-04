@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ProductService {
 
-    List<ProductOperations> getProducts();
+    List<ProductOperations> getProducts(boolean rootOnly);
 
     ProductOperations createProduct(ProductOperations product);
 

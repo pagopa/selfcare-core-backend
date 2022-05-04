@@ -162,4 +162,21 @@ class ProductConnectorImplTest {
         Mockito.verifyNoMoreInteractions(repositoryMock);
     }
 
+    @Test
+    void findByParentAndEnabled() {
+        // given
+        String parent = "parentId";
+        boolean enabled = true;
+        List<ProductEntity> expected = List.of(TestUtils.mockInstance(new ProductEntity()));
+        Mockito.when(repositoryMock.findByParentIdAndEnabled(Mockito.anyString(), Mockito.anyBoolean()))
+                .thenReturn(expected);
+        // when
+        List<ProductOperations> found = productConnector.findByParentAndEnabled(parent, enabled);
+        //then
+        Assertions.assertEquals(expected, found);
+        Mockito.verify(repositoryMock, Mockito.times(1))
+                .findByParentIdAndEnabled(parent, enabled);
+        Mockito.verifyNoMoreInteractions(repositoryMock);
+    }
+
 }
