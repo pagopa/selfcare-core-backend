@@ -32,6 +32,7 @@ public class ProductMapper {
             resource.setRoleMappings(toRoleMappings(entity.getRoleMappings()));
             resource.setContractTemplatePath(entity.getContractTemplatePath());
             resource.setContractTemplateVersion(entity.getContractTemplateVersion());
+            resource.setIdentityTokenAudience(entity.getIdentityTokenAudience());
             resource.setRoleManagementURL(entity.getRoleManagementURL());
             if (entity.getParentId() != null) {
                 resource.setParentId(entity.getParentId());
@@ -49,6 +50,7 @@ public class ProductMapper {
         if (dto != null) {
             product = new ProductDto();
             product.setId(dto.getId());
+            product.setIdentityTokenAudience(dto.getIdentityTokenAudience());
             product.setTitle(dto.getTitle());
             product.setDescription(dto.getDescription());
             product.setUrlPublic(dto.getUrlPublic());
@@ -82,6 +84,7 @@ public class ProductMapper {
         if (dto != null) {
             product = new ProductDto();
             product.setTitle(dto.getTitle());
+            product.setIdentityTokenAudience(dto.getIdentityTokenAudience());
             product.setDescription(dto.getDescription());
             product.setUrlPublic(dto.getUrlPublic());
             product.setUrlBO(dto.getUrlBO());

@@ -35,6 +35,7 @@ class UpdateProductDtoTest {
         toCheckMap.put("description", NotBlank.class);
         toCheckMap.put("urlBO", NotBlank.class);
         toCheckMap.put("roleMappings", NotEmpty.class);
+        toCheckMap.put("identityTokenAudience", NotBlank.class);
         toCheckMap.put("contractTemplatePath", NotBlank.class);
         toCheckMap.put("contractTemplateVersion", NotBlank.class);
         UpdateProductDto updateProductDto = new UpdateProductDto();

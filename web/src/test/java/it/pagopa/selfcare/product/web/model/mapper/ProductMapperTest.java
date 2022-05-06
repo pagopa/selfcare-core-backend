@@ -41,6 +41,7 @@ class ProductMapperTest {
         assertEquals(product.getDescription(), productResource.getDescription());
         assertEquals(product.getUrlPublic(), productResource.getUrlPublic());
         assertEquals(product.getUrlBO(), productResource.getUrlBO());
+        assertEquals(product.getIdentityTokenAudience(), productResource.getIdentityTokenAudience());
         assertTrue(now.isBefore(productResource.getContractTemplateUpdatedAt()));
         assertEquals(product.getContractTemplateVersion(), productResource.getContractTemplateVersion());
         assertEquals(product.getContractTemplatePath(), productResource.getContractTemplatePath());

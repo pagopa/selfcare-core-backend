@@ -150,6 +150,7 @@ class ProductServiceImpl implements ProductService {
         foundProduct.setUrlPublic(product.getUrlPublic());
         foundProduct.setUrlBO(product.getUrlBO());
         foundProduct.setRoleMappings(product.getRoleMappings());
+        foundProduct.setIdentityTokenAudience(product.getIdentityTokenAudience());
         foundProduct.setRoleManagementURL(product.getRoleManagementURL());
         foundProduct.setContractTemplatePath(product.getContractTemplatePath());
         if (!product.getContractTemplateVersion().equals(foundProduct.getContractTemplateVersion())) {
