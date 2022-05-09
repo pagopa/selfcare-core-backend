@@ -25,6 +25,11 @@ public class CreateProductDto {
     @NotBlank
     private String title;
 
+    @ApiModelProperty(value = "${swagger.product.model.identityTokenAudience}", required = true)
+    @JsonProperty
+    @NotBlank
+    private String identityTokenAudience;
+
     @ApiModelProperty(value = "${swagger.product.model.description}", required = true)
     @JsonProperty(required = true)
     @NotBlank

@@ -61,4 +61,8 @@ public interface ProductOperations {
 
     String getParentId();
 
+    void setIdentityTokenAudience(String identityTokenAudience);
+
+    String getIdentityTokenAudience();
+
 }
