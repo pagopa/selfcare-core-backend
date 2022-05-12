@@ -25,31 +25,31 @@ import java.security.InvalidKeyException;
 @Profile("AzureStorage")
 class AzureBlobClient implements FileStorageConnector {
 
-    private final String institutionsLogoContainerReference;
+    private final String institutionsImgContainerReference;
     private final CloudBlobClient blobClient;
     private final String publicHost;
 
 
     AzureBlobClient(@Value("${blobStorage.connectionString}") String storageConnectionString,
-                    @Value("${blobStorage.product.logo.containerReference}") String productLogoContainerReference,
+                    @Value("${blobStorage.product.img.containerReference}") String productImgContainerReference,
                     @Value("${blobStorage.product.upload.host}") String publicHost)
             throws URISyntaxException, InvalidKeyException {
 
         final CloudStorageAccount storageAccount = CloudStorageAccount.parse(storageConnectionString);
         this.blobClient = storageAccount.createCloudBlobClient();
-        this.institutionsLogoContainerReference = productLogoContainerReference;
+        this.institutionsImgContainerReference = productImgContainerReference;
         this.publicHost = publicHost;
     }
 
 
     @Override
-    public URL uploadProductLogo(InputStream file, String fileName, String contentType) throws FileUploadException, MalformedURLException {
+    public URL uploadProductImg(InputStream file, String fileName, String contentType, String operation) throws FileUploadException, MalformedURLException {
         log.trace("uploadInstitutionLogo start");
-        log.debug("uploadInstitutionLogo file = {}, fileName = {}, contentType = {}", file, fileName, contentType);
+        log.debug("uploadInstitutionLogo file = {}, fileName = {}, contentType = {}, operation = {}", file, fileName, contentType, operation);
         URI logoUri = null;
 
         try {
-            final CloudBlobContainer blobContainer = blobClient.getContainerReference(institutionsLogoContainerReference);
+            final CloudBlobContainer blobContainer = blobClient.getContainerReference(institutionsImgContainerReference);
             final CloudBlockBlob blob = blobContainer.getBlockBlobReference(fileName);
             blob.getProperties().setContentType(contentType);
             blob.upload(file, file.available());

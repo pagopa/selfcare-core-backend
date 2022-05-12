@@ -748,7 +748,7 @@ class ProductServiceImplTest {
         Mockito.when(productConnectorMock.findById(Mockito.anyString()))
                 .thenReturn(Optional.of(product));
         Mockito.doThrow(FileUploadException.class)
-                .when(storageConnectorMock).uploadProductLogo(Mockito.any(), Mockito.any(), Mockito.any());
+                .when(storageConnectorMock).uploadProductImg(Mockito.any(), Mockito.any(), Mockito.any(), null);
         //when
         Executable executable = () -> productService.saveProductLogo(productId, logo, contentType, fileName);
         //then
@@ -756,7 +756,7 @@ class ProductServiceImplTest {
         Assertions.assertNotNull(exception.getCause());
         Assertions.assertTrue(FileUploadException.class.isAssignableFrom(exception.getCause().getClass()));
         Mockito.verify(storageConnectorMock, Mockito.times(1))
-                .uploadProductLogo(Mockito.any(), Mockito.any(), Mockito.any());
+                .uploadProductImg(Mockito.any(), Mockito.any(), Mockito.any(), null);
         Mockito.verifyNoMoreInteractions(storageConnectorMock);
     }
 
@@ -774,13 +774,13 @@ class ProductServiceImplTest {
         URL uriToUrl = uriMock.toURL();
         Mockito.when(productConnectorMock.findById(Mockito.anyString()))
                 .thenReturn(Optional.of(product));
-        Mockito.when(storageConnectorMock.uploadProductLogo(Mockito.any(), Mockito.any(), Mockito.any()))
+        Mockito.when(storageConnectorMock.uploadProductImg(Mockito.any(), Mockito.any(), Mockito.any(), null))
                 .thenReturn(uriToUrl);
         //when
         productService.saveProductLogo(productId, logo, contentType, fileName);
         //then
         Mockito.verify(storageConnectorMock, Mockito.times(1))
-                .uploadProductLogo(Mockito.any(), Mockito.eq("resources/products/" + productId + "/logo.png"), Mockito.eq(contentType));
+                .uploadProductImg(Mockito.any(), Mockito.eq("resources/products/" + productId + "/logo.png"), Mockito.eq(contentType), null);
         Mockito.verify(productConnectorMock, Mockito.times(1))
                 .findById(productId);
         Mockito.verify(productConnectorMock, Mockito.times(1))
@@ -802,13 +802,13 @@ class ProductServiceImplTest {
         URL uriToUrl = uriMock.toURL();
         Mockito.when(productConnectorMock.findById(Mockito.anyString()))
                 .thenReturn(Optional.of(product));
-        Mockito.when(storageConnectorMock.uploadProductLogo(Mockito.any(), Mockito.any(), Mockito.any()))
+        Mockito.when(storageConnectorMock.uploadProductImg(Mockito.any(), Mockito.any(), Mockito.any(), null))
                 .thenReturn(uriToUrl);
         //when
         productService.saveProductLogo(productId, logo, contentType, fileName);
         //then
         Mockito.verify(storageConnectorMock, Mockito.times(1))
-                .uploadProductLogo(Mockito.any(), Mockito.eq("resources/products/" + productId + "/logo.png"), Mockito.eq(contentType));
+                .uploadProductImg(Mockito.any(), Mockito.eq("resources/products/" + productId + "/logo.png"), Mockito.eq(contentType), null);
         Mockito.verify(productConnectorMock, Mockito.times(1))
                 .findById(productId);
         Mockito.verify(productConnectorMock, Mockito.times(0))
@@ -839,7 +839,7 @@ class ProductServiceImplTest {
         product.setContractTemplateVersion("1.2.4");
         Mockito.when(productConnectorMock.save(Mockito.any()))
                 .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, ProductOperations.class));
-        Mockito.when(storageConnectorMock.uploadProductLogo(Mockito.any(), Mockito.any(), Mockito.any()))
+        Mockito.when(storageConnectorMock.uploadProductImg(Mockito.any(), Mockito.any(), Mockito.any(), null))
                 .thenReturn(uriToUrl);
         //when
         productService.saveProductLogo(productId, logo, contentType, fileName);
@@ -851,7 +851,7 @@ class ProductServiceImplTest {
         ProductOperations savedProduct = savedProductCaptor.getValue();
         Assertions.assertEquals(uriToUrl.toString(), savedProduct.getLogo());
         Mockito.verify(storageConnectorMock, Mockito.times(1))
-                .uploadProductLogo(Mockito.any(), Mockito.eq("resources/products/" + productId + "/logo.png"), Mockito.eq(contentType));
+                .uploadProductImg(Mockito.any(), Mockito.eq("resources/products/" + productId + "/logo.png"), Mockito.eq(contentType), null);
         Mockito.verifyNoMoreInteractions(storageConnectorMock);
         Mockito.verifyNoMoreInteractions(productConnectorMock);
 

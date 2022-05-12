@@ -45,7 +45,7 @@ class AzureBlobClientTest {
         InputStream resource = new ClassPathResource("logo-pagopa-spa.png")
                 .getInputStream();
         // when
-        Executable executable = () -> blobClient.uploadProductLogo(resource, "filename.png", "image/png");
+        Executable executable = () -> blobClient.uploadProductImg(resource, "filename.png", "image/png", null);
         // then
         Assertions.assertDoesNotThrow(executable);
     }
@@ -63,7 +63,7 @@ class AzureBlobClientTest {
                 .getInputStream();
 
         //when
-        Executable executable = () -> blobClient.uploadProductLogo(resource, "filename.png", "image/png");
+        Executable executable = () -> blobClient.uploadProductImg(resource, "filename.png", "image/png", null);
 
         //then
         Assertions.assertThrows(FileUploadException.class, executable);

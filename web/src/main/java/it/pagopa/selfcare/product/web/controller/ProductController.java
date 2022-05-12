@@ -79,6 +79,19 @@ public class ProductController {
         return null;
     }
 
+    @PutMapping(value = "/{id}/depiction-image")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.product.operation.saveProductDepictImage}")
+    public void saveProductDepictImage(@ApiParam("${swagger.product.model.id}")
+                                       @PathVariable("id") String id,
+                                       @ApiParam("${swagger.product.model.depictImage}")
+                                       @RequestParam("depictImage") MultipartFile depictImage) throws IOException {
+        log.trace("saveProductDepictImage start");
+        log.debug("saveProductDepictImage id = {}, logo = {}", id, depictImage);
+        productService.saveProductDepictImage(id, depictImage.getInputStream(), depictImage.getContentType(), depictImage.getOriginalFilename());
+        log.trace("saveProductDepictImage end");
+    }
+
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
