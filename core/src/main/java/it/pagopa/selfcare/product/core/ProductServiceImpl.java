@@ -222,6 +222,8 @@ class ProductServiceImpl implements ProductService {
                         productConnector.save(productToUpdate);
                     }
                     break;
+                default:
+                    break;
             }
 
         } catch (FileUploadException | MalformedURLException e) {
