@@ -18,8 +18,9 @@ public class ProductResource {
     @NotBlank
     private String id;
 
-    @ApiModelProperty(value = "${swagger.product.model.identityTokenAudience}", required = true)
-    @JsonProperty
+    @ApiModelProperty(value = "${swagger.product.model.identityTokenAudience}", required = false)
+    @JsonProperty(required = true)
+    @NotBlank
     private String identityTokenAudience;
 
     @ApiModelProperty(value = "${swagger.product.model.logo}", required = false)

@@ -45,7 +45,7 @@ class AzureBlobClientTest {
         InputStream resource = new ClassPathResource("logo-pagopa-spa.png")
                 .getInputStream();
         // when
-        Executable executable = () -> blobClient.uploadProductImg(resource, "filename.png", "image/png", null);
+        Executable executable = () -> blobClient.uploadProductImg(resource, "filename.png", "image/png", "logo");
         // then
         Assertions.assertDoesNotThrow(executable);
     }
@@ -64,12 +64,10 @@ class AzureBlobClientTest {
 
         //when
         Executable executable = () -> blobClient.uploadProductImg(resource, "filename.png", "image/png", null);
-
         //then
         Assertions.assertThrows(FileUploadException.class, executable);
 
     }
-
 
     private void mockCloudBlobClient(AzureBlobClient blobClient, CloudBlobClient blobClientMock) throws NoSuchFieldException, IllegalAccessException {
         Field field = AzureBlobClient.class.getDeclaredField("blobClient");

@@ -36,6 +36,7 @@ class ProductResourceTest {
         toCheckMap.put("logo", NotBlank.class);
         toCheckMap.put("title", NotBlank.class);
         toCheckMap.put("description", NotBlank.class);
+        toCheckMap.put("identityTokenAudience", NotBlank.class);
         toCheckMap.put("urlBO", NotBlank.class);
         toCheckMap.put("createdAt", NotNull.class);
         toCheckMap.put("contractTemplateUpdatedAt", NotNull.class);
@@ -51,6 +52,7 @@ class ProductResourceTest {
         productResource.setUrlBO(null);
         productResource.setCreatedAt(null);
         productResource.setContractTemplateUpdatedAt(null);
+        productResource.setIdentityTokenAudience(null);
         productResource.setRoleMappings(null);
         productResource.setContractTemplatePath(null);
         productResource.setContractTemplateVersion(null);

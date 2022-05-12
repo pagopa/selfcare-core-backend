@@ -79,7 +79,7 @@ public class ProductController {
         return null;
     }
 
-    @PutMapping(value = "/{id}/depiction-image")
+    @PutMapping(value = "/{id}/depict-image")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.product.operation.saveProductDepictImage}")
     public void saveProductDepictImage(@ApiParam("${swagger.product.model.id}")
