@@ -108,7 +108,6 @@ public class ProductController {
         return productResource;
     }
 
-    //TODO verify if its necessary to return a 404 in case of null rolemappings
     @GetMapping("/{id}/role-mappings")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.product.operation.getProductRoleMappings}")
