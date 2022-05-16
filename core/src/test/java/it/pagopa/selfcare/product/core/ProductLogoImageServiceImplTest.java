@@ -75,6 +75,15 @@ class ProductLogoImageServiceImplTest {
     }
 
     @Test
+    void getDefaultImageUrl() {
+        //given
+
+        //when
+        //then
+        assertEquals(logoImagePropertiesMock.getDefaultUrl(), productLogoImageService.getDefaultImageUrl());
+    }
+
+    @Test
     void saveImage_invalidContentType() {
         //given
         InputStream inputImage = InputStream.nullInputStream();

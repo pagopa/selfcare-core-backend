@@ -75,6 +75,15 @@ class ProductDepictImageServiceImplTest {
     }
 
     @Test
+    void getDefaultImageUrl() {
+        //given
+
+        //when
+        //then
+        assertEquals(depictImagePropertiesMock.getDefaultUrl(), productDepictImageService.getDefaultImageUrl());
+    }
+
+    @Test
     void saveImage_invalidContentType() {
         //given
         InputStream inputImage = InputStream.nullInputStream();

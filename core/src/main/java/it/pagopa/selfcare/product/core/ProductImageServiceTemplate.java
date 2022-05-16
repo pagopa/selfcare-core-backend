@@ -23,8 +23,8 @@ public abstract class ProductImageServiceTemplate implements ProductImageService
     private final ProductConnector productConnector;
 
     @Autowired
-    public ProductImageServiceTemplate(FileStorageConnector fileStorageConnector,
-                                       ProductConnector productConnector) {
+    protected ProductImageServiceTemplate(FileStorageConnector fileStorageConnector,
+                                          ProductConnector productConnector) {
         this.productConnector = productConnector;
         this.fileStorageConnector = fileStorageConnector;
     }
