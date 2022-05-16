@@ -43,9 +43,9 @@ class AzureBlobClient implements FileStorageConnector {
 
 
     @Override
-    public URL uploadProductImg(InputStream file, String fileName, String contentType, String operation) throws FileUploadException, MalformedURLException {
+    public URL uploadProductImg(InputStream file, String fileName, String contentType) throws FileUploadException, MalformedURLException {
         log.trace("uploadInstitutionLogo start");
-        log.debug("uploadInstitutionLogo file = {}, fileName = {}, contentType = {}, operation = {}", file, fileName, contentType, operation);
+        log.debug("uploadInstitutionLogo file = {}, fileName = {}, contentType = {}", file, fileName, contentType);
         URI logoUri = null;
 
         try {
