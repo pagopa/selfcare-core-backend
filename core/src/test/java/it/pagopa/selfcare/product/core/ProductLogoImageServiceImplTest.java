@@ -36,17 +36,17 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {ProductDepictImageServiceImpl.class, CoreTestConfig.class})
+@ContextConfiguration(classes = {ProductLogoImageServiceImpl.class, CoreTestConfig.class})
 @TestPropertySource(properties = {
-        "product.img.depiction.allowed-mime-types=image/jpeg",
-        "product.img.depiction.allowed-extensions=jpeg",
-        "product.img.depiction.default-url=https://selcdcheckoutsa.blob.core.windows.net/$web/resources/products/default/depict-image.jpeg"
+        "product.img.logo.allowed-mime-types=image/png",
+        "product.img.logo.allowed-extensions=png",
+        "product.img.logo.default-url=https://selcdcheckoutsa.blob.core.windows.net/$web/resources/products/default/logo.png"
 })
-class ProductDepictImageServiceImplTest {
+class ProductLogoImageServiceImplTest {
 
     @Autowired
-    @Qualifier("productDepictImageService")
-    ProductDepictImageServiceImpl productDepictImageService;
+    @Qualifier("productLogoImageService")
+    ProductLogoImageServiceImpl productLogoImageService;
 
     @MockBean
     ProductConnector productConnectorMock;
@@ -55,8 +55,8 @@ class ProductDepictImageServiceImplTest {
     FileStorageConnector fileStorageConnectorMock;
 
     @Autowired
-    @Qualifier("depictImageProperties")
-    ImageProperties depictImagePropertiesMock;
+    @Qualifier("logoImageProperties")
+    ImageProperties logoImagePropertiesMock;
 
     @Test
     void saveImage_nullFileName() {
@@ -66,7 +66,7 @@ class ProductDepictImageServiceImplTest {
         InputStream inputImage = InputStream.nullInputStream();
         ProductOperations product = TestUtils.mockInstance(new DummyProduct());
         //when
-        Executable executable = () -> productDepictImageService.saveImage(product, inputImage, contentType, fileName);
+        Executable executable = () -> productLogoImageService.saveImage(product, inputImage, contentType, fileName);
         //then
         FileValidationException e = assertThrows(FileValidationException.class, executable);
         assertEquals("file name cannot be null", e.getMessage());
@@ -82,7 +82,7 @@ class ProductDepictImageServiceImplTest {
         String fileName = "filename.gif";
         ProductOperations productOperations = TestUtils.mockInstance(new DummyProduct());
         //when
-        Executable executable = () -> productDepictImageService.saveImage(productOperations, inputImage, contentType, fileName);
+        Executable executable = () -> productLogoImageService.saveImage(productOperations, inputImage, contentType, fileName);
         //then
         FileValidationException fileValidationException = assertThrows(FileValidationException.class, executable);
         assertTrue(InvalidMimeTypeException.class.isAssignableFrom(fileValidationException.getCause().getClass()));
@@ -93,15 +93,15 @@ class ProductDepictImageServiceImplTest {
     void saveImage_invalidExtension() {
         //given
         InputStream inputImage = InputStream.nullInputStream();
-        String contentType = MimeTypeUtils.IMAGE_JPEG_VALUE;
+        String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
         String fileName = "filename.gif";
         ProductOperations productOperations = TestUtils.mockInstance(new DummyProduct());
         //when
-        Executable executable = () -> productDepictImageService.saveImage(productOperations, inputImage, contentType, fileName);
+        Executable executable = () -> productLogoImageService.saveImage(productOperations, inputImage, contentType, fileName);
         //then
         FileValidationException fileValidationException = assertThrows(FileValidationException.class, executable);
         assertTrue(IllegalArgumentException.class.isAssignableFrom(fileValidationException.getCause().getClass()));
-        assertEquals(fileValidationException.getMessage(), String.format("Invalid file extension \"%s\": allowed only %s", StringUtils.getFilenameExtension(fileName), depictImagePropertiesMock.getAllowedExtensions()));
+        assertEquals(fileValidationException.getMessage(), String.format("Invalid file extension \"%s\": allowed only %s", StringUtils.getFilenameExtension(fileName), logoImagePropertiesMock.getAllowedExtensions()));
         Mockito.verifyNoInteractions(fileStorageConnectorMock, productConnectorMock);
     }
 
@@ -109,21 +109,21 @@ class ProductDepictImageServiceImplTest {
     void saveImage_uploadException() throws MalformedURLException {
         //given
         InputStream inputImage = InputStream.nullInputStream();
-        String contentType = MimeTypeUtils.IMAGE_JPEG_VALUE;
+        String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
         String productId = "productId";
-        String fileName = "fileName.jpeg";
+        String fileName = "fileName.png";
         ProductOperations product = TestUtils.mockInstance(new DummyProduct());
         product.setId(productId);
         Mockito.doThrow(FileUploadException.class)
                 .when(fileStorageConnectorMock).uploadProductImg(Mockito.any(), Mockito.any(), Mockito.anyString());
         //when
-        Executable executable = () -> productDepictImageService.saveImage(product, inputImage, contentType, fileName);
+        Executable executable = () -> productLogoImageService.saveImage(product, inputImage, contentType, fileName);
         //then
         RuntimeException exception = Assertions.assertThrows(RuntimeException.class, executable);
         Assertions.assertNotNull(exception.getCause());
         Assertions.assertTrue(FileUploadException.class.isAssignableFrom(exception.getCause().getClass()));
         Mockito.verify(fileStorageConnectorMock, Mockito.times(1))
-                .uploadProductImg(inputImage, String.format("resources/products/%s/depict-image.jpeg", productId), contentType);
+                .uploadProductImg(inputImage, String.format("resources/products/%s/logo.png", productId), contentType);
         Mockito.verifyNoMoreInteractions(fileStorageConnectorMock);
     }
 
@@ -133,25 +133,25 @@ class ProductDepictImageServiceImplTest {
         //give
         String productId = "productId";
         InputStream depictImage = InputStream.nullInputStream();
-        String contentType = MimeTypeUtils.IMAGE_JPEG_VALUE;
-        String fileName = "filename.jpeg";
+        String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
+        String fileName = "filename.png";
         ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setParentId");
-        product.setDepictImageUrl(null);
+        product.setLogo(null);
         product.setId(productId);
-        URI uriMock = new URI("https://selcdcheckoutsa.z6.web.core.windows.net/resources/products/default/depict-image.png");
+        URI uriMock = new URI("https://selcdcheckoutsa.z6.web.core.windows.net/resources/products/default/logo.png");
         URL uriToUrl = uriMock.toURL();
         Mockito.when(fileStorageConnectorMock.uploadProductImg(Mockito.any(), Mockito.any(), Mockito.anyString()))
                 .thenReturn(uriToUrl);
         //when
-        productDepictImageService.saveImage(product, depictImage, contentType, fileName);
+        productLogoImageService.saveImage(product, depictImage, contentType, fileName);
         //then
         Mockito.verify(fileStorageConnectorMock, Mockito.times(1))
-                .uploadProductImg(depictImage, String.format("resources/products/%s/depict-image.jpeg", productId), contentType);
+                .uploadProductImg(depictImage, String.format("resources/products/%s/logo.png", productId), contentType);
         ArgumentCaptor<ProductOperations> productCaptor = ArgumentCaptor.forClass(ProductOperations.class);
         Mockito.verify(productConnectorMock, Mockito.times(1))
                 .save(productCaptor.capture());
         ProductOperations capturedProduct = productCaptor.getValue();
-        assertEquals(uriToUrl.toString(), capturedProduct.getDepictImageUrl());
+        assertEquals(uriToUrl.toString(), capturedProduct.getLogo());
         Mockito.verifyNoMoreInteractions(fileStorageConnectorMock, productConnectorMock);
     }
 
@@ -160,25 +160,25 @@ class ProductDepictImageServiceImplTest {
         //give
         String productId = "productId";
         InputStream depictImage = InputStream.nullInputStream();
-        String contentType = MimeTypeUtils.IMAGE_JPEG_VALUE;
-        String fileName = "filename.jpeg";
+        String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
+        String fileName = "filename.png";
         ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setParentId");
-        product.setDepictImageUrl("https://selcdcheckoutsa.z6.web.core.windows.net/resources/products/default/depict-image.jpeg");
+        product.setLogo("https://selcdcheckoutsa.z6.web.core.windows.net/resources/products/default/logo.png");
         product.setId(productId);
-        URI uriMock = new URI("https://selcdcheckoutsa.z6.web.core.windows.net/resources/products/default/depict-image.jpeg");
+        URI uriMock = new URI("https://selcdcheckoutsa.z6.web.core.windows.net/resources/products/default/logo.png");
         URL uriToUrl = uriMock.toURL();
         Mockito.when(fileStorageConnectorMock.uploadProductImg(Mockito.any(), Mockito.any(), Mockito.anyString()))
                 .thenReturn(uriToUrl);
         //when
-        productDepictImageService.saveImage(product, depictImage, contentType, fileName);
+        productLogoImageService.saveImage(product, depictImage, contentType, fileName);
         //then
         Mockito.verify(fileStorageConnectorMock, Mockito.times(1))
-                .uploadProductImg(depictImage, String.format("resources/products/%s/depict-image.jpeg", productId), contentType);
+                .uploadProductImg(depictImage, String.format("resources/products/%s/logo.png", productId), contentType);
         ArgumentCaptor<ProductOperations> productCaptor = ArgumentCaptor.forClass(ProductOperations.class);
         Mockito.verify(productConnectorMock, Mockito.times(1))
                 .save(productCaptor.capture());
         ProductOperations capturedProduct = productCaptor.getValue();
-        assertEquals(uriToUrl.toString(), capturedProduct.getDepictImageUrl());
+        assertEquals(uriToUrl.toString(), capturedProduct.getLogo());
         Mockito.verifyNoMoreInteractions(fileStorageConnectorMock, productConnectorMock);
     }
 
@@ -187,32 +187,32 @@ class ProductDepictImageServiceImplTest {
         //give
         String productId = "productId";
         InputStream depictImage = InputStream.nullInputStream();
-        String contentType = MimeTypeUtils.IMAGE_JPEG_VALUE;
-        String fileName = "filename.jpeg";
+        String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
+        String fileName = "filename.png";
         ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setParentId", "setRoleMappings");
-        product.setDepictImageUrl("https://selcdcheckoutsa.blob.core.windows.net/$web/resources/products/default/depict-image.jpeg");
+        product.setLogo("https://selcdcheckoutsa.blob.core.windows.net/$web/resources/products/default/logo.png");
         product.setId(productId);
         EnumMap<PartyRole, DummyProductRoleInfo> map = new EnumMap<>(PartyRole.class);
         List<DummyProductRole> list = new ArrayList<>();
         list.add(TestUtils.mockInstance(new DummyProductRole(), 1));
         list.add(TestUtils.mockInstance(new DummyProductRole(), 2));
         map.put(PartyRole.OPERATOR, new DummyProductRoleInfo(true, list));
-        URI uriMock = new URI("https://selcdcheckoutsa.z6.web.core.windows.net/resources/products/prod-1/depict-image.jpeg");
+        URI uriMock = new URI("https://selcdcheckoutsa.z6.web.core.windows.net/resources/products/prod-1/logo.png");
         URL uriToUrl = uriMock.toURL();
         product.setRoleMappings(map);
         product.setContractTemplateVersion("1.2.4");
         Mockito.when(fileStorageConnectorMock.uploadProductImg(Mockito.any(), Mockito.any(), Mockito.anyString()))
                 .thenReturn(uriToUrl);
         //when
-        productDepictImageService.saveImage(product, depictImage, contentType, fileName);
+        productLogoImageService.saveImage(product, depictImage, contentType, fileName);
         //then
         Mockito.verify(fileStorageConnectorMock, Mockito.times(1))
-                .uploadProductImg(depictImage, String.format("resources/products/%s/depict-image.jpeg", productId), contentType);
+                .uploadProductImg(depictImage, String.format("resources/products/%s/logo.png", productId), contentType);
         ArgumentCaptor<ProductOperations> productCaptor = ArgumentCaptor.forClass(ProductOperations.class);
         Mockito.verify(productConnectorMock, Mockito.times(1))
                 .save(productCaptor.capture());
         ProductOperations capturedProduct = productCaptor.getValue();
-        assertEquals(uriToUrl.toString(), capturedProduct.getDepictImageUrl());
+        assertEquals(uriToUrl.toString(), capturedProduct.getLogo());
         Mockito.verifyNoMoreInteractions(productConnectorMock);
     }
 }

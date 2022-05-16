@@ -289,6 +289,10 @@ class ProductServiceImplTest {
         // when
         ProductOperations output = productService.createProduct(input);
         // then
+        Mockito.verify(productLogoImageServiceMock, Mockito.times(1))
+                .getDefaultImageUrl();
+        Mockito.verify(productDepictImageServiceMock, Mockito.times(1))
+                .getDefaultImageUrl();
         assertNotNull(output);
         assertNotNull(output.getCreatedAt());
         assertNotNull(output.getContractTemplateUpdatedAt());
@@ -296,8 +300,12 @@ class ProductServiceImplTest {
         assertEquals(LOGO_URL, output.getLogo());
         assertEquals(DEPICT_IMAGE_URL, output.getDepictImageUrl());
         assertTrue(output.getContractTemplateUpdatedAt().isAfter(now));
+        ArgumentCaptor<ProductOperations> saveCaptor = ArgumentCaptor.forClass(ProductOperations.class);
         Mockito.verify(productConnectorMock, Mockito.times(1))
-                .insert(Mockito.any(ProductOperations.class));
+                .insert(saveCaptor.capture());
+        ProductOperations savedProduct = saveCaptor.getValue();
+        assertEquals(DEPICT_IMAGE_URL, savedProduct.getDepictImageUrl());
+        assertEquals(LOGO_URL, savedProduct.getLogo());
         Mockito.verifyNoMoreInteractions(productConnectorMock);
     }
 
