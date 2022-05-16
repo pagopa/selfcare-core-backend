@@ -151,14 +151,15 @@
             "schema": {
               "type": "string"
             }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ProductResource"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResource"
                 }
               }
             }
@@ -233,17 +234,18 @@
         "tags" : [ "product" ],
         "summary" : "deleteProduct",
         "description" : "Service that allows the deactivation of a specific product by an Admin user",
-        "operationId" : "deleteProductUsingDELETE",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "description" : "Product's unique identifier",
-          "required" : true,
-          "style" : "simple",
-          "schema" : {
-            "type" : "string"
+        "operationId": "deleteProductUsingDELETE",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product's unique identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
           }
-        }
         ],
         "responses": {
           "204": {
@@ -358,17 +360,17 @@
                 "properties": {
                   "logo": {
                     "type": "string",
-                    "description" : "Product's logo",
-                    "format" : "binary"
+                    "description": "Product's logo url",
+                    "format": "binary"
                   }
                 }
               }
             }
           }
         },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
+        "responses": {
+          "200": {
+            "description": "OK",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -668,6 +670,8 @@
           "contractTemplateVersion",
           "createdAt",
           "id",
+          "identityTokenAudience",
+          "logo",
           "title"
         ],
         "type": "object",
@@ -708,7 +712,7 @@
           },
           "logo": {
             "type": "string",
-            "description": "Product's logo"
+            "description": "Product's logo url"
           },
           "parentId": {
             "type": "string",
