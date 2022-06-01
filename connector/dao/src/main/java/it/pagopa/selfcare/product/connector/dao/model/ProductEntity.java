@@ -36,6 +36,8 @@ public class ProductEntity implements ProductOperations {
         contractTemplateVersion = product.getContractTemplateVersion();
         roleManagementURL = product.getRoleManagementURL();
         enabled = product.isEnabled();
+        parentId = product.getParentId();
+        identityTokenAudience = product.getIdentityTokenAudience();
     }
 
     @Id
@@ -52,6 +54,8 @@ public class ProductEntity implements ProductOperations {
     private String contractTemplateVersion;
     private String roleManagementURL;
     private boolean enabled = true;
+    private String parentId;
+    private String identityTokenAudience;
 
 
     @Data

@@ -152,4 +152,37 @@ class ProductRepositoryTest {
         assertTrue(result.isEmpty());
     }
 
+    @Test
+    void findByParentAndEnabled_found() {
+        //given
+        ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setId");
+        repository.save(product);
+        //when
+        List<ProductEntity> result = repository.findByParentIdAndEnabled("setParentId", true);
+        //then
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
+    void findByParentAndEnabled_notFound() {
+        //given
+        ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setId");
+        product.setParentId("differentParent");
+        repository.save(product);
+        //when
+        List<ProductEntity> result = repository.findByParentIdAndEnabled("setParentId", true);
+        //then
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void findByParentAndEnabled_parentNull() {
+        //given
+        ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setId", "setParentId");
+        repository.save(product);
+        //when
+        List<ProductEntity> result = repository.findByParentIdAndEnabled(null, true);
+        //then
+        assertFalse(result.isEmpty());
+    }
 }

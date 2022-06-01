@@ -20,6 +20,8 @@ public class DummyProduct implements ProductOperations {
     private String contractTemplatePath;
     private String contractTemplateVersion;
     private String roleManagementURL;
+    private String identityTokenAudience;
     private boolean enabled = true;
+    private String parentId;
 
 }

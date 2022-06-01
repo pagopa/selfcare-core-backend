@@ -9,4 +9,6 @@ public interface ProductRepository extends MongoRepository<ProductEntity, String
 
     List<ProductEntity> findByEnabled(boolean enabled);
 
+    List<ProductEntity> findByParentIdAndEnabled(String parentId, boolean enabled);
+
 }

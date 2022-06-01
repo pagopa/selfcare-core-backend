@@ -21,4 +21,6 @@ public interface ProductConnector {
 
     List<ProductOperations> findByEnabled(boolean enabled);
 
+    List<ProductOperations> findByParentAndEnabled(String parent, boolean enabled);
+
 }
