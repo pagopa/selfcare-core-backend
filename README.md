@@ -1,6 +1,6 @@
 # selfcare-ms-product
 
-## Inputs
+## Configuration Properties
 
 | **Application properties** |
 |:--------------------------:|
@@ -39,3 +39,14 @@
 |--------------|-------------------------|-------------|:------------:|
 |spring.data.mongodb.uri|MONGODB_CONNECTION_URI|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/connector/dao/src/main/resources/config/dao-config.properties)| yes |
 |spring.data.mongodb.database|MONGODB_NAME|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/connector/dao/src/main/resources/config/dao-config.properties)| yes |
+
+
+| **Core Configurations** |
+|:--------------------------:|
+
+| **Property** | **Enviroment Variable** | **Default** | **Required** |
+|--------------|-------------------------|-------------|:------------:|
+|product.logo.allowed-mime-types|PRODUCT_LOGO_ALLOWED_MIME_TYPES|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/core/src/main/resources/config/core-config.properties)| yes |
+|product.logo.allowed-extensions|PRODUCT_LOGO_ALLOWED_EXTENSIONS|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/core/src/main/resources/config/core-config.properties)| yes |
+|product.logo.default-url|LOGO_STORAGE_URL|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/core/src/main/resources/config/core-config.properties)| yes |
+|product.logo.default-url|PUBLIC_FILE_STORAGE_BASE_URL|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/core/src/main/resources/config/core-config.properties)| yes |
