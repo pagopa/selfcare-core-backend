@@ -50,3 +50,12 @@
 |product.logo.allowed-extensions|PRODUCT_LOGO_ALLOWED_EXTENSIONS|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/core/src/main/resources/config/core-config.properties)| yes |
 |product.logo.default-url|LOGO_STORAGE_URL|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/core/src/main/resources/config/core-config.properties)| yes |
 |product.logo.default-url|PUBLIC_FILE_STORAGE_BASE_URL|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/core/src/main/resources/config/core-config.properties)| yes |
+
+| **Web Configurations** |
+|:--------------------------:|
+
+| **Property** | **Enviroment Variable** | **Default** | **Required** |
+|--------------|-------------------------|-------------|:------------:|
+|spring.servlet.multipart.max-file-size|MULTIPART_MAX_FILE_SIZE|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/web/src/main/resources/config/web-config.properties)| yes |
+|spring.servlet.multipart.resolve-lazily| n/a |<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/web/src/main/resources/config/web-config.properties)| yes |
+|spring.servlet.multipart.file-size-threshold|MULTIPART_MAX_FILE_SIZE|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/web/src/main/resources/config/web-config.properties)| yes |
