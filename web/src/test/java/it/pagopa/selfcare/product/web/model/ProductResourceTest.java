@@ -33,8 +33,6 @@ class ProductResourceTest {
         // given
         HashMap<String, Class<? extends Annotation>> toCheckMap = new HashMap<>();
         toCheckMap.put("id", NotBlank.class);
-        toCheckMap.put("logo", NotBlank.class);
-        toCheckMap.put("depictImageUrl", NotBlank.class);
         toCheckMap.put("title", NotBlank.class);
         toCheckMap.put("description", NotBlank.class);
         toCheckMap.put("identityTokenAudience", NotBlank.class);
