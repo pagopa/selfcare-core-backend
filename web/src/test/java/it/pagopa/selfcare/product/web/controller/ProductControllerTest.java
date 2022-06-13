@@ -3,7 +3,6 @@ package it.pagopa.selfcare.product.web.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.commons.utils.TestUtils;
-import it.pagopa.selfcare.commons.web.model.ErrorResource;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.core.ProductService;
@@ -19,22 +18,25 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.util.MimeTypeUtils;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(value = {ProductController.class}, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ContextConfiguration(classes = {
@@ -93,7 +95,7 @@ class ProductControllerTest {
         });
         //when
         mvc.perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(status().isOk());
         //then
         ArgumentCaptor<InputStream> inputStreamArgumentCaptor = ArgumentCaptor.forClass(InputStream.class);
         Mockito.verify(productServiceMock, Mockito.times(1))
@@ -147,9 +149,9 @@ class ProductControllerTest {
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().is2xxSuccessful())
                 .andReturn();
         // then
         List<ProductResource> products = objectMapper.readValue(
@@ -168,9 +170,9 @@ class ProductControllerTest {
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().is2xxSuccessful())
                 .andReturn();
         // then
         List<ProductResource> products = objectMapper.readValue(
@@ -205,9 +207,9 @@ class ProductControllerTest {
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/id")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().is2xxSuccessful())
                 .andReturn();
         // then
         ProductResource product = objectMapper.readValue(result.getResponse().getContentAsString(), ProductResource.class);
@@ -220,15 +222,14 @@ class ProductControllerTest {
         Mockito.when(productServiceMock.getProduct(Mockito.anyString()))
                 .thenThrow(ResourceNotFoundException.class);
         // when
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
+        mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/id")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().is(HttpStatus.NOT_FOUND.value()))
-                .andReturn();
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
+                .andExpect(content().string(not(emptyString())));
         // then
-        ErrorResource error = objectMapper.readValue(result.getResponse().getContentAsString(), ErrorResource.class);
-        assertNotNull(error);
     }
 
     @Test
@@ -240,9 +241,9 @@ class ProductControllerTest {
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .post(BASE_URL + "/")
                 .content(objectMapper.writeValueAsString(CREATE_PRODUCT_DTO))
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().is2xxSuccessful())
                 .andReturn();
         // then
         ProductResource product = objectMapper.readValue(result.getResponse().getContentAsString(), ProductResource.class);
@@ -260,9 +261,9 @@ class ProductControllerTest {
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .post(BASE_URL + "/" + productId + "/sub-products")
                 .content(objectMapper.writeValueAsString(CREATE_SUB_PRODUCT_DTO))
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().is2xxSuccessful())
                 .andReturn();
         // then
         ProductResource product = objectMapper.readValue(result.getResponse().getContentAsString(), ProductResource.class);
@@ -285,9 +286,9 @@ class ProductControllerTest {
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .put(BASE_URL + "/id")
                 .content(objectMapper.writeValueAsString(UPDATE_PRODUCT_DTO))
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().is2xxSuccessful())
                 .andReturn();
         // then
         ProductResource product = objectMapper.readValue(result.getResponse().getContentAsString(), ProductResource.class);
@@ -302,16 +303,15 @@ class ProductControllerTest {
         Mockito.when(productServiceMock.updateProduct(Mockito.anyString(), Mockito.any(ProductOperations.class)))
                 .thenThrow(ResourceNotFoundException.class);
         // when
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
+        mvc.perform(MockMvcRequestBuilders
                 .put(BASE_URL + "/id")
                 .content(objectMapper.writeValueAsString(UPDATE_PRODUCT_DTO))
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().is(HttpStatus.NOT_FOUND.value()))
-                .andReturn();
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
+                .andExpect(content().string(not(emptyString())));
         // then
-        ErrorResource error = objectMapper.readValue(result.getResponse().getContentAsString(), ErrorResource.class);
-        assertNotNull(error);
     }
 
     @Test
@@ -328,9 +328,9 @@ class ProductControllerTest {
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .put(BASE_URL + "/id/sub-products")
                 .content(objectMapper.writeValueAsString(UPDATE_SUB_PRODUCT_DTO))
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().is2xxSuccessful())
                 .andReturn();
         // then
         ProductResource product = objectMapper.readValue(result.getResponse().getContentAsString(), ProductResource.class);
@@ -346,9 +346,9 @@ class ProductControllerTest {
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .delete(BASE_URL + "/id")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().is2xxSuccessful())
                 .andReturn();
         // then
         assertEquals("", result.getResponse().getContentAsString());
@@ -361,15 +361,14 @@ class ProductControllerTest {
         Mockito.doThrow(ResourceNotFoundException.class)
                 .when(productServiceMock).deleteProduct(Mockito.anyString());
         // when
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
+        mvc.perform(MockMvcRequestBuilders
                 .delete(BASE_URL + "/id")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().is(HttpStatus.NOT_FOUND.value()))
-                .andReturn();
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
+                .andExpect(content().string(not(emptyString())));
         // then
-        ErrorResource error = objectMapper.readValue(result.getResponse().getContentAsString(), ErrorResource.class);
-        assertNotNull(error);
     }
 
 
@@ -396,9 +395,9 @@ class ProductControllerTest {
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/id/role-mappings")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().is2xxSuccessful())
                 .andReturn();
         // then
         Map<String, ProductRoleInfo> roles = objectMapper.readValue(
@@ -415,15 +414,14 @@ class ProductControllerTest {
         Mockito.when(productServiceMock.getProduct(Mockito.anyString()))
                 .thenThrow(ResourceNotFoundException.class);
         // when
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
+        mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/id/role-mappings")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().is(HttpStatus.NOT_FOUND.value()))
-                .andReturn();
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
+                .andExpect(content().string(not(emptyString())));
         // then
-        ErrorResource error = objectMapper.readValue(result.getResponse().getContentAsString(), ErrorResource.class);
-        assertNotNull(error);
     }
 
     @Test
@@ -438,9 +436,9 @@ class ProductControllerTest {
         //when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .get(BASE_URL + "/tree")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful())
+                .contentType(APPLICATION_JSON_VALUE)
+                .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().is2xxSuccessful())
                 .andReturn();
         //then
         List<ProductTreeResource> treeResources = objectMapper.readValue(result.getResponse().getContentAsString(),
