@@ -121,7 +121,7 @@ class ProductControllerTest {
         });
         //when
         mvc.perform(requestBuilder)
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(status().isOk());
         //then
         ArgumentCaptor<InputStream> inputStreamArgumentCaptor = ArgumentCaptor.forClass(InputStream.class);
         Mockito.verify(productServiceMock, Mockito.times(1))

@@ -241,8 +241,9 @@
             "schema": {
               "type": "string"
             }
-        } ],
-        "responses" : {
+          }
+        ],
+        "responses": {
           "200": {
             "description": "OK",
             "content": {
@@ -418,13 +419,97 @@
             }
           }
         },
-        "security" : [ {
-          "bearerAuth" : [ "global" ]
-        } ]
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
       }
     },
-    "/products/{id}/logo" : {
-      "put" : {
+    "/products/{id}/depict-image": {
+      "put": {
+        "tags": [
+          "product"
+        ],
+        "summary": "saveProductDepictImage",
+        "description": "Service that allows the update of a Product depiction image",
+        "operationId": "saveProductDepictImageUsingPUT",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product's unique identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            },
+            "application/octet-stream": {
+              "schema": {
+                "type": "string",
+                "format": "binary"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
+      }
+    },
+    "/products/{id}/logo": {
+      "put": {
         "tags": [
           "product"
         ],
@@ -454,20 +539,20 @@
                 "properties": {
                   "logo": {
                     "type": "string",
-                    "description" : "Product's logo",
-                    "format" : "binary"
+                    "description": "Product's logo url",
+                    "format": "binary"
                   }
                 }
               }
             }
           }
         },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
                   "type": "object"
                 }
               },
@@ -909,8 +994,10 @@
           "contractTemplateUpdatedAt",
           "contractTemplateVersion",
           "createdAt",
+          "depictImageUrl",
           "id",
           "identityTokenAudience",
+          "logo",
           "title"
         ],
         "type": "object",
@@ -933,6 +1020,10 @@
             "description": "Date the products was activated/created",
             "format": "date-time"
           },
+          "depictImageUrl": {
+            "type": "string",
+            "description": "Product's depiction image url"
+          },
           "description": {
             "type": "string",
             "description": "Product's description"
@@ -947,7 +1038,7 @@
           },
           "logo": {
             "type": "string",
-            "description": "Product's logo"
+            "description": "Product's logo url"
           },
           "parentId": {
             "type": "string",
