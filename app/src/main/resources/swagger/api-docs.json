@@ -994,10 +994,8 @@
           "contractTemplateUpdatedAt",
           "contractTemplateVersion",
           "createdAt",
-          "depictImageUrl",
           "id",
           "identityTokenAudience",
-          "logo",
           "title"
         ],
         "type": "object",
