@@ -995,7 +995,6 @@
           "contractTemplateVersion",
           "createdAt",
           "id",
-          "identityTokenAudience",
           "title"
         ],
         "type": "object",

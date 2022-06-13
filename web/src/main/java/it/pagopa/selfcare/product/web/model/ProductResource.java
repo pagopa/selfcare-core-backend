@@ -18,9 +18,7 @@ public class ProductResource {
     @NotBlank
     private String id;
 
-    @ApiModelProperty(value = "${swagger.product.model.identityTokenAudience}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
+    @ApiModelProperty(value = "${swagger.product.model.identityTokenAudience}")
     private String identityTokenAudience;
 
     @ApiModelProperty(value = "${swagger.product.model.logo}")
@@ -34,13 +32,13 @@ public class ProductResource {
     @NotBlank
     private String title;
 
-    @ApiModelProperty(value = "${swagger.product.model.description}", required = false)
+    @ApiModelProperty(value = "${swagger.product.model.description}")
     private String description;
 
     @ApiModelProperty("${swagger.product.model.urlPublic}")
     private String urlPublic;
 
-    @ApiModelProperty(value = "${swagger.product.model.urlBO}", required = false)
+    @ApiModelProperty(value = "${swagger.product.model.urlBO}")
     private String urlBO;
 
     @ApiModelProperty(value = "${swagger.product.model.creationDateTime}", required = true)
@@ -53,8 +51,7 @@ public class ProductResource {
     @NotNull
     private OffsetDateTime contractTemplateUpdatedAt;
 
-    @ApiModelProperty(value = "${swagger.product.model.roleMappings}", required = false)
-    @JsonProperty(required = true)
+    @ApiModelProperty(value = "${swagger.product.model.roleMappings}")
     private EnumMap<PartyRole, ProductRoleInfo> roleMappings;
 
     @ApiModelProperty(value = "${swagger.product.model.contractTemplatePath}", required = true)
