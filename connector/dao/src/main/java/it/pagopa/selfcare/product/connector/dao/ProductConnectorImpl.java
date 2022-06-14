@@ -72,4 +72,9 @@ public class ProductConnectorImpl implements ProductConnector {
         return new ArrayList<>(repository.findByEnabled(enabled));
     }
 
+    @Override
+    public List<ProductOperations> findByParentAndEnabled(String parent, boolean enabled) {
+        return new ArrayList<>(repository.findByParentIdAndEnabled(parent, enabled));
+    }
+
 }

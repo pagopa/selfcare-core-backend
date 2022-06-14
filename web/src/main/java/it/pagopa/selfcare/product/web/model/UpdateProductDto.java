@@ -24,6 +24,11 @@ public class UpdateProductDto {
     @NotBlank
     private String description;
 
+    @ApiModelProperty(value = "${swagger.product.model.identityTokenAudience}", required = true)
+    @JsonProperty
+    @NotBlank
+    private String identityTokenAudience;
+
     @ApiModelProperty(value = "${swagger.product.model.urlPublic}", required = true)
     private String urlPublic;
 

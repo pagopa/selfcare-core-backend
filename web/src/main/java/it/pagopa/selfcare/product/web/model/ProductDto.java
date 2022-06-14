@@ -25,5 +25,7 @@ public class ProductDto implements ProductOperations {
     private String contractTemplateVersion;
     private String roleManagementURL;
     private boolean enabled = true;
+    private String parentId;
+    private String identityTokenAudience;
 
 }

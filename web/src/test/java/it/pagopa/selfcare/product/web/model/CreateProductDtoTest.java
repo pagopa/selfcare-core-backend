@@ -37,6 +37,7 @@ class CreateProductDtoTest {
         toCheckMap.put("urlBO", NotBlank.class);
         toCheckMap.put("roleMappings", NotEmpty.class);
         toCheckMap.put("contractTemplatePath", NotBlank.class);
+        toCheckMap.put("identityTokenAudience", NotBlank.class);
         toCheckMap.put("contractTemplateVersion", NotBlank.class);
         CreateProductDto createProductDto = new CreateProductDto();
         createProductDto.setId(null);

@@ -41,6 +41,7 @@ class ProductMapperTest {
         assertEquals(product.getDescription(), productResource.getDescription());
         assertEquals(product.getUrlPublic(), productResource.getUrlPublic());
         assertEquals(product.getUrlBO(), productResource.getUrlBO());
+        assertEquals(product.getIdentityTokenAudience(), productResource.getIdentityTokenAudience());
         assertTrue(now.isBefore(productResource.getContractTemplateUpdatedAt()));
         assertEquals(product.getContractTemplateVersion(), productResource.getContractTemplateVersion());
         assertEquals(product.getContractTemplatePath(), productResource.getContractTemplatePath());
@@ -90,6 +91,26 @@ class ProductMapperTest {
     }
 
     @Test
+    void fromCreateSubProductDto_notNull() {
+        //given
+        CreateSubProductDto dto = TestUtils.mockInstance(new CreateSubProductDto());
+        // when
+        ProductOperations product = ProductMapper.fromDto(dto);
+        // then
+        assertNotNull(product);
+        TestUtils.reflectionEqualsByName(product, dto);
+    }
+
+    @Test
+    void fromCreateSubProduct_null() {
+        //given
+        //when
+        ProductOperations product = ProductMapper.fromDto((CreateSubProductDto) null);
+        // then
+        assertNull(product);
+    }
+
+    @Test
     void fromUpdateProductDto_notNull() {
         // given
         UpdateProductDto dto = TestUtils.mockInstance(new UpdateProductDto(), "setRoleMappings");
@@ -116,6 +137,26 @@ class ProductMapperTest {
         // when
         ProductOperations product = ProductMapper.fromDto((UpdateProductDto) null);
         // then
+        assertNull(product);
+    }
+
+    @Test
+    void fromUpdateSubProduct_notNull() {
+        //given
+        UpdateSubProductDto updateSubProductDto = TestUtils.mockInstance(new UpdateSubProductDto());
+        //when
+        ProductOperations productOperations = ProductMapper.fromDto(updateSubProductDto);
+        //then
+        assertNull(productOperations.getId());
+        TestUtils.reflectionEqualsByName(productOperations, updateSubProductDto);
+    }
+
+    @Test
+    void fromUpdateSubProduct_null() {
+        //given
+        //when
+        ProductOperations product = ProductMapper.fromDto((UpdateSubProductDto) null);
+        //then
         assertNull(product);
     }
 
@@ -147,6 +188,46 @@ class ProductMapperTest {
         // then
         assertNotNull(result);
         assertIterableEquals(roleMappings.entrySet(), result.entrySet());
+    }
+
+    @Test
+    void toTreeResource_null() {
+        //given
+        List<ProductOperations> model = null;
+        //when
+        List<ProductTreeResource> resource = ProductMapper.toTreeResource(model);
+        //then
+        assertNull(resource);
+    }
+
+    @Test
+    void toTreeResource_notNull() {
+        //given
+        ProductOperations node = TestUtils.mockInstance(new ProductDto(), "setParentId", "setId");
+        node.setId("parentId");
+        ProductOperations children = TestUtils.mockInstance(new ProductDto(), "setParentId");
+        children.setParentId(node.getId());
+        //when
+        List<ProductTreeResource> resource = ProductMapper.toTreeResource(List.of(node, children));
+        //then
+        assertNotNull(resource);
+        assertEquals(1, resource.size());
+        TestUtils.reflectionEqualsByName(node, resource.get(0).getNode());
+        TestUtils.reflectionEqualsByName(children, resource.get(0).getChildren().get(0));
+    }
+
+    @Test
+    void toTreeResource_notNull_noChildren() {
+        //given
+        ProductOperations node = TestUtils.mockInstance(new ProductDto(), "setParentId", "setId");
+        node.setId("parentId");
+        //when
+        List<ProductTreeResource> resource = ProductMapper.toTreeResource(List.of(node));
+        //then
+        assertNotNull(resource);
+        assertEquals(1, resource.size());
+        TestUtils.reflectionEqualsByName(node, resource.get(0).getNode());
+
     }
 
 }
