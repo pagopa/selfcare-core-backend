@@ -18,4 +18,6 @@ public interface ProductService {
     ProductOperations updateProduct(String id, ProductOperations product);
 
     void saveProductLogo(String logoId, InputStream logo, String contentType, String fileName);
+
+    void saveProductDepictImage(String id, InputStream depictImage, String contentType, String fileName);
 }

@@ -23,6 +23,7 @@ public class ProductMapper {
             resource = new ProductResource();
             resource.setId(entity.getId());
             resource.setLogo(entity.getLogo());
+            resource.setDepictImageUrl(entity.getDepictImageUrl());
             resource.setTitle(entity.getTitle());
             resource.setDescription(entity.getDescription());
             resource.setUrlPublic(entity.getUrlPublic());
