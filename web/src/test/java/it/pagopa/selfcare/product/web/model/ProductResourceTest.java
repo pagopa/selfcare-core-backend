@@ -10,7 +10,6 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -33,13 +32,9 @@ class ProductResourceTest {
         // given
         HashMap<String, Class<? extends Annotation>> toCheckMap = new HashMap<>();
         toCheckMap.put("id", NotBlank.class);
-        toCheckMap.put("logo", NotBlank.class);
         toCheckMap.put("title", NotBlank.class);
-        toCheckMap.put("description", NotBlank.class);
-        toCheckMap.put("urlBO", NotBlank.class);
         toCheckMap.put("createdAt", NotNull.class);
         toCheckMap.put("contractTemplateUpdatedAt", NotNull.class);
-        toCheckMap.put("roleMappings", NotEmpty.class);
         toCheckMap.put("contractTemplatePath", NotBlank.class);
         toCheckMap.put("contractTemplateVersion", NotBlank.class);
         ProductResource productResource = new ProductResource();
@@ -51,6 +46,7 @@ class ProductResourceTest {
         productResource.setUrlBO(null);
         productResource.setCreatedAt(null);
         productResource.setContractTemplateUpdatedAt(null);
+        productResource.setIdentityTokenAudience(null);
         productResource.setRoleMappings(null);
         productResource.setContractTemplatePath(null);
         productResource.setContractTemplateVersion(null);

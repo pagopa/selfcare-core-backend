@@ -10,6 +10,7 @@ public class DummyProduct implements ProductOperations {
 
     private String id;
     private String logo;
+    private String depictImageUrl;
     private String title;
     private String description;
     private String urlPublic;

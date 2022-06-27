@@ -11,6 +11,7 @@ import it.pagopa.selfcare.product.web.config.WebTestConfig;
 import it.pagopa.selfcare.product.web.handler.ProductExceptionsHandler;
 import it.pagopa.selfcare.product.web.model.*;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -25,6 +26,7 @@ import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequ
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.MimeTypeUtils;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -83,6 +85,7 @@ class ProductControllerTest {
         String filename = "test.png";
         MockMultipartFile multipartFile = new MockMultipartFile("logo", filename,
                 contentType, "test prodoct logo".getBytes(StandardCharsets.UTF_8));
+        InputStream inputStream = multipartFile.getInputStream();
         MockMultipartHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
                 .multipart(BASE_URL + "/" + productId + "/logo")
                 .file(multipartFile);
@@ -94,10 +97,37 @@ class ProductControllerTest {
         mvc.perform(requestBuilder)
                 .andExpect(status().isOk());
         //then
+        ArgumentCaptor<InputStream> inputStreamArgumentCaptor = ArgumentCaptor.forClass(InputStream.class);
         Mockito.verify(productServiceMock, Mockito.times(1))
-                .saveProductLogo(Mockito.eq(productId), Mockito.any(), Mockito.eq(contentType), Mockito.eq(filename));
+                .saveProductLogo(Mockito.eq(productId), inputStreamArgumentCaptor.capture(), Mockito.eq(contentType), Mockito.eq(filename));
+        assertArrayEquals(inputStream.readAllBytes(), inputStreamArgumentCaptor.getValue().readAllBytes());
         Mockito.verifyNoMoreInteractions(productServiceMock);
+    }
 
+    @Test
+    void saveProductDepictImage() throws Exception {
+        String productId = "productId";
+        String contentType = MimeTypeUtils.IMAGE_PNG_VALUE;
+        String filename = "test.png";
+        MockMultipartFile multipartFile = new MockMultipartFile("depictImage", filename,
+                contentType, "test product depict Image".getBytes(StandardCharsets.UTF_8));
+        InputStream inputStream = multipartFile.getInputStream();
+        MockMultipartHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+                .multipart(BASE_URL + "/" + productId + "/depict-image")
+                .file(multipartFile);
+        requestBuilder.with(request -> {
+            request.setMethod(HttpMethod.PUT.name());
+            return request;
+        });
+        //when
+        mvc.perform(requestBuilder)
+                .andExpect(status().isOk());
+        //then
+        ArgumentCaptor<InputStream> inputStreamArgumentCaptor = ArgumentCaptor.forClass(InputStream.class);
+        Mockito.verify(productServiceMock, Mockito.times(1))
+                .saveProductDepictImage(Mockito.eq(productId), inputStreamArgumentCaptor.capture(), Mockito.eq(contentType), Mockito.eq(filename));
+        assertArrayEquals(inputStream.readAllBytes(), inputStreamArgumentCaptor.getValue().readAllBytes());
+        Mockito.verifyNoMoreInteractions(productServiceMock);
     }
 
     @Test
