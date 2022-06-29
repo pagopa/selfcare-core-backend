@@ -69,7 +69,7 @@ public class ProductController {
     @ApiOperation(value = "", notes = "${swagger.product.operation.saveProductLogo}")
     public Object saveProductLogo(@ApiParam("${swagger.product.model.id}")
                                   @PathVariable("id") String id,
-                                  @ApiParam("${swagger.product.model.logo}")
+                                  @ApiParam("${swagger.product.model.logoImage}")
                                   @RequestPart("logo") MultipartFile logo) throws IOException {
 
         log.trace("saveProductLogo start");
