@@ -85,7 +85,7 @@ public class ProductController {
     public Object saveProductDepictImage(@ApiParam("${swagger.product.model.id}")
                                          @PathVariable("id") String id,
                                          @ApiParam("${swagger.product.model.depictImage}")
-                                         @RequestParam("depictImage") MultipartFile depictImage) throws IOException {
+                                         @RequestPart("depictImage") MultipartFile depictImage) throws IOException {
         log.trace("saveProductDepictImage start");
         log.debug("saveProductDepictImage id = {}, logo = {}", id, depictImage);
         productService.saveProductDepictImage(id, depictImage.getInputStream(), depictImage.getContentType(), depictImage.getOriginalFilename());
