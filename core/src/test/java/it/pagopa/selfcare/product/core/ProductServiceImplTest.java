@@ -299,11 +299,11 @@ class ProductServiceImplTest {
         verify(productDepictImageServiceMock, times(1))
                 .getDefaultImageUrl();
         verify(productConnectorMock, times(1))
-                .insert(eq(input));
+                .insert(input);
         verify(productConnectorMock, times(1))
-                .existsByIdAndEnabledFalse(eq(id));
+                .existsByIdAndEnabledFalse(id);
         verify(productConnectorMock, times(1))
-                .save(eq(input));
+                .save(input);
         verifyNoMoreInteractions(productConnectorMock);
 
     }
@@ -337,9 +337,9 @@ class ProductServiceImplTest {
         verify(productDepictImageServiceMock, times(1))
                 .getDefaultImageUrl();
         verify(productConnectorMock, times(1))
-                .insert(eq(input));
+                .insert(input);
         verify(productConnectorMock, times(1))
-                .existsByIdAndEnabledFalse(eq(id));
+                .existsByIdAndEnabledFalse(id);
         verifyNoMoreInteractions(productConnectorMock);
     }
 
