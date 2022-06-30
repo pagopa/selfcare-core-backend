@@ -75,7 +75,7 @@ class ProductServiceImpl implements ProductService {
             if (productConnector.existsByIdAndEnabledFalse(product.getId())) {
                 insert = productConnector.save(product);
             } else {
-                throw new ResourceAlreadyExistsException(String.format("Product %s is still active", product.getId()), e);
+                throw new ResourceAlreadyExistsException(String.format("Product %s already exists and is still active", product.getId()), e);
             }
         }
         log.debug("createProduct result = {}", insert);
