@@ -69,7 +69,7 @@ public class ProductController {
     @ApiOperation(value = "", notes = "${swagger.product.operation.saveProductLogo}")
     public Object saveProductLogo(@ApiParam("${swagger.product.model.id}")
                                   @PathVariable("id") String id,
-                                  @ApiParam("${swagger.product.model.logo}")
+                                  @ApiParam("${swagger.product.model.logoImage}")
                                   @RequestPart("logo") MultipartFile logo) throws IOException {
 
         log.trace("saveProductLogo start");
@@ -79,17 +79,18 @@ public class ProductController {
         return null;
     }
 
-    @PutMapping(value = "/{id}/depict-image")
+    @PutMapping(value = "/{id}/depict-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.product.operation.saveProductDepictImage}")
-    public void saveProductDepictImage(@ApiParam("${swagger.product.model.id}")
-                                       @PathVariable("id") String id,
-                                       @ApiParam("${swagger.product.model.depictImage}")
-                                       @RequestParam("depictImage") MultipartFile depictImage) throws IOException {
+    public Object saveProductDepictImage(@ApiParam("${swagger.product.model.id}")
+                                         @PathVariable("id") String id,
+                                         @ApiParam("${swagger.product.model.depictImage}")
+                                         @RequestPart("depictImage") MultipartFile depictImage) throws IOException {
         log.trace("saveProductDepictImage start");
         log.debug("saveProductDepictImage id = {}, logo = {}", id, depictImage);
         productService.saveProductDepictImage(id, depictImage.getInputStream(), depictImage.getContentType(), depictImage.getOriginalFilename());
         log.trace("saveProductDepictImage end");
+        return null;
     }
 
 
