@@ -1,6 +1,5 @@
 package it.pagopa.selfcare.product.connector.dao;
 
-import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.product.connector.dao.model.ProductEntity;
 import it.pagopa.selfcare.product.connector.exception.ResourceAlreadyExistsException;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
@@ -17,8 +16,10 @@ import org.springframework.dao.DuplicateKeyException;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProductConnectorImplTest {
@@ -33,50 +34,50 @@ class ProductConnectorImplTest {
     @Test
     void insert_duplicateKey() {
         // given
-        ProductEntity entity = TestUtils.mockInstance(new ProductEntity());
-        Mockito.doThrow(DuplicateKeyException.class)
+        ProductEntity entity = mockInstance(new ProductEntity());
+        doThrow(DuplicateKeyException.class)
                 .when(repositoryMock)
-                .insert(Mockito.any(ProductEntity.class));
+                .insert(any(ProductEntity.class));
         // when
         Executable executable = () -> productConnector.insert(entity);
         // then
         ResourceAlreadyExistsException e = assertThrows(ResourceAlreadyExistsException.class, executable);
         assertEquals("Product id = " + entity.getId(), e.getMessage());
-        Mockito.verify(repositoryMock, Mockito.times(1))
+        verify(repositoryMock, times(1))
                 .insert(entity);
-        Mockito.verifyNoMoreInteractions(repositoryMock);
+        verifyNoMoreInteractions(repositoryMock);
     }
 
 
     @Test
     void insert() {
         // given
-        ProductEntity entity = TestUtils.mockInstance(new ProductEntity());
-        Mockito.when(repositoryMock.insert(Mockito.any(ProductEntity.class)))
+        ProductEntity entity = mockInstance(new ProductEntity());
+        when(repositoryMock.insert(any(ProductEntity.class)))
                 .thenReturn(entity);
         // when
         ProductOperations saved = productConnector.insert(entity);
         // then
         Assertions.assertEquals(entity, saved);
-        Mockito.verify(repositoryMock, Mockito.times(1))
+        verify(repositoryMock, times(1))
                 .insert(entity);
-        Mockito.verifyNoMoreInteractions(repositoryMock);
+        verifyNoMoreInteractions(repositoryMock);
     }
 
 
     @Test
     void save() {
         // given
-        ProductEntity entity = TestUtils.mockInstance(new ProductEntity());
-        Mockito.when(repositoryMock.save(Mockito.any()))
+        ProductEntity entity = mockInstance(new ProductEntity());
+        when(repositoryMock.save(any()))
                 .thenReturn(entity);
         // when
         ProductOperations saved = productConnector.save(entity);
         // then
         Assertions.assertEquals(entity, saved);
-        Mockito.verify(repositoryMock, Mockito.times(1))
+        verify(repositoryMock, times(1))
                 .save(entity);
-        Mockito.verifyNoMoreInteractions(repositoryMock);
+        verifyNoMoreInteractions(repositoryMock);
     }
 
 
@@ -84,16 +85,16 @@ class ProductConnectorImplTest {
     void findById() {
         // given
         String id = "id";
-        Optional<ProductEntity> entity = Optional.of(TestUtils.mockInstance(new ProductEntity()));
-        Mockito.when(repositoryMock.findById(Mockito.any()))
+        Optional<ProductEntity> entity = Optional.of(mockInstance(new ProductEntity()));
+        when(repositoryMock.findById(any()))
                 .thenReturn(entity);
         // when
         Optional<ProductOperations> found = productConnector.findById(id);
         // then
         Assertions.assertEquals(entity, found);
-        Mockito.verify(repositoryMock, Mockito.times(1))
+        verify(repositoryMock, times(1))
                 .findById(id);
-        Mockito.verifyNoMoreInteractions(repositoryMock);
+        verifyNoMoreInteractions(repositoryMock);
     }
 
 
@@ -102,31 +103,31 @@ class ProductConnectorImplTest {
         // given
         String id = "id";
         boolean expected = true;
-        Mockito.when(repositoryMock.existsById(Mockito.any()))
+        when(repositoryMock.existsById(any()))
                 .thenReturn(expected);
         // when
         boolean exists = productConnector.existsById(id);
         // then
         Assertions.assertEquals(expected, exists);
-        Mockito.verify(repositoryMock, Mockito.times(1))
+        verify(repositoryMock, times(1))
                 .existsById(id);
-        Mockito.verifyNoMoreInteractions(repositoryMock);
+        verifyNoMoreInteractions(repositoryMock);
     }
 
 
     @Test
     void findAll() {
         // given
-        List<ProductEntity> expected = List.of(TestUtils.mockInstance(new ProductEntity()));
-        Mockito.when(repositoryMock.findAll())
+        List<ProductEntity> expected = List.of(mockInstance(new ProductEntity()));
+        when(repositoryMock.findAll())
                 .thenReturn(expected);
         // when
         List<ProductOperations> found = productConnector.findAll();
         // then
         Assertions.assertEquals(expected, found);
-        Mockito.verify(repositoryMock, Mockito.times(1))
+        verify(repositoryMock, times(1))
                 .findAll();
-        Mockito.verifyNoMoreInteractions(repositoryMock);
+        verifyNoMoreInteractions(repositoryMock);
     }
 
 
@@ -136,13 +137,13 @@ class ProductConnectorImplTest {
         String id = "id";
         Mockito.doNothing()
                 .when(repositoryMock)
-                .deleteById(Mockito.any());
+                .deleteById(any());
         // when
         productConnector.deleteById(id);
         // then
-        Mockito.verify(repositoryMock, Mockito.times(1))
+        verify(repositoryMock, times(1))
                 .deleteById(id);
-        Mockito.verifyNoMoreInteractions(repositoryMock);
+        verifyNoMoreInteractions(repositoryMock);
     }
 
 
@@ -150,16 +151,16 @@ class ProductConnectorImplTest {
     void findByEnabled() {
         // given
         boolean enabled = true;
-        List<ProductEntity> expected = List.of(TestUtils.mockInstance(new ProductEntity()));
-        Mockito.when(repositoryMock.findByEnabled(Mockito.anyBoolean()))
+        List<ProductEntity> expected = List.of(mockInstance(new ProductEntity()));
+        when(repositoryMock.findByEnabled(anyBoolean()))
                 .thenReturn(expected);
         // when
         List<ProductOperations> found = productConnector.findByEnabled(enabled);
         // then
         Assertions.assertEquals(expected, found);
-        Mockito.verify(repositoryMock, Mockito.times(1))
+        verify(repositoryMock, times(1))
                 .findByEnabled(enabled);
-        Mockito.verifyNoMoreInteractions(repositoryMock);
+        verifyNoMoreInteractions(repositoryMock);
     }
 
     @Test
@@ -167,16 +168,48 @@ class ProductConnectorImplTest {
         // given
         String parent = "parentId";
         boolean enabled = true;
-        List<ProductEntity> expected = List.of(TestUtils.mockInstance(new ProductEntity()));
-        Mockito.when(repositoryMock.findByParentIdAndEnabled(Mockito.anyString(), Mockito.anyBoolean()))
+        List<ProductEntity> expected = List.of(mockInstance(new ProductEntity()));
+        when(repositoryMock.findByParentIdAndEnabled(anyString(), anyBoolean()))
                 .thenReturn(expected);
         // when
         List<ProductOperations> found = productConnector.findByParentAndEnabled(parent, enabled);
         //then
         Assertions.assertEquals(expected, found);
-        Mockito.verify(repositoryMock, Mockito.times(1))
+        verify(repositoryMock, times(1))
                 .findByParentIdAndEnabled(parent, enabled);
-        Mockito.verifyNoMoreInteractions(repositoryMock);
+        verifyNoMoreInteractions(repositoryMock);
+    }
+
+    @Test
+    void existsByIdAndEnabledFalse_found() {
+        //given
+        String id = "id";
+        boolean expected = true;
+        when(repositoryMock.existsByIdAndEnabledFalse(anyString()))
+                .thenReturn(expected);
+        //when
+        boolean found = productConnector.existsByIdAndEnabledFalse(id);
+        //then
+        assertTrue(found);
+        verify(repositoryMock, times(1))
+                .existsByIdAndEnabledFalse(id);
+        verifyNoMoreInteractions(repositoryMock);
+    }
+
+    @Test
+    void existsByIdAndEnabledFalse_notFound() {
+        //given
+        String id = "id";
+        boolean expected = false;
+        when(repositoryMock.existsByIdAndEnabledFalse(anyString()))
+                .thenReturn(expected);
+        //when
+        boolean found = productConnector.existsByIdAndEnabledFalse(id);
+        //then
+        assertFalse(found);
+        verify(repositoryMock, times(1))
+                .existsByIdAndEnabledFalse(id);
+        verifyNoMoreInteractions(repositoryMock);
     }
 
 }

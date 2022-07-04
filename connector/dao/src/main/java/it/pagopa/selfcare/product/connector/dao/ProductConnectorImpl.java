@@ -54,6 +54,11 @@ public class ProductConnectorImpl implements ProductConnector {
         return repository.existsById(id);
     }
 
+    @Override
+    public boolean existsByIdAndEnabledFalse(String id) {
+        return repository.existsByIdAndEnabledFalse(id);
+    }
+
 
     @Override
     public List<ProductOperations> findAll() {

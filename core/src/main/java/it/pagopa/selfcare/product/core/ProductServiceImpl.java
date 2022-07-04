@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.product.core;
 
 import it.pagopa.selfcare.product.connector.api.ProductConnector;
+import it.pagopa.selfcare.product.connector.exception.ResourceAlreadyExistsException;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
@@ -67,7 +68,16 @@ class ProductServiceImpl implements ProductService {
         OffsetDateTime now = OffsetDateTime.now();
         product.setCreatedAt(now);
         product.setContractTemplateUpdatedAt(now);
-        ProductOperations insert = productConnector.insert(product);
+        ProductOperations insert;
+        try {
+            insert = productConnector.insert(product);
+        } catch (ResourceAlreadyExistsException e) {
+            if (productConnector.existsByIdAndEnabledFalse(product.getId())) {
+                insert = productConnector.save(product);
+            } else {
+                throw new ResourceAlreadyExistsException(String.format("Product %s already exists and is still active", product.getId()), e);
+            }
+        }
         log.debug("createProduct result = {}", insert);
         log.trace("createProduct end");
         return insert;
