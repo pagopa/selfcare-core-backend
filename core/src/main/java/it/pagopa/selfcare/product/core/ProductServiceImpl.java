@@ -1,55 +1,41 @@
 package it.pagopa.selfcare.product.core;
 
-import it.pagopa.selfcare.product.connector.api.FileStorageConnector;
 import it.pagopa.selfcare.product.connector.api.ProductConnector;
-import it.pagopa.selfcare.product.connector.exception.FileUploadException;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
-import it.pagopa.selfcare.product.core.exception.FileValidationException;
 import it.pagopa.selfcare.product.core.exception.InvalidRoleMappingException;
 import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.util.InvalidMimeTypeException;
-import org.springframework.util.StringUtils;
 
 import javax.validation.ValidationException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.OffsetDateTime;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Service
 class ProductServiceImpl implements ProductService {
 
-    private static final String LOGO_PATH_TEMPLATE = "resources/products/%s/logo.%s";
     private static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product id is required";
 
+
     private final ProductConnector productConnector;
-    private final FileStorageConnector fileStorageConnector;
-    private final Set<String> allowedProductLogoMimeTypes;
-    private final Set<String> allowedProductLogoExtensions;
-    private final String defaultUrl;
+    private final ProductImageService productLogoImageService;
+    private final ProductImageService productDepictImageService;
 
     @Autowired
     public ProductServiceImpl(ProductConnector productConnector,
-                              FileStorageConnector fileStorageConnector,
-                              @Value("${product.logo.allowed-mime-types}") String[] allowedProductLogoMimeTypes,
-                              @Value("${product.logo.allowed-extensions}") String[] allowedProductLogoExtensions,
-                              @Value("${product.logo.default-url}") String defaultUrl) {
+                              @Qualifier("productLogoImageService") ProductImageService productLogoImageService,
+                              @Qualifier("productDepictImageService") ProductImageService productDepictImageService) {
         this.productConnector = productConnector;
-        this.fileStorageConnector = fileStorageConnector;
-        this.allowedProductLogoMimeTypes = Set.of(allowedProductLogoMimeTypes);
-        this.allowedProductLogoExtensions = Set.of(allowedProductLogoExtensions);
-        this.defaultUrl = defaultUrl;
+        this.productLogoImageService = productLogoImageService;
+        this.productDepictImageService = productDepictImageService;
     }
 
     @Override
@@ -73,7 +59,8 @@ class ProductServiceImpl implements ProductService {
         Assert.notNull(product, "A product is required");
         if (product.getParentId() == null) {
             validateRoleMappings(product.getRoleMappings());
-            product.setLogo(defaultUrl);
+            product.setLogo(productLogoImageService.getDefaultImageUrl());
+            product.setDepictImageUrl(productDepictImageService.getDefaultImageUrl());
         } else if (!productConnector.existsById(product.getParentId())) {
             throw new ValidationException("Parent not found", new ResourceNotFoundException("For id = " + product.getParentId()));
         }
@@ -168,48 +155,26 @@ class ProductServiceImpl implements ProductService {
     public void saveProductLogo(String id, InputStream logo, String contentType, String fileName) {
         log.trace("saveProductLogo start");
         log.debug("saveProductLogo id = {}, logo = {}, contentType = {}, fileName = {}", id, logo, contentType, fileName);
+        ProductOperations productToUpdate = getProduct(id);
+        if (productToUpdate.getParentId() != null) {
+            throw new ValidationException("Given product Id = " + id + " is of a subProduct");
+        }
+        productLogoImageService.saveImage(productToUpdate, logo, contentType, fileName);
+        log.trace("saveProductLogo end");
+    }
+
+    @Override
+    public void saveProductDepictImage(String id, InputStream depictImage, String contentType, String fileName) {
+        log.trace("saveProductDepictImage start");
+        log.debug("saveProductDepictImage id = {}, logo = {}, contentType = {}, fileName = {}", id, depictImage, contentType, fileName);
         Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
         ProductOperations productToUpdate = getProduct(id);
         if (productToUpdate.getParentId() != null) {
             throw new ValidationException("Given product Id = " + id + " is of a subProduct");
         }
-        try {
-            validate(contentType, fileName);
-
-        } catch (Exception e) {
-            throw new FileValidationException(e.getMessage(), e);
-        }
-
-        String fileExtension = StringUtils.getFilenameExtension(fileName);
-        URL savedUrl;
-        try {
-            savedUrl = fileStorageConnector.uploadProductLogo(logo, String.format(LOGO_PATH_TEMPLATE, id, fileExtension), contentType);
-
-        } catch (FileUploadException | MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-        String stringUrl = savedUrl.toString();
-        if (productToUpdate.getLogo() == null || !productToUpdate.getLogo().equals(stringUrl)) {
-
-            productToUpdate.setLogo(stringUrl);
-            productConnector.save(productToUpdate);
-        }
-        log.trace("saveProductLogo end");
+        productDepictImageService.saveImage(productToUpdate, depictImage, contentType, fileName);
+        log.trace("saveProductDepictImage end");
     }
 
-    private void validate(String contentType, String fileName) {
-        log.trace("validate start");
-        log.debug("validate contentType = {}, fileName = {}", contentType, fileName);
-        Assert.notNull(fileName, "file name cannot be null");
 
-        if (!allowedProductLogoMimeTypes.contains(contentType)) {
-            throw new InvalidMimeTypeException(contentType, String.format("allowed only %s", allowedProductLogoMimeTypes));
-        }
-
-        String fileExtension = StringUtils.getFilenameExtension(fileName);
-        if (!allowedProductLogoExtensions.contains(fileExtension)) {
-            throw new IllegalArgumentException(String.format("Invalid file extension \"%s\": allowed only %s", fileExtension, allowedProductLogoExtensions));
-        }
-        log.trace("validate end");
-    }
 }

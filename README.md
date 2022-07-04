@@ -44,12 +44,16 @@
 | **Core Configurations** |
 |:--------------------------:|
 
-| **Property** | **Enviroment Variable** | **Default** | **Required** |
-|--------------|-------------------------|-------------|:------------:|
-|product.logo.allowed-mime-types|PRODUCT_LOGO_ALLOWED_MIME_TYPES|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/core/src/main/resources/config/core-config.properties)| yes |
-|product.logo.allowed-extensions|PRODUCT_LOGO_ALLOWED_EXTENSIONS|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/core/src/main/resources/config/core-config.properties)| yes |
-|product.logo.default-url|LOGO_STORAGE_URL|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/core/src/main/resources/config/core-config.properties)| yes |
-|product.logo.default-url|PUBLIC_FILE_STORAGE_BASE_URL|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/core/src/main/resources/config/core-config.properties)| yes |
+| **Property**                             | **Enviroment Variable** | **Default** | **Required** |
+|------------------------------------------|-------------------------|-------------|:------------:|
+| product.img.logo.allowed-mime-types      |PRODUCT_LOGO_ALLOWED_MIME_TYPES|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/core/src/main/resources/config/core-config.properties)| yes |
+| product.img.logo.allowed-extensions      |PRODUCT_LOGO_ALLOWED_EXTENSIONS|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/core/src/main/resources/config/core-config.properties)| yes |
+| product.img.logo.default-url             |LOGO_STORAGE_URL|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/core/src/main/resources/config/core-config.properties)| yes |
+| product.img.logo.default-url             |PUBLIC_FILE_STORAGE_BASE_URL|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/core/src/main/resources/config/core-config.properties)| yes |
+| product.img.depiction.allowed-mime-types |PRODUCT_DEPICT_ALLOWED_MIME_TYPES|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/core/src/main/resources/config/core-config.properties)| yes |
+| product.img.depiction.allowed-extensions |PRODUCT_DEPICT_ALLOWED_EXTENSIONS|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/core/src/main/resources/config/core-config.properties)| yes |
+| product.img.logo.default-url             |DEPICT_IMAGE_URL|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/core/src/main/resources/config/core-config.properties)| yes |
+| product.img.logo.default-url             |PUBLIC_FILE_STORAGE_BASE_URL|<a name= "default property"></a>[default_property](https://github.com/pagopa/selfcare-ms-product/blob/release-dev/core/src/main/resources/config/core-config.properties)| yes |
 
 | **Web Configurations** |
 |:--------------------------:|
