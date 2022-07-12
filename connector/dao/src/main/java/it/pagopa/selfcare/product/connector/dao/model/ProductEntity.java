@@ -25,6 +25,7 @@ public class ProductEntity implements ProductOperations {
         this();
         id = product.getId();
         logo = product.getLogo();
+        logoBgColor = product.getLogoBgColor();
         depictImageUrl = product.getDepictImageUrl();
         title = product.getTitle();
         description = product.getDescription();
@@ -46,6 +47,7 @@ public class ProductEntity implements ProductOperations {
     private String logo;
     private String depictImageUrl;
     private String title;
+    private String logoBgColor;
     private String description;
     private String urlPublic;
     private String urlBO;

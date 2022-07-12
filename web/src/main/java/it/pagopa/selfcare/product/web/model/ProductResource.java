@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.time.OffsetDateTime;
 import java.util.EnumMap;
 
@@ -23,6 +24,10 @@ public class ProductResource {
 
     @ApiModelProperty(value = "${swagger.product.model.logo}")
     private String logo;
+
+    @ApiModelProperty(value = "${swagger.product.model.logoBgColor}")
+    @Pattern(regexp = "^#[0-9A-F]{6}$")
+    private String logoBgColor;
 
     @ApiModelProperty(value = "${swagger.product.model.depictImageUrl}")
     private String depictImageUrl;

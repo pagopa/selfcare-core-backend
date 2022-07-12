@@ -15,6 +15,7 @@ import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UpdateProductDtoTest {
@@ -43,6 +44,7 @@ class UpdateProductDtoTest {
         updateProductDto.setDescription(null);
         updateProductDto.setUrlPublic(null);
         updateProductDto.setUrlBO(null);
+        updateProductDto.setLogoBgColor(null);
         updateProductDto.setRoleMappings(null);
         updateProductDto.setContractTemplatePath(null);
         updateProductDto.setContractTemplateVersion(null);
@@ -50,13 +52,32 @@ class UpdateProductDtoTest {
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(updateProductDto);
         // then
-        List<ConstraintViolation<Object>> filteredViolations = violations.stream()
-                .filter(violation -> {
-                    Class<? extends Annotation> annotationToCheck = toCheckMap.get(violation.getPropertyPath().toString());
-                    return !violation.getConstraintDescriptor().getAnnotation().annotationType().equals(annotationToCheck);
-                })
-                .collect(Collectors.toList());
+        List<ConstraintViolation<Object>> filteredViolations = violations.stream().filter(violation -> {
+            Class<? extends Annotation> annotationToCheck = toCheckMap.get(violation.getPropertyPath().toString());
+            return !violation.getConstraintDescriptor().getAnnotation().annotationType().equals(annotationToCheck);
+        }).collect(Collectors.toList());
         assertTrue(filteredViolations.isEmpty());
+    }
+
+    @Test
+    void validateRegExViolation() {
+        //given
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+        for (PartyRole partyRole : PartyRole.values()) {
+            ProductRoleInfo productRoleInfo = new ProductRoleInfo();
+            List<ProductRole> roles = new ArrayList<>();
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+            productRoleInfo.setRoles(roles);
+            productRoleInfo.setMultiroleAllowed(true);
+            roleMappings.put(partyRole, productRoleInfo);
+        }
+        UpdateProductDto product = TestUtils.mockInstance(new UpdateProductDto(), "setRoleMappings");
+        product.setRoleMappings(roleMappings);
+        //when
+        Set<ConstraintViolation<Object>> violations = validator.validate(product);
+        // then
+        assertFalse(violations.isEmpty());
     }
 
     @Test
@@ -72,7 +93,8 @@ class UpdateProductDtoTest {
             productRoleInfo.setMultiroleAllowed(true);
             roleMappings.put(partyRole, productRoleInfo);
         }
-        UpdateProductDto product = TestUtils.mockInstance(new UpdateProductDto(), "setRoleMappings");
+        UpdateProductDto product = TestUtils.mockInstance(new UpdateProductDto(), "setRoleMappings", "setLogoBgColor");
+        product.setLogoBgColor("#21ED43");
         product.setRoleMappings(roleMappings);
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(product);
