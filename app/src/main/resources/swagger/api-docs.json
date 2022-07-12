@@ -964,26 +964,30 @@
           },
           "id" : {
             "type" : "string",
-            "description" : "Product's unique identifier"
+            "description": "Product's unique identifier"
           },
-          "identityTokenAudience" : {
-            "type" : "string",
-            "description" : "Product's identity token audience"
+          "identityTokenAudience": {
+            "type": "string",
+            "description": "Product's identity token audience"
           },
-          "logo" : {
-            "type" : "string",
-            "description" : "Product's logo url"
+          "logo": {
+            "type": "string",
+            "description": "Product's logo url"
           },
-          "parentId" : {
-            "type" : "string",
-            "description" : "Root parent of the sub product"
+          "logoBgColor": {
+            "type": "string",
+            "description": "Product logo's background color"
           },
-          "roleManagementURL" : {
-            "type" : "string",
-            "description" : "Url of the utilities management"
+          "parentId": {
+            "type": "string",
+            "description": "Root parent of the sub product"
           },
-          "roleMappings" : {
-            "type" : "object",
+          "roleManagementURL": {
+            "type": "string",
+            "description": "Url of the utilities management"
+          },
+          "roleMappings": {
+            "type": "object",
             "additionalProperties" : {
               "$ref" : "#/components/schemas/ProductRoleInfoRes"
             },
@@ -1101,26 +1105,30 @@
           },
           "contractTemplateVersion" : {
             "type" : "string",
-            "description" : "Version of the contract"
+            "description": "Version of the contract"
           },
-          "description" : {
-            "type" : "string",
-            "description" : "Product's description"
+          "description": {
+            "type": "string",
+            "description": "Product's description"
           },
-          "identityTokenAudience" : {
-            "type" : "string",
-            "description" : "Product's identity token audience"
+          "identityTokenAudience": {
+            "type": "string",
+            "description": "Product's identity token audience"
           },
-          "roleManagementURL" : {
-            "type" : "string",
-            "description" : "Url of the utilities management"
+          "logoBgColor": {
+            "type": "string",
+            "description": "Product logo's background color"
           },
-          "roleMappings" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/ProductRoleInfoReq"
+          "roleManagementURL": {
+            "type": "string",
+            "description": "Url of the utilities management"
+          },
+          "roleMappings": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ProductRoleInfoReq"
             },
-            "description" : "Mappings between Party's and Product's role"
+            "description": "Mappings between Party's and Product's role"
           },
           "title" : {
             "type" : "string",
