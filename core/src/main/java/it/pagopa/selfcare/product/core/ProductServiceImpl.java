@@ -144,6 +144,7 @@ class ProductServiceImpl implements ProductService {
         }
         foundProduct.setTitle(product.getTitle());
         foundProduct.setDescription(product.getDescription());
+        foundProduct.setLogoBgColor(product.getLogoBgColor());
         foundProduct.setUrlPublic(product.getUrlPublic());
         foundProduct.setUrlBO(product.getUrlBO());
         foundProduct.setRoleMappings(product.getRoleMappings());

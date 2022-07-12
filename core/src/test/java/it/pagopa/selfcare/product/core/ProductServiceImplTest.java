@@ -617,6 +617,7 @@ class ProductServiceImplTest {
         assertEquals(savedProduct.getUrlBO(), product.getUrlBO());
         assertEquals(savedProduct.getRoleMappings(), product.getRoleMappings());
         assertEquals(savedProduct.getRoleManagementURL(), product.getRoleManagementURL());
+        assertEquals(savedProduct.getLogoBgColor(), product.getLogoBgColor());
         assertEquals(savedProduct.getContractTemplatePath(), product.getContractTemplatePath());
         assertEquals(savedProduct.getContractTemplateVersion(), product.getContractTemplateVersion());
         verify(productConnectorMock, times(1)).findById(productId);
@@ -658,6 +659,7 @@ class ProductServiceImplTest {
         assertEquals(savedProduct.getDescription(), product.getDescription());
         assertEquals(savedProduct.getUrlPublic(), product.getUrlPublic());
         assertEquals(savedProduct.getUrlBO(), product.getUrlBO());
+        assertEquals(savedProduct.getLogoBgColor(), product.getLogoBgColor());
         assertEquals(savedProduct.getRoleMappings(), product.getRoleMappings());
         assertEquals(savedProduct.getRoleManagementURL(), product.getRoleManagementURL());
         assertEquals(savedProduct.getContractTemplatePath(), product.getContractTemplatePath());

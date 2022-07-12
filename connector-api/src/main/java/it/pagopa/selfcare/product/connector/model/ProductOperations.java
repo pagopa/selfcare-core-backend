@@ -13,6 +13,10 @@ public interface ProductOperations {
 
     void setLogo(String logo);
 
+    String getLogoBgColor();
+
+    void setLogoBgColor(String logoBgColor);
+
     String getDepictImageUrl();
 
     void setDepictImageUrl(String depictImageUrl);

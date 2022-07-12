@@ -8,6 +8,7 @@ import lombok.Data;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import java.util.EnumMap;
 
 @Data
@@ -23,6 +24,10 @@ public class UpdateProductDto {
     @JsonProperty(required = true)
     @NotBlank
     private String description;
+
+    @ApiModelProperty(value = "${swagger.product.model.logoBgColor}")
+    @Pattern(regexp = "^#[0-9A-F]{6}$")
+    private String logoBgColor;
 
     @ApiModelProperty(value = "${swagger.product.model.identityTokenAudience}", required = true)
     @JsonProperty
