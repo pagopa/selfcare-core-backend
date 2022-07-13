@@ -431,17 +431,15 @@
         } ],
         "requestBody" : {
           "content" : {
-            "multipart/form-data": {
-              "schema": {
-                "required": [
-                  "depictImage"
-                ],
-                "type": "object",
-                "properties": {
-                  "depictImage": {
-                    "type": "string",
-                    "description": "Product's depict image",
-                    "format": "binary"
+            "multipart/form-data" : {
+              "schema" : {
+                "required" : [ "depictImage" ],
+                "type" : "object",
+                "properties" : {
+                  "depictImage" : {
+                    "type" : "string",
+                    "description" : "Product's depict image",
+                    "format" : "binary"
                   }
                 }
               }
@@ -450,16 +448,16 @@
         },
         "responses" : {
           "200" : {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object"
                 }
               },
-              "multipart/form-data": {
-                "schema": {
-                  "type": "object"
+              "multipart/form-data" : {
+                "schema" : {
+                  "type" : "object"
                 }
               }
             }
@@ -524,9 +522,9 @@
                 "type" : "object",
                 "properties" : {
                   "logo" : {
-                    "type": "string",
-                    "description": "Product's logo image",
-                    "format": "binary"
+                    "type" : "string",
+                    "description" : "Product's logo image",
+                    "format" : "binary"
                   }
                 }
               }
@@ -964,30 +962,31 @@
           },
           "id" : {
             "type" : "string",
-            "description": "Product's unique identifier"
+            "description" : "Product's unique identifier"
           },
-          "identityTokenAudience": {
-            "type": "string",
-            "description": "Product's identity token audience"
+          "identityTokenAudience" : {
+            "type" : "string",
+            "description" : "Product's identity token audience"
           },
-          "logo": {
-            "type": "string",
-            "description": "Product's logo url"
+          "logo" : {
+            "type" : "string",
+            "description" : "Product's logo url"
           },
-          "logoBgColor": {
-            "type": "string",
-            "description": "Product logo's background color"
+          "logoBgColor" : {
+            "pattern" : "^#[0-9A-F]{6}$",
+            "type" : "string",
+            "description" : "Product logo's background color"
           },
-          "parentId": {
-            "type": "string",
-            "description": "Root parent of the sub product"
+          "parentId" : {
+            "type" : "string",
+            "description" : "Root parent of the sub product"
           },
-          "roleManagementURL": {
-            "type": "string",
-            "description": "Url of the utilities management"
+          "roleManagementURL" : {
+            "type" : "string",
+            "description" : "Url of the utilities management"
           },
-          "roleMappings": {
-            "type": "object",
+          "roleMappings" : {
+            "type" : "object",
             "additionalProperties" : {
               "$ref" : "#/components/schemas/ProductRoleInfoRes"
             },
@@ -1105,30 +1104,31 @@
           },
           "contractTemplateVersion" : {
             "type" : "string",
-            "description": "Version of the contract"
+            "description" : "Version of the contract"
           },
-          "description": {
-            "type": "string",
-            "description": "Product's description"
+          "description" : {
+            "type" : "string",
+            "description" : "Product's description"
           },
-          "identityTokenAudience": {
-            "type": "string",
-            "description": "Product's identity token audience"
+          "identityTokenAudience" : {
+            "type" : "string",
+            "description" : "Product's identity token audience"
           },
-          "logoBgColor": {
-            "type": "string",
-            "description": "Product logo's background color"
+          "logoBgColor" : {
+            "pattern" : "^#[0-9A-F]{6}$",
+            "type" : "string",
+            "description" : "Product logo's background color"
           },
-          "roleManagementURL": {
-            "type": "string",
-            "description": "Url of the utilities management"
+          "roleManagementURL" : {
+            "type" : "string",
+            "description" : "Url of the utilities management"
           },
-          "roleMappings": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/ProductRoleInfoReq"
+          "roleMappings" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/ProductRoleInfoReq"
             },
-            "description": "Mappings between Party's and Product's role"
+            "description" : "Mappings between Party's and Product's role"
           },
           "title" : {
             "type" : "string",
