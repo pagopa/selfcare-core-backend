@@ -6,13 +6,16 @@
     "version" : "0.0.1-SNAPSHOT"
   },
   "servers" : [ {
-    "url" : "{basePath}:{port}",
+    "url" : "{url}:{port}{basePath}",
     "variables" : {
-      "basePath" : {
+      "url" : {
         "default" : "http://localhost"
       },
       "port" : {
         "default" : "8080"
+      },
+      "basePath" : {
+        "default" : ""
       }
     }
   } ],
@@ -428,23 +431,38 @@
         } ],
         "requestBody" : {
           "content" : {
-            "application/json" : {
-              "schema" : {
-                "type" : "string",
-                "format" : "binary"
-              }
-            },
-            "application/octet-stream" : {
-              "schema" : {
-                "type" : "string",
-                "format" : "binary"
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "depictImage"
+                ],
+                "type": "object",
+                "properties": {
+                  "depictImage": {
+                    "type": "string",
+                    "description": "Product's depict image",
+                    "format": "binary"
+                  }
+                }
               }
             }
           }
         },
         "responses" : {
           "200" : {
-            "description" : "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              },
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           },
           "400" : {
             "description" : "Bad Request",
@@ -506,9 +524,9 @@
                 "type" : "object",
                 "properties" : {
                   "logo" : {
-                    "type" : "string",
-                    "description" : "Product's logo url",
-                    "format" : "binary"
+                    "type": "string",
+                    "description": "Product's logo image",
+                    "format": "binary"
                   }
                 }
               }
