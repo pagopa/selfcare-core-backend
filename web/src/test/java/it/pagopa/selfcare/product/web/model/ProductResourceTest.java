@@ -45,6 +45,7 @@ class ProductResourceTest {
         productResource.setUrlPublic(null);
         productResource.setUrlBO(null);
         productResource.setCreatedAt(null);
+        productResource.setLogoBgColor(null);
         productResource.setContractTemplateUpdatedAt(null);
         productResource.setIdentityTokenAudience(null);
         productResource.setRoleMappings(null);
@@ -77,6 +78,7 @@ class ProductResourceTest {
             roleMappings.put(partyRole, productRoleInfo);
         }
         ProductResource product = TestUtils.mockInstance(new ProductResource(), "setRoleMappings");
+        product.setLogoBgColor("#FF2354");
         product.setRoleMappings(roleMappings);
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(product);

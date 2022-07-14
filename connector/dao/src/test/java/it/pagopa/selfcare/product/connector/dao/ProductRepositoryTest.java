@@ -185,4 +185,32 @@ class ProductRepositoryTest {
         //then
         assertFalse(result.isEmpty());
     }
+
+    @Test
+    void existsByIdAndEnabledFalse() {
+        //given
+        String productId = "productId";
+        ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "enabled");
+        product.setId(productId);
+        product.setEnabled(false);
+        repository.save(product);
+        //when
+        boolean found = repository.existsByIdAndEnabledFalse(productId);
+        //then
+        assertTrue(found);
+    }
+
+    @Test
+    void existsByIdAndEnableFalse_notFound() {
+        //given
+        String productId = "productId";
+        ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "enabled");
+        product.setId(productId);
+        product.setEnabled(true);
+        repository.save(product);
+        //when
+        boolean found = repository.existsByIdAndEnabledFalse(productId);
+        //then
+        assertFalse(found);
+    }
 }

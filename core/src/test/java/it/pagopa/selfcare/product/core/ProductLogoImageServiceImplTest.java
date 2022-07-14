@@ -38,8 +38,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {ProductLogoImageServiceImpl.class, CoreTestConfig.class})
 @TestPropertySource(properties = {
-        "product.img.logo.allowed-mime-types=image/png",
-        "product.img.logo.allowed-extensions=png",
+        "product.img.logo.allowed-mime-types=image/png, image/svg+xml",
+        "product.img.logo.allowed-extensions=png, svg",
         "product.img.logo.default-url=https://selcdcheckoutsa.blob.core.windows.net/$web/resources/products/default/logo.png"
 })
 class ProductLogoImageServiceImplTest {
@@ -165,7 +165,7 @@ class ProductLogoImageServiceImplTest {
     }
 
     @Test
-    void storeProductDepictImage_defaultUrl() throws FileUploadException, MalformedURLException, URISyntaxException {
+    void storeProductLogoImage_defaultUrl() throws FileUploadException, MalformedURLException, URISyntaxException {
         //give
         String productId = "productId";
         InputStream depictImage = InputStream.nullInputStream();
@@ -192,7 +192,41 @@ class ProductLogoImageServiceImplTest {
     }
 
     @Test
-    void updateProductDepictImage_logoUrl() throws MalformedURLException, URISyntaxException {
+    void updateProductLogoImage_logoUrlSvg() throws MalformedURLException, URISyntaxException {
+        //give
+        String productId = "productId";
+        InputStream depictImage = InputStream.nullInputStream();
+        String contentType = "image/svg+xml";
+        String fileName = "filename.svg";
+        ProductOperations product = TestUtils.mockInstance(new DummyProduct(), "setId", "setParentId", "setRoleMappings");
+        product.setLogo("https://selcdcheckoutsa.blob.core.windows.net/$web/resources/products/default/logo.svg");
+        product.setId(productId);
+        EnumMap<PartyRole, DummyProductRoleInfo> map = new EnumMap<>(PartyRole.class);
+        List<DummyProductRole> list = new ArrayList<>();
+        list.add(TestUtils.mockInstance(new DummyProductRole(), 1));
+        list.add(TestUtils.mockInstance(new DummyProductRole(), 2));
+        map.put(PartyRole.OPERATOR, new DummyProductRoleInfo(true, list));
+        URI uriMock = new URI("https://selcdcheckoutsa.z6.web.core.windows.net/resources/products/prod-1/logo.svg");
+        URL uriToUrl = uriMock.toURL();
+        product.setRoleMappings(map);
+        product.setContractTemplateVersion("1.2.4");
+        Mockito.when(fileStorageConnectorMock.uploadProductImg(Mockito.any(), Mockito.any(), Mockito.anyString()))
+                .thenReturn(uriToUrl);
+        //when
+        productLogoImageService.saveImage(product, depictImage, contentType, fileName);
+        //then
+        Mockito.verify(fileStorageConnectorMock, Mockito.times(1))
+                .uploadProductImg(depictImage, String.format("resources/products/%s/logo.svg", productId), contentType);
+        ArgumentCaptor<ProductOperations> productCaptor = ArgumentCaptor.forClass(ProductOperations.class);
+        Mockito.verify(productConnectorMock, Mockito.times(1))
+                .save(productCaptor.capture());
+        ProductOperations capturedProduct = productCaptor.getValue();
+        assertEquals(uriToUrl.toString(), capturedProduct.getLogo());
+        Mockito.verifyNoMoreInteractions(productConnectorMock);
+    }
+
+    @Test
+    void updateProductLogoImage_logoUrlPng() throws MalformedURLException, URISyntaxException {
         //give
         String productId = "productId";
         InputStream depictImage = InputStream.nullInputStream();

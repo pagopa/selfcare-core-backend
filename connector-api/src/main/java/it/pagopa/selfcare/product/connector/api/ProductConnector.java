@@ -15,6 +15,8 @@ public interface ProductConnector {
 
     boolean existsById(String id);
 
+    boolean existsByIdAndEnabledFalse(String id);
+
     List<ProductOperations> findAll();
 
     void deleteById(String id);
