@@ -23,6 +23,7 @@ public class ProductMapper {
             resource = new ProductResource();
             resource.setId(entity.getId());
             resource.setLogo(entity.getLogo());
+            resource.setLogoBgColor(entity.getLogoBgColor());
             resource.setDepictImageUrl(entity.getDepictImageUrl());
             resource.setTitle(entity.getTitle());
             resource.setDescription(entity.getDescription());
@@ -85,6 +86,7 @@ public class ProductMapper {
         if (dto != null) {
             product = new ProductDto();
             product.setTitle(dto.getTitle());
+            product.setLogoBgColor(dto.getLogoBgColor());
             product.setIdentityTokenAudience(dto.getIdentityTokenAudience());
             product.setDescription(dto.getDescription());
             product.setUrlPublic(dto.getUrlPublic());
