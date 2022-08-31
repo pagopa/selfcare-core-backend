@@ -9,7 +9,6 @@ import it.pagopa.selfcare.product.connector.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import org.bson.BsonValue;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.ArgumentCaptor;
@@ -84,7 +83,7 @@ class ProductConnectorImplTest {
         // when
         ProductOperations saved = productConnector.insert(entity);
         // then
-        Assertions.assertEquals(entity, saved);
+        assertEquals(entity, saved);
         verify(repositoryMock, times(1))
                 .insert(entity);
         verifyNoMoreInteractions(repositoryMock);
@@ -92,15 +91,39 @@ class ProductConnectorImplTest {
 
 
     @Test
-    void save() {
+    void save_auditCreationFieldsFilled() {
         // given
         ProductEntity entity = mockInstance(new ProductEntity());
+        assertNotNull(entity.getCreatedAt());
+        assertNotNull(entity.getCreatedBy());
         when(repositoryMock.save(any()))
-                .thenReturn(entity);
+                .thenAnswer(invocation -> invocation.getArgument(0, ProductEntity.class));
         // when
         ProductOperations saved = productConnector.save(entity);
         // then
-        Assertions.assertEquals(entity, saved);
+        assertEquals(entity, saved);
+        assertNotNull(saved.getCreatedAt());
+        assertNotNull(saved.getCreatedBy());
+        verify(repositoryMock, times(1))
+                .save(entity);
+        verifyNoMoreInteractions(repositoryMock);
+    }
+
+
+    @Test
+    void save_auditCreationFieldsNotFilled() {
+        // given
+        ProductEntity entity = mockInstance(new ProductEntity(), "setCreatedAt", "setCreatedBy");
+        assertNull(entity.getCreatedAt());
+        assertNull(entity.getCreatedBy());
+        when(repositoryMock.save(any()))
+                .thenAnswer(invocation -> invocation.getArgument(0, ProductEntity.class));
+        // when
+        ProductOperations saved = productConnector.save(entity);
+        // then
+        assertEquals(entity, saved);
+        assertNotNull(saved.getCreatedAt());
+        assertNotNull(saved.getCreatedBy());
         verify(repositoryMock, times(1))
                 .save(entity);
         verifyNoMoreInteractions(repositoryMock);
@@ -117,7 +140,7 @@ class ProductConnectorImplTest {
         // when
         Optional<ProductOperations> found = productConnector.findById(id);
         // then
-        Assertions.assertEquals(entity, found);
+        assertEquals(entity, found);
         verify(repositoryMock, times(1))
                 .findById(id);
         verifyNoMoreInteractions(repositoryMock);
@@ -134,7 +157,7 @@ class ProductConnectorImplTest {
         // when
         boolean exists = productConnector.existsById(id);
         // then
-        Assertions.assertEquals(expected, exists);
+        assertEquals(expected, exists);
         verify(repositoryMock, times(1))
                 .existsById(id);
         verifyNoMoreInteractions(repositoryMock);
@@ -150,7 +173,7 @@ class ProductConnectorImplTest {
         // when
         List<ProductOperations> found = productConnector.findAll();
         // then
-        Assertions.assertEquals(expected, found);
+        assertEquals(expected, found);
         verify(repositoryMock, times(1))
                 .findAll();
         verifyNoMoreInteractions(repositoryMock);
@@ -183,7 +206,7 @@ class ProductConnectorImplTest {
         // when
         List<ProductOperations> found = productConnector.findByEnabled(enabled);
         // then
-        Assertions.assertEquals(expected, found);
+        assertEquals(expected, found);
         verify(repositoryMock, times(1))
                 .findByEnabled(enabled);
         verifyNoMoreInteractions(repositoryMock);
@@ -200,7 +223,7 @@ class ProductConnectorImplTest {
         // when
         List<ProductOperations> found = productConnector.findByParentAndEnabled(parent, enabled);
         //then
-        Assertions.assertEquals(expected, found);
+        assertEquals(expected, found);
         verify(repositoryMock, times(1))
                 .findByParentIdAndEnabled(parent, enabled);
         verifyNoMoreInteractions(repositoryMock);
