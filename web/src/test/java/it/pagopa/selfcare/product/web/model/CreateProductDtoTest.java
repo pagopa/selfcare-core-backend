@@ -34,21 +34,22 @@ class CreateProductDtoTest {
         toCheckMap.put("id", NotBlank.class);
         toCheckMap.put("title", NotBlank.class);
         toCheckMap.put("description", NotBlank.class);
+        toCheckMap.put("contractTemplatePath", NotBlank.class);
+        toCheckMap.put("contractTemplateVersion", NotBlank.class);
+        toCheckMap.put("identityTokenAudience", NotBlank.class);
         toCheckMap.put("urlBO", NotBlank.class);
         toCheckMap.put("roleMappings", NotEmpty.class);
-        toCheckMap.put("contractTemplatePath", NotBlank.class);
-        toCheckMap.put("identityTokenAudience", NotBlank.class);
-        toCheckMap.put("contractTemplateVersion", NotBlank.class);
         CreateProductDto createProductDto = new CreateProductDto();
         createProductDto.setId(null);
         createProductDto.setTitle(null);
         createProductDto.setDescription(null);
         createProductDto.setUrlPublic(null);
         createProductDto.setUrlBO(null);
+        createProductDto.setLogoBgColor(null);
+        createProductDto.setIdentityTokenAudience(null);
         createProductDto.setRoleMappings(null);
         createProductDto.setContractTemplatePath(null);
         createProductDto.setContractTemplateVersion(null);
-        createProductDto.setRoleManagementURL(null);
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(createProductDto);
         // then
@@ -59,7 +60,7 @@ class CreateProductDtoTest {
                     return !violation.getConstraintDescriptor().getAnnotation().annotationType().equals(annotationToCheck);
                 })
                 .collect(Collectors.toList());
-        assertTrue(filteredViolations.isEmpty());
+        assertTrue(filteredViolations.isEmpty(), filteredViolations.toString());
     }
 
     @Test
@@ -77,9 +78,10 @@ class CreateProductDtoTest {
         }
         CreateProductDto product = TestUtils.mockInstance(new CreateProductDto(), "setRoleMappings");
         product.setRoleMappings(roleMappings);
+        product.setLogoBgColor("#FF2354");
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(product);
         // then
-        assertTrue(violations.isEmpty());
+        assertTrue(violations.isEmpty(), violations.toString());
     }
 }

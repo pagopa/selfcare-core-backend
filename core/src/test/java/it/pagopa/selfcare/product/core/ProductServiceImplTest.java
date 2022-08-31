@@ -3,10 +3,10 @@ package it.pagopa.selfcare.product.core;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.product.connector.api.ProductConnector;
 import it.pagopa.selfcare.product.connector.exception.ResourceAlreadyExistsException;
+import it.pagopa.selfcare.product.connector.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.connector.model.*;
 import it.pagopa.selfcare.product.core.config.CoreTestConfig;
 import it.pagopa.selfcare.product.core.exception.InvalidRoleMappingException;
-import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +23,7 @@ import org.springframework.util.MimeTypeUtils;
 
 import javax.validation.ValidationException;
 import java.io.InputStream;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.*;
 
@@ -127,7 +128,7 @@ class ProductServiceImplTest {
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         Assertions.assertEquals("A product is required", e.getMessage());
-        Mockito.verifyNoInteractions(productConnectorMock);
+        verifyNoInteractions(productConnectorMock);
     }
 
 
@@ -142,7 +143,7 @@ class ProductServiceImplTest {
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals("A product role mappings is required", e.getMessage());
-        Mockito.verifyNoInteractions(productConnectorMock);
+        verifyNoInteractions(productConnectorMock);
     }
 
 
@@ -159,7 +160,7 @@ class ProductServiceImplTest {
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals("A product role mappings is required", e.getMessage());
-        Mockito.verifyNoInteractions(productConnectorMock);
+        verifyNoInteractions(productConnectorMock);
     }
 
 
@@ -177,7 +178,7 @@ class ProductServiceImplTest {
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals("A product role info is required", e.getMessage());
-        Mockito.verifyNoInteractions(productConnectorMock);
+        verifyNoInteractions(productConnectorMock);
     }
 
 
@@ -195,7 +196,7 @@ class ProductServiceImplTest {
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals("At least one Product role are required", e.getMessage());
-        Mockito.verifyNoInteractions(productConnectorMock);
+        verifyNoInteractions(productConnectorMock);
     }
 
 
@@ -213,7 +214,7 @@ class ProductServiceImplTest {
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals("At least one Product role are required", e.getMessage());
-        Mockito.verifyNoInteractions(productConnectorMock);
+        verifyNoInteractions(productConnectorMock);
     }
 
 
@@ -234,7 +235,7 @@ class ProductServiceImplTest {
         // then
         InvalidRoleMappingException e = assertThrows(InvalidRoleMappingException.class, executable);
         assertEquals(String.format("Only '%s' Party-role can have more than one Product-role", PartyRole.OPERATOR.name()), e.getMessage());
-        Mockito.verifyNoInteractions(productConnectorMock);
+        verifyNoInteractions(productConnectorMock);
     }
 
     @Test
@@ -346,7 +347,7 @@ class ProductServiceImplTest {
     @Test
     void createProduct_ok() {
         // given
-        OffsetDateTime now = OffsetDateTime.now().minusSeconds(1);
+        Instant now = Instant.now().minusSeconds(1);
         String id = "id";
         ProductOperations input = new DummyProduct();
         EnumMap<PartyRole, DummyProductRoleInfo> map = new EnumMap<>(PartyRole.class);
@@ -369,9 +370,7 @@ class ProductServiceImplTest {
         verify(productDepictImageServiceMock, times(1))
                 .getDefaultImageUrl();
         assertNotNull(output);
-        assertNotNull(output.getCreatedAt());
         assertNotNull(output.getContractTemplateUpdatedAt());
-        assertTrue(output.getCreatedAt().isAfter(now));
         assertEquals(LOGO_URL, output.getLogo());
         assertEquals(DEPICT_IMAGE_URL, output.getDepictImageUrl());
         assertTrue(output.getContractTemplateUpdatedAt().isAfter(now));
@@ -387,7 +386,7 @@ class ProductServiceImplTest {
     @Test
     void createProduct_subProduct() {
         //given
-        OffsetDateTime now = OffsetDateTime.now().minusSeconds(1);
+        Instant now = Instant.now().minusSeconds(1);
         String id = "id";
         ProductOperations input = new DummyProduct();
         input.setId(id);
@@ -403,9 +402,8 @@ class ProductServiceImplTest {
         ProductOperations output = productService.createProduct(input);
         // then
         assertNotNull(output);
-        assertNotNull(output.getCreatedAt());
         assertNotNull(output.getContractTemplateUpdatedAt());
-        assertTrue(output.getCreatedAt().isAfter(now));
+        assertTrue(output.getContractTemplateUpdatedAt().isAfter(now));
         ArgumentCaptor<ProductOperations> createCaptor = ArgumentCaptor.forClass(ProductOperations.class);
         verify(productConnectorMock, times(1))
                 .insert(createCaptor.capture());
@@ -450,48 +448,14 @@ class ProductServiceImplTest {
         // given
         String productId = "productId";
         ProductOperations product = mockInstance(new DummyProduct(), "setRoleMappings");
-        when(productConnectorMock.findById(Mockito.anyString()))
-                .thenReturn(Optional.of(product));
-        when(productConnectorMock.save(any()))
-                .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, ProductOperations.class));
         // when
         productService.deleteProduct(productId);
         // then
-        assertFalse(product.isEnabled());
-        verify(productConnectorMock, times(1)).findById(productId);
-        verify(productConnectorMock, times(1)).save(any());
+        verify(productConnectorMock, times(1)).
+                disableById(productId);
         verifyNoMoreInteractions(productConnectorMock);
     }
 
-    @Test
-    void deleteProduct_existNotEnabled() {
-        // given
-        String id = "id";
-        when(productConnectorMock.findById(Mockito.anyString()))
-                .thenAnswer(invocationOnMock -> {
-                    ProductOperations product = mockInstance(new DummyProduct(), "setId", "setEnabled", "setRoleMappings");
-                    product.setId(invocationOnMock.getArgument(0, String.class));
-                    product.setEnabled(false);
-                    return Optional.of(product);
-                });
-        // when
-        productService.deleteProduct(id);
-        // then
-        verify(productConnectorMock, times(1)).findById(id);
-        verifyNoMoreInteractions(productConnectorMock);
-    }
-
-    @Test
-    void deleteProduct_NotExist() {
-        // given
-        String productId = "productId";
-        // when
-        Executable executable = () -> productService.deleteProduct(productId);
-        // then
-        Assertions.assertThrows(ResourceNotFoundException.class, executable);
-        verify(productConnectorMock, times(1)).findById(productId);
-        verifyNoMoreInteractions(productConnectorMock);
-    }
 
     @Test
     void deleteProduct_nullId() {
@@ -502,7 +466,7 @@ class ProductServiceImplTest {
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals("A product id is required", e.getMessage());
-        Mockito.verifyNoInteractions(productConnectorMock);
+        verifyNoInteractions(productConnectorMock);
     }
 
     @Test
@@ -547,7 +511,7 @@ class ProductServiceImplTest {
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals("A product id is required", e.getMessage());
-        Mockito.verifyNoInteractions(productConnectorMock);
+        verifyNoInteractions(productConnectorMock);
     }
 
     @Test
@@ -573,7 +537,7 @@ class ProductServiceImplTest {
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         Assertions.assertEquals("A product id is required", e.getMessage());
-        Mockito.verifyNoInteractions(productConnectorMock);
+        verifyNoInteractions(productConnectorMock);
     }
 
 
@@ -587,7 +551,7 @@ class ProductServiceImplTest {
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         Assertions.assertEquals("A product is required", e.getMessage());
-        Mockito.verifyNoInteractions(productConnectorMock);
+        verifyNoInteractions(productConnectorMock);
     }
 
 
@@ -616,7 +580,6 @@ class ProductServiceImplTest {
         assertEquals(savedProduct.getUrlPublic(), product.getUrlPublic());
         assertEquals(savedProduct.getUrlBO(), product.getUrlBO());
         assertEquals(savedProduct.getRoleMappings(), product.getRoleMappings());
-        assertEquals(savedProduct.getRoleManagementURL(), product.getRoleManagementURL());
         assertEquals(savedProduct.getLogoBgColor(), product.getLogoBgColor());
         assertEquals(savedProduct.getContractTemplatePath(), product.getContractTemplatePath());
         assertEquals(savedProduct.getContractTemplateVersion(), product.getContractTemplateVersion());
@@ -661,7 +624,6 @@ class ProductServiceImplTest {
         assertEquals(savedProduct.getUrlBO(), product.getUrlBO());
         assertEquals(savedProduct.getLogoBgColor(), product.getLogoBgColor());
         assertEquals(savedProduct.getRoleMappings(), product.getRoleMappings());
-        assertEquals(savedProduct.getRoleManagementURL(), product.getRoleManagementURL());
         assertEquals(savedProduct.getContractTemplatePath(), product.getContractTemplatePath());
         assertEquals(savedProduct.getContractTemplateVersion(), product.getContractTemplateVersion());
         verify(productConnectorMock, times(1)).findById(productId);
@@ -728,7 +690,6 @@ class ProductServiceImplTest {
         assertEquals(savedProduct.getUrlPublic(), product.getUrlPublic());
         assertEquals(savedProduct.getUrlBO(), product.getUrlBO());
         assertNull(savedProduct.getRoleMappings());
-        assertEquals(savedProduct.getRoleManagementURL(), product.getRoleManagementURL());
         assertEquals(savedProduct.getContractTemplatePath(), product.getContractTemplatePath());
         assertEquals(savedProduct.getContractTemplateVersion(), product.getContractTemplateVersion());
         verify(productConnectorMock, times(1)).findById(productId);
@@ -749,7 +710,7 @@ class ProductServiceImplTest {
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         Assertions.assertEquals("A product id is required", e.getMessage());
-        Mockito.verifyNoInteractions(productConnectorMock);
+        verifyNoInteractions(productConnectorMock);
     }
 
     @Test
@@ -769,7 +730,7 @@ class ProductServiceImplTest {
         // then
         ValidationException e = assertThrows(ValidationException.class, executable);
         assertEquals("Given product Id = " + productId + " is of a subProduct", e.getMessage());
-        Mockito.verifyNoInteractions(productLogoImageServiceMock);
+        verifyNoInteractions(productLogoImageServiceMock);
     }
 
     @Test
@@ -811,7 +772,7 @@ class ProductServiceImplTest {
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         Assertions.assertEquals("A product id is required", e.getMessage());
-        Mockito.verifyNoInteractions(productConnectorMock);
+        verifyNoInteractions(productConnectorMock);
     }
 
     @Test
@@ -831,7 +792,7 @@ class ProductServiceImplTest {
         // then
         ValidationException e = assertThrows(ValidationException.class, executable);
         assertEquals("Given product Id = " + productId + " is of a subProduct", e.getMessage());
-        Mockito.verifyNoInteractions(productLogoImageServiceMock);
+        verifyNoInteractions(productLogoImageServiceMock);
     }
 
     @Test

@@ -25,4 +25,5 @@ public interface ProductConnector {
 
     List<ProductOperations> findByParentAndEnabled(String parent, boolean enabled);
 
+    void disableById(String id);
 }

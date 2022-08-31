@@ -85,6 +85,7 @@ class ProductRepositoryTest {
         assertTrue(foundProduct.isPresent());
         ProductEntity p = foundProduct.get();
         p.setDescription("Description");
+        p.setNew(false);
         ProductEntity p1 = repository.save(p);
         // then
         assertNotEquals(p1.getDescription(), product.getDescription());

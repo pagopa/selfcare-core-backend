@@ -14,7 +14,6 @@ import java.util.EnumMap;
 @Data
 public class UpdateProductDto {
 
-
     @ApiModelProperty(value = "${swagger.product.model.title}", required = true)
     @JsonProperty(required = true)
     @NotBlank
@@ -25,12 +24,12 @@ public class UpdateProductDto {
     @NotBlank
     private String description;
 
-    @ApiModelProperty(value = "${swagger.product.model.logoBgColor}")
+    @ApiModelProperty(value = "${swagger.product.model.logoBgColor}", example = "#000000")
     @Pattern(regexp = "^#[0-9A-F]{6}$")
     private String logoBgColor;
 
     @ApiModelProperty(value = "${swagger.product.model.identityTokenAudience}", required = true)
-    @JsonProperty
+    @JsonProperty(required = true)
     @NotBlank
     private String identityTokenAudience;
 
@@ -57,8 +56,5 @@ public class UpdateProductDto {
     @JsonProperty(required = true)
     @NotBlank
     private String contractTemplateVersion;
-
-    @ApiModelProperty(value = "${swagger.product.model.roleManagementURL}", required = true)
-    private String roleManagementURL;
 
 }

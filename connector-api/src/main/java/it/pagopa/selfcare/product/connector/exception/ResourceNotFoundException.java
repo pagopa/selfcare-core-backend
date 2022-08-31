@@ -1,4 +1,4 @@
-package it.pagopa.selfcare.product.core.exception;
+package it.pagopa.selfcare.product.connector.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException() {

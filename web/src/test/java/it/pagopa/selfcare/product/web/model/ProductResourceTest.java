@@ -38,20 +38,6 @@ class ProductResourceTest {
         toCheckMap.put("contractTemplatePath", NotBlank.class);
         toCheckMap.put("contractTemplateVersion", NotBlank.class);
         ProductResource productResource = new ProductResource();
-        productResource.setId(null);
-        productResource.setLogo(null);
-        productResource.setTitle(null);
-        productResource.setDescription(null);
-        productResource.setUrlPublic(null);
-        productResource.setUrlBO(null);
-        productResource.setCreatedAt(null);
-        productResource.setLogoBgColor(null);
-        productResource.setContractTemplateUpdatedAt(null);
-        productResource.setIdentityTokenAudience(null);
-        productResource.setRoleMappings(null);
-        productResource.setContractTemplatePath(null);
-        productResource.setContractTemplateVersion(null);
-        productResource.setRoleManagementURL(null);
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(productResource);
         // then
@@ -61,7 +47,7 @@ class ProductResourceTest {
                     return !violation.getConstraintDescriptor().getAnnotation().annotationType().equals(annotationToCheck);
                 })
                 .collect(Collectors.toList());
-        assertTrue(filteredViolations.isEmpty());
+        assertTrue(filteredViolations.isEmpty(), filteredViolations.toString());
     }
 
     @Test
@@ -83,7 +69,7 @@ class ProductResourceTest {
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(product);
         // then
-        assertTrue(violations.isEmpty());
+        assertTrue(violations.isEmpty(), violations.toString());
     }
 
 }
