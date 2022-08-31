@@ -6,7 +6,7 @@ import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
 import lombok.Data;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.EnumMap;
 
 @Data
@@ -20,12 +20,14 @@ public class ProductDto implements ProductOperations {
     private String description;
     private String urlPublic;
     private String urlBO;
-    private OffsetDateTime createdAt;
-    private OffsetDateTime contractTemplateUpdatedAt;
+    private Instant createdAt;
+    private String createdBy;
+    private Instant modifiedAt;
+    private String modifiedBy;
+    private Instant contractTemplateUpdatedAt;
     private EnumMap<PartyRole, ? extends ProductRoleInfoOperations> roleMappings;
     private String contractTemplatePath;
     private String contractTemplateVersion;
-    private String roleManagementURL;
     private boolean enabled = true;
     private String parentId;
     private String identityTokenAudience;

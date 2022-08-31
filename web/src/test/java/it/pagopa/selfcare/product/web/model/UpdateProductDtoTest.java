@@ -34,21 +34,21 @@ class UpdateProductDtoTest {
         HashMap<String, Class<? extends Annotation>> toCheckMap = new HashMap<>();
         toCheckMap.put("title", NotBlank.class);
         toCheckMap.put("description", NotBlank.class);
-        toCheckMap.put("urlBO", NotBlank.class);
-        toCheckMap.put("roleMappings", NotEmpty.class);
-        toCheckMap.put("identityTokenAudience", NotBlank.class);
         toCheckMap.put("contractTemplatePath", NotBlank.class);
         toCheckMap.put("contractTemplateVersion", NotBlank.class);
+        toCheckMap.put("identityTokenAudience", NotBlank.class);
+        toCheckMap.put("urlBO", NotBlank.class);
+        toCheckMap.put("roleMappings", NotEmpty.class);
         UpdateProductDto updateProductDto = new UpdateProductDto();
         updateProductDto.setTitle(null);
         updateProductDto.setDescription(null);
         updateProductDto.setUrlPublic(null);
         updateProductDto.setUrlBO(null);
         updateProductDto.setLogoBgColor(null);
+        updateProductDto.setIdentityTokenAudience(null);
         updateProductDto.setRoleMappings(null);
         updateProductDto.setContractTemplatePath(null);
         updateProductDto.setContractTemplateVersion(null);
-        updateProductDto.setRoleManagementURL(null);
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(updateProductDto);
         // then
@@ -56,7 +56,7 @@ class UpdateProductDtoTest {
             Class<? extends Annotation> annotationToCheck = toCheckMap.get(violation.getPropertyPath().toString());
             return !violation.getConstraintDescriptor().getAnnotation().annotationType().equals(annotationToCheck);
         }).collect(Collectors.toList());
-        assertTrue(filteredViolations.isEmpty());
+        assertTrue(filteredViolations.isEmpty(), filteredViolations.toString());
     }
 
     @Test
@@ -77,7 +77,7 @@ class UpdateProductDtoTest {
         //when
         Set<ConstraintViolation<Object>> violations = validator.validate(product);
         // then
-        assertFalse(violations.isEmpty());
+        assertFalse(violations.isEmpty(), violations.toString());
     }
 
     @Test
@@ -99,7 +99,7 @@ class UpdateProductDtoTest {
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(product);
         // then
-        assertTrue(violations.isEmpty());
+        assertTrue(violations.isEmpty(), violations.toString());
     }
 
 }

@@ -806,7 +806,7 @@
     "schemas" : {
       "CreateProductDto" : {
         "title" : "CreateProductDto",
-        "required" : [ "contractTemplatePath", "contractTemplateVersion", "description", "id", "identityTokenAudience", "roleManagementURL", "roleMappings", "title", "urlBO", "urlPublic" ],
+        "required" : [ "contractTemplatePath", "contractTemplateVersion", "description", "id", "identityTokenAudience", "roleMappings", "title", "urlBO", "urlPublic" ],
         "type" : "object",
         "properties" : {
           "contractTemplatePath" : {
@@ -829,9 +829,11 @@
             "type" : "string",
             "description" : "Product's identity token audience"
           },
-          "roleManagementURL" : {
+          "logoBgColor" : {
+            "pattern" : "^#[0-9A-F]{6}$",
             "type" : "string",
-            "description" : "Url of the utilities management"
+            "description" : "Product logo's background color",
+            "example" : "#000000"
           },
           "roleMappings" : {
             "type" : "object",
@@ -949,8 +951,13 @@
           },
           "createdAt" : {
             "type" : "string",
-            "description" : "Date the products was activated/created",
+            "description" : "Creation/activation date and time",
             "format" : "date-time"
+          },
+          "createdBy" : {
+            "type" : "string",
+            "description" : "User who created/activated the resource",
+            "format" : "uuid"
           },
           "depictImageUrl" : {
             "type" : "string",
@@ -975,15 +982,22 @@
           "logoBgColor" : {
             "pattern" : "^#[0-9A-F]{6}$",
             "type" : "string",
-            "description" : "Product logo's background color"
+            "description" : "Product logo's background color",
+            "example" : "#000000"
+          },
+          "modifiedAt" : {
+            "type" : "string",
+            "description" : "Last modified date and time",
+            "format" : "date-time"
+          },
+          "modifiedBy" : {
+            "type" : "string",
+            "description" : "User who modified the resource",
+            "format" : "uuid"
           },
           "parentId" : {
             "type" : "string",
             "description" : "Root parent of the sub product"
-          },
-          "roleManagementURL" : {
-            "type" : "string",
-            "description" : "Url of the utilities management"
           },
           "roleMappings" : {
             "type" : "object",
@@ -1095,7 +1109,7 @@
       },
       "UpdateProductDto" : {
         "title" : "UpdateProductDto",
-        "required" : [ "contractTemplatePath", "contractTemplateVersion", "description", "identityTokenAudience", "roleManagementURL", "roleMappings", "title", "urlBO", "urlPublic" ],
+        "required" : [ "contractTemplatePath", "contractTemplateVersion", "description", "identityTokenAudience", "roleMappings", "title", "urlBO", "urlPublic" ],
         "type" : "object",
         "properties" : {
           "contractTemplatePath" : {
@@ -1117,11 +1131,8 @@
           "logoBgColor" : {
             "pattern" : "^#[0-9A-F]{6}$",
             "type" : "string",
-            "description" : "Product logo's background color"
-          },
-          "roleManagementURL" : {
-            "type" : "string",
-            "description" : "Url of the utilities management"
+            "description" : "Product logo's background color",
+            "example" : "#000000"
           },
           "roleMappings" : {
             "type" : "object",

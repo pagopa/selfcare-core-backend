@@ -2,11 +2,11 @@ package it.pagopa.selfcare.product.core;
 
 import it.pagopa.selfcare.product.connector.api.ProductConnector;
 import it.pagopa.selfcare.product.connector.exception.ResourceAlreadyExistsException;
+import it.pagopa.selfcare.product.connector.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
 import it.pagopa.selfcare.product.core.exception.InvalidRoleMappingException;
-import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,7 +15,7 @@ import org.springframework.util.Assert;
 
 import javax.validation.ValidationException;
 import java.io.InputStream;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.EnumMap;
 import java.util.List;
 
@@ -65,9 +65,7 @@ class ProductServiceImpl implements ProductService {
         } else if (!productConnector.existsById(product.getParentId())) {
             throw new ValidationException("Parent not found", new ResourceNotFoundException("For id = " + product.getParentId()));
         }
-        OffsetDateTime now = OffsetDateTime.now();
-        product.setCreatedAt(now);
-        product.setContractTemplateUpdatedAt(now);
+        product.setContractTemplateUpdatedAt(Instant.now());
         ProductOperations insert;
         try {
             insert = productConnector.insert(product);
@@ -104,11 +102,7 @@ class ProductServiceImpl implements ProductService {
         log.trace("deleteProduct start");
         log.debug("deleteProduct id = {}", id);
         Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
-        ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
-        if (foundProduct.isEnabled()) {
-            foundProduct.setEnabled(false);
-            productConnector.save(foundProduct);
-        }
+        productConnector.disableById(id);
         log.trace("deleteProduct end");
     }
 
@@ -149,10 +143,9 @@ class ProductServiceImpl implements ProductService {
         foundProduct.setUrlBO(product.getUrlBO());
         foundProduct.setRoleMappings(product.getRoleMappings());
         foundProduct.setIdentityTokenAudience(product.getIdentityTokenAudience());
-        foundProduct.setRoleManagementURL(product.getRoleManagementURL());
         foundProduct.setContractTemplatePath(product.getContractTemplatePath());
         if (!product.getContractTemplateVersion().equals(foundProduct.getContractTemplateVersion())) {
-            foundProduct.setContractTemplateUpdatedAt(OffsetDateTime.now());
+            foundProduct.setContractTemplateUpdatedAt(Instant.now());
         }
         foundProduct.setContractTemplateVersion(product.getContractTemplateVersion());
 
