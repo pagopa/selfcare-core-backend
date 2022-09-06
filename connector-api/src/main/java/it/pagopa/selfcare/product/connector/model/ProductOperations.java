@@ -1,6 +1,6 @@
 package it.pagopa.selfcare.product.connector.model;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.EnumMap;
 
 public interface ProductOperations {
@@ -37,13 +37,25 @@ public interface ProductOperations {
 
     void setUrlBO(String urlBO);
 
-    OffsetDateTime getCreatedAt();
+    Instant getCreatedAt();
 
-    void setCreatedAt(OffsetDateTime createdAt);
+    void setCreatedAt(Instant createdAt);
 
-    OffsetDateTime getContractTemplateUpdatedAt();
+    Instant getModifiedAt();
 
-    void setContractTemplateUpdatedAt(OffsetDateTime contractTemplateUpdatedAt);
+    void setModifiedAt(Instant modifiedAt);
+
+    String getCreatedBy();
+
+    void setCreatedBy(String createdBy);
+
+    String getModifiedBy();
+
+    void setModifiedBy(String modifiedBy);
+
+    Instant getContractTemplateUpdatedAt();
+
+    void setContractTemplateUpdatedAt(Instant contractTemplateUpdatedAt);
 
     EnumMap<PartyRole, ? extends ProductRoleInfoOperations> getRoleMappings();
 
@@ -56,10 +68,6 @@ public interface ProductOperations {
     String getContractTemplateVersion();
 
     void setContractTemplateVersion(String contractTemplateVersion);
-
-    String getRoleManagementURL();
-
-    void setRoleManagementURL(String roleManagementURL);
 
     boolean isEnabled();
 

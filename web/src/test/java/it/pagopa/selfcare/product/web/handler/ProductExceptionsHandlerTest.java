@@ -2,8 +2,8 @@ package it.pagopa.selfcare.product.web.handler;
 
 import it.pagopa.selfcare.commons.web.model.Problem;
 import it.pagopa.selfcare.product.connector.exception.ResourceAlreadyExistsException;
+import it.pagopa.selfcare.product.connector.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.core.exception.InvalidRoleMappingException;
-import it.pagopa.selfcare.product.core.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.ResponseEntity;

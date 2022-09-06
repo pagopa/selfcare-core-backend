@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,12 +31,18 @@ public class ProductMapper {
             resource.setUrlPublic(entity.getUrlPublic());
             resource.setUrlBO(entity.getUrlBO());
             resource.setCreatedAt(entity.getCreatedAt());
+            if (entity.getCreatedBy() != null) {
+                resource.setCreatedBy(UUID.fromString(entity.getCreatedBy()));
+            }
+            resource.setModifiedAt(entity.getModifiedAt());
+            if (entity.getModifiedBy() != null) {
+                resource.setModifiedBy(UUID.fromString(entity.getModifiedBy()));
+            }
             resource.setContractTemplateUpdatedAt(entity.getContractTemplateUpdatedAt());
             resource.setRoleMappings(toRoleMappings(entity.getRoleMappings()));
             resource.setContractTemplatePath(entity.getContractTemplatePath());
             resource.setContractTemplateVersion(entity.getContractTemplateVersion());
             resource.setIdentityTokenAudience(entity.getIdentityTokenAudience());
-            resource.setRoleManagementURL(entity.getRoleManagementURL());
             if (entity.getParentId() != null) {
                 resource.setParentId(entity.getParentId());
             }
@@ -60,7 +67,7 @@ public class ProductMapper {
             product.setRoleMappings(dto.getRoleMappings());
             product.setContractTemplatePath(dto.getContractTemplatePath());
             product.setContractTemplateVersion(dto.getContractTemplateVersion());
-            product.setRoleManagementURL(dto.getRoleManagementURL());
+            product.setLogoBgColor(dto.getLogoBgColor());
         }
         log.debug("fromDto result = {}", product);
         log.trace("fromDto end");
@@ -94,7 +101,6 @@ public class ProductMapper {
             product.setRoleMappings(dto.getRoleMappings());
             product.setContractTemplatePath(dto.getContractTemplatePath());
             product.setContractTemplateVersion(dto.getContractTemplateVersion());
-            product.setRoleManagementURL(dto.getRoleManagementURL());
         }
         log.debug("fromDto result = {}", product);
         log.trace("fromDto end");
