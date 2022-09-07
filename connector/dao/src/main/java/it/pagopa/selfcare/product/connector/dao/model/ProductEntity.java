@@ -8,10 +8,12 @@ import it.pagopa.selfcare.product.connector.model.ProductRoleOperations;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
+import lombok.experimental.FieldNameConstants;
+import org.springframework.data.annotation.*;
+import org.springframework.data.domain.Persistable;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.EnumMap;
 import java.util.List;
 
@@ -19,28 +21,8 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Document("products")
-public class ProductEntity implements ProductOperations {
-
-    public ProductEntity(ProductOperations product) {
-        this();
-        id = product.getId();
-        logo = product.getLogo();
-        logoBgColor = product.getLogoBgColor();
-        depictImageUrl = product.getDepictImageUrl();
-        title = product.getTitle();
-        description = product.getDescription();
-        urlPublic = product.getUrlPublic();
-        urlBO = product.getUrlBO();
-        createdAt = product.getCreatedAt();
-        contractTemplateUpdatedAt = product.getContractTemplateUpdatedAt();
-        roleMappings = product.getRoleMappings();
-        contractTemplatePath = product.getContractTemplatePath();
-        contractTemplateVersion = product.getContractTemplateVersion();
-        roleManagementURL = product.getRoleManagementURL();
-        enabled = product.isEnabled();
-        parentId = product.getParentId();
-        identityTokenAudience = product.getIdentityTokenAudience();
-    }
+@FieldNameConstants(onlyExplicitlyIncluded = true)
+public class ProductEntity implements ProductOperations, Persistable<String> {
 
     @Id
     private String id;
@@ -51,16 +33,26 @@ public class ProductEntity implements ProductOperations {
     private String description;
     private String urlPublic;
     private String urlBO;
-    private OffsetDateTime createdAt;
-    private OffsetDateTime contractTemplateUpdatedAt;
+    @CreatedDate
+    private Instant createdAt;
+    @CreatedBy
+    private String createdBy;
+    @LastModifiedDate
+    @FieldNameConstants.Include
+    private Instant modifiedAt;
+    @LastModifiedBy
+    @FieldNameConstants.Include
+    private String modifiedBy;
+    private Instant contractTemplateUpdatedAt;
     private EnumMap<PartyRole, ? extends ProductRoleInfoOperations> roleMappings;
     private String contractTemplatePath;
     private String contractTemplateVersion;
-    private String roleManagementURL;
+    @FieldNameConstants.Include
     private boolean enabled = true;
     private String parentId;
     private String identityTokenAudience;
-
+    @Transient
+    private boolean isNew = true;
 
     @Data
     public static class ProductRoleInfo implements ProductRoleInfoOperations {
@@ -74,6 +66,35 @@ public class ProductEntity implements ProductOperations {
         private String code;
         private String label;
         private String description;
+    }
+
+
+    public ProductEntity(ProductOperations product) {
+        this();
+        id = product.getId();
+        logo = product.getLogo();
+        logoBgColor = product.getLogoBgColor();
+        depictImageUrl = product.getDepictImageUrl();
+        title = product.getTitle();
+        description = product.getDescription();
+        urlPublic = product.getUrlPublic();
+        urlBO = product.getUrlBO();
+        createdAt = product.getCreatedAt();
+        createdBy = product.getCreatedBy();
+        modifiedAt = product.getModifiedAt();
+        modifiedBy = product.getModifiedBy();
+        contractTemplateUpdatedAt = product.getContractTemplateUpdatedAt();
+        roleMappings = product.getRoleMappings();
+        contractTemplatePath = product.getContractTemplatePath();
+        contractTemplateVersion = product.getContractTemplateVersion();
+        enabled = product.isEnabled();
+        parentId = product.getParentId();
+        identityTokenAudience = product.getIdentityTokenAudience();
+    }
+
+
+    public static class Fields {
+        public static String id = org.springframework.data.mongodb.core.aggregation.Fields.UNDERSCORE_ID;
     }
 
 }
