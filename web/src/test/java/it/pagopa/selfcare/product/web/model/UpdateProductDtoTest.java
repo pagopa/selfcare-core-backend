@@ -1,6 +1,5 @@
 package it.pagopa.selfcare.product.web.model;
 
-import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +14,7 @@ import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -39,16 +39,8 @@ class UpdateProductDtoTest {
         toCheckMap.put("identityTokenAudience", NotBlank.class);
         toCheckMap.put("urlBO", NotBlank.class);
         toCheckMap.put("roleMappings", NotEmpty.class);
+        toCheckMap.put("backOfficeEnvironmentConfigurations", NotEmpty.class);
         UpdateProductDto updateProductDto = new UpdateProductDto();
-        updateProductDto.setTitle(null);
-        updateProductDto.setDescription(null);
-        updateProductDto.setUrlPublic(null);
-        updateProductDto.setUrlBO(null);
-        updateProductDto.setLogoBgColor(null);
-        updateProductDto.setIdentityTokenAudience(null);
-        updateProductDto.setRoleMappings(null);
-        updateProductDto.setContractTemplatePath(null);
-        updateProductDto.setContractTemplateVersion(null);
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(updateProductDto);
         // then
@@ -66,14 +58,15 @@ class UpdateProductDtoTest {
         for (PartyRole partyRole : PartyRole.values()) {
             ProductRoleInfo productRoleInfo = new ProductRoleInfo();
             List<ProductRole> roles = new ArrayList<>();
-            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 1));
-            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+            roles.add(mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+            roles.add(mockInstance(new ProductRole(), partyRole.ordinal() + 2));
             productRoleInfo.setRoles(roles);
             productRoleInfo.setMultiroleAllowed(true);
             roleMappings.put(partyRole, productRoleInfo);
         }
-        UpdateProductDto product = TestUtils.mockInstance(new UpdateProductDto(), "setRoleMappings");
+        UpdateProductDto product = mockInstance(new UpdateProductDto(), "setRoleMappings", "setBackOfficeEnvironmentConfigurations");
         product.setRoleMappings(roleMappings);
+        product.setBackOfficeEnvironmentConfigurations(Map.of("test", mockInstance(new BackOfficeConfigurationsResource())));
         //when
         Set<ConstraintViolation<Object>> violations = validator.validate(product);
         // then
@@ -87,15 +80,16 @@ class UpdateProductDtoTest {
         for (PartyRole partyRole : PartyRole.values()) {
             ProductRoleInfo productRoleInfo = new ProductRoleInfo();
             List<ProductRole> roles = new ArrayList<>();
-            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 1));
-            roles.add(TestUtils.mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+            roles.add(mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+            roles.add(mockInstance(new ProductRole(), partyRole.ordinal() + 2));
             productRoleInfo.setRoles(roles);
             productRoleInfo.setMultiroleAllowed(true);
             roleMappings.put(partyRole, productRoleInfo);
         }
-        UpdateProductDto product = TestUtils.mockInstance(new UpdateProductDto(), "setRoleMappings", "setLogoBgColor");
+        UpdateProductDto product = mockInstance(new UpdateProductDto(), "setRoleMappings", "setBackOfficeEnvironmentConfigurations", "setLogoBgColor");
         product.setLogoBgColor("#21ED43");
         product.setRoleMappings(roleMappings);
+        product.setBackOfficeEnvironmentConfigurations(Map.of("test", mockInstance(new BackOfficeConfigurationsResource())));
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(product);
         // then

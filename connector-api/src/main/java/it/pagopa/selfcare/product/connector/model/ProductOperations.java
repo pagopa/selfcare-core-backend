@@ -2,6 +2,7 @@ package it.pagopa.selfcare.product.connector.model;
 
 import java.time.Instant;
 import java.util.EnumMap;
+import java.util.Map;
 
 public interface ProductOperations {
 
@@ -80,5 +81,9 @@ public interface ProductOperations {
     void setIdentityTokenAudience(String identityTokenAudience);
 
     String getIdentityTokenAudience();
+
+    Map<String, ? extends BackOfficeConfigurations> getBackOfficeEnvironmentConfigurations();
+
+    void setBackOfficeEnvironmentConfigurations(Map<String, ? extends BackOfficeConfigurations> backOfficeEnvironmentConfigurations);
 
 }

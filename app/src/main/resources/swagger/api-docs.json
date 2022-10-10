@@ -12,7 +12,7 @@
         "default" : "http://localhost"
       },
       "port" : {
-        "default" : "8080"
+        "default" : "80"
       },
       "basePath" : {
         "default" : ""
@@ -804,11 +804,33 @@
   },
   "components" : {
     "schemas" : {
+      "BackOfficeConfigurationsResource" : {
+        "title" : "BackOfficeConfigurationsResource",
+        "required" : [ "identityTokenAudience", "url" ],
+        "type" : "object",
+        "properties" : {
+          "identityTokenAudience" : {
+            "type" : "string",
+            "description" : "Product's identity token audience"
+          },
+          "url" : {
+            "type" : "string",
+            "description" : "URL that redirects to the back-office section, where is possible to manage the product"
+          }
+        }
+      },
       "CreateProductDto" : {
         "title" : "CreateProductDto",
         "required" : [ "contractTemplatePath", "contractTemplateVersion", "description", "id", "identityTokenAudience", "roleMappings", "title", "urlBO", "urlPublic" ],
         "type" : "object",
         "properties" : {
+          "backOfficeEnvironmentConfigurations" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/BackOfficeConfigurationsResource"
+            },
+            "description" : "Environment-specific configurations for back-office redirection with Token Exchange"
+          },
           "contractTemplatePath" : {
             "type" : "string",
             "description" : "The path of contract"
@@ -936,6 +958,13 @@
         "required" : [ "contractTemplatePath", "contractTemplateUpdatedAt", "contractTemplateVersion", "createdAt", "id", "title" ],
         "type" : "object",
         "properties" : {
+          "backOfficeEnvironmentConfigurations" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/BackOfficeConfigurationsResource"
+            },
+            "description" : "Environment-specific configurations for back-office redirection with Token Exchange"
+          },
           "contractTemplatePath" : {
             "type" : "string",
             "description" : "The path of contract"
@@ -1112,6 +1141,13 @@
         "required" : [ "contractTemplatePath", "contractTemplateVersion", "description", "identityTokenAudience", "roleMappings", "title", "urlBO", "urlPublic" ],
         "type" : "object",
         "properties" : {
+          "backOfficeEnvironmentConfigurations" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/BackOfficeConfigurationsResource"
+            },
+            "description" : "Environment-specific configurations for back-office redirection with Token Exchange"
+          },
           "contractTemplatePath" : {
             "type" : "string",
             "description" : "The path of contract"
