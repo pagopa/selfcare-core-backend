@@ -52,8 +52,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ProductControllerTest {
 
     private static final String BASE_URL = "/products";
-    private static final CreateProductDto CREATE_PRODUCT_DTO = mockInstance(new CreateProductDto(), "setRoleMappings", "setLogoBgColor");
-    private static final UpdateProductDto UPDATE_PRODUCT_DTO = mockInstance(new UpdateProductDto(), "setRoleMappings", "setLogoBgColor");
+    private static final CreateProductDto CREATE_PRODUCT_DTO = mockInstance(new CreateProductDto(), "setRoleMappings", "setLogoBgColor", "setBackOfficeEnvironmentConfigurations");
+    private static final UpdateProductDto UPDATE_PRODUCT_DTO = mockInstance(new UpdateProductDto(), "setRoleMappings", "setLogoBgColor", "setBackOfficeEnvironmentConfigurations");
     private static final CreateSubProductDto CREATE_SUB_PRODUCT_DTO = mockInstance(new CreateSubProductDto());
     private static final UpdateSubProductDto UPDATE_SUB_PRODUCT_DTO = mockInstance(new UpdateSubProductDto());
 
@@ -70,8 +70,10 @@ class ProductControllerTest {
         }
         CREATE_PRODUCT_DTO.setRoleMappings(roleMappings);
         CREATE_PRODUCT_DTO.setLogoBgColor("#000000");
+        CREATE_PRODUCT_DTO.setBackOfficeEnvironmentConfigurations(Map.of("test", mockInstance(new BackOfficeConfigurationsResource())));
         UPDATE_PRODUCT_DTO.setRoleMappings(roleMappings);
         UPDATE_PRODUCT_DTO.setLogoBgColor("#000000");
+        UPDATE_PRODUCT_DTO.setBackOfficeEnvironmentConfigurations(Map.of("test", mockInstance(new BackOfficeConfigurationsResource())));
     }
 
     @MockBean

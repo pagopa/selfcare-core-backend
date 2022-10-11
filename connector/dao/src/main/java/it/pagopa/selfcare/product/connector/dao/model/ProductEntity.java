@@ -1,10 +1,7 @@
 package it.pagopa.selfcare.product.connector.dao.model;
 
 
-import it.pagopa.selfcare.product.connector.model.PartyRole;
-import it.pagopa.selfcare.product.connector.model.ProductOperations;
-import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
-import it.pagopa.selfcare.product.connector.model.ProductRoleOperations;
+import it.pagopa.selfcare.product.connector.model.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -16,6 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.Instant;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -51,8 +49,10 @@ public class ProductEntity implements ProductOperations, Persistable<String> {
     private boolean enabled = true;
     private String parentId;
     private String identityTokenAudience;
+    private Map<String, ? extends BackOfficeConfigurations> backOfficeEnvironmentConfigurations;
     @Transient
     private boolean isNew = true;
+
 
     @Data
     public static class ProductRoleInfo implements ProductRoleInfoOperations {
@@ -60,12 +60,20 @@ public class ProductEntity implements ProductOperations, Persistable<String> {
         private List<? extends ProductRoleOperations> roles;
     }
 
+
     @Data
     @EqualsAndHashCode(of = "code")
     public static class ProductRole implements ProductRoleOperations {
         private String code;
         private String label;
         private String description;
+    }
+
+
+    @Data
+    public static class EntityBackOfficeConfigurations implements BackOfficeConfigurations {
+        private String url;
+        private String identityTokenAudience;
     }
 
 
@@ -90,6 +98,7 @@ public class ProductEntity implements ProductOperations, Persistable<String> {
         enabled = product.isEnabled();
         parentId = product.getParentId();
         identityTokenAudience = product.getIdentityTokenAudience();
+        backOfficeEnvironmentConfigurations = product.getBackOfficeEnvironmentConfigurations();
     }
 
 

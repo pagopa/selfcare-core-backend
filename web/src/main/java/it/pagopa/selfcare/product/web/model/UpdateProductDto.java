@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import java.util.EnumMap;
+import java.util.Map;
 
 @Data
 public class UpdateProductDto {
@@ -56,5 +57,9 @@ public class UpdateProductDto {
     @JsonProperty(required = true)
     @NotBlank
     private String contractTemplateVersion;
+
+    @ApiModelProperty(value = "${swagger.product.model.backOfficeEnvironmentConfigurations}")
+    @Valid
+    private Map<String, BackOfficeConfigurationsResource> backOfficeEnvironmentConfigurations;
 
 }

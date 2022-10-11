@@ -15,6 +15,7 @@ import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -39,17 +40,8 @@ class CreateProductDtoTest {
         toCheckMap.put("identityTokenAudience", NotBlank.class);
         toCheckMap.put("urlBO", NotBlank.class);
         toCheckMap.put("roleMappings", NotEmpty.class);
+        toCheckMap.put("backOfficeEnvironmentConfigurations", NotEmpty.class);
         CreateProductDto createProductDto = new CreateProductDto();
-        createProductDto.setId(null);
-        createProductDto.setTitle(null);
-        createProductDto.setDescription(null);
-        createProductDto.setUrlPublic(null);
-        createProductDto.setUrlBO(null);
-        createProductDto.setLogoBgColor(null);
-        createProductDto.setIdentityTokenAudience(null);
-        createProductDto.setRoleMappings(null);
-        createProductDto.setContractTemplatePath(null);
-        createProductDto.setContractTemplateVersion(null);
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(createProductDto);
         // then
@@ -76,8 +68,9 @@ class CreateProductDtoTest {
             productRoleInfo.setMultiroleAllowed(true);
             roleMappings.put(partyRole, productRoleInfo);
         }
-        CreateProductDto product = TestUtils.mockInstance(new CreateProductDto(), "setRoleMappings");
+        UpdateProductDto product = mockInstance(new UpdateProductDto(), "setRoleMappings", "setBackOfficeEnvironmentConfigurations");
         product.setRoleMappings(roleMappings);
+        product.setBackOfficeEnvironmentConfigurations(Map.of("test", mockInstance(new BackOfficeConfigurationsResource())));
         product.setLogoBgColor("#FF2354");
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(product);
