@@ -59,7 +59,6 @@ public class UpdateProductDto {
     private String contractTemplateVersion;
 
     @ApiModelProperty(value = "${swagger.product.model.backOfficeEnvironmentConfigurations}")
-    @NotEmpty
     @Valid
     private Map<String, BackOfficeConfigurationsResource> backOfficeEnvironmentConfigurations;
 

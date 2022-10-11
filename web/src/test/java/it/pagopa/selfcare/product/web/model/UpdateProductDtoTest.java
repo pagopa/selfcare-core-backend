@@ -39,7 +39,6 @@ class UpdateProductDtoTest {
         toCheckMap.put("identityTokenAudience", NotBlank.class);
         toCheckMap.put("urlBO", NotBlank.class);
         toCheckMap.put("roleMappings", NotEmpty.class);
-        toCheckMap.put("backOfficeEnvironmentConfigurations", NotEmpty.class);
         UpdateProductDto updateProductDto = new UpdateProductDto();
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(updateProductDto);
