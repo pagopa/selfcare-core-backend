@@ -143,6 +143,7 @@ class ProductServiceImpl implements ProductService {
         foundProduct.setUrlBO(product.getUrlBO());
         foundProduct.setRoleMappings(product.getRoleMappings());
         foundProduct.setIdentityTokenAudience(product.getIdentityTokenAudience());
+        foundProduct.setBackOfficeEnvironmentConfigurations(product.getBackOfficeEnvironmentConfigurations());
         foundProduct.setContractTemplatePath(product.getContractTemplatePath());
         if (!product.getContractTemplateVersion().equals(foundProduct.getContractTemplateVersion())) {
             foundProduct.setContractTemplateUpdatedAt(Instant.now());

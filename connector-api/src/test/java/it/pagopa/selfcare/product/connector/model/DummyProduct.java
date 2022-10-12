@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.time.Instant;
 import java.util.EnumMap;
+import java.util.Map;
 
 @Data
 public class DummyProduct implements ProductOperations {
@@ -27,5 +28,6 @@ public class DummyProduct implements ProductOperations {
     private String identityTokenAudience;
     private boolean enabled = true;
     private String parentId;
+    private Map<String, ? extends BackOfficeConfigurations> backOfficeEnvironmentConfigurations;
 
 }

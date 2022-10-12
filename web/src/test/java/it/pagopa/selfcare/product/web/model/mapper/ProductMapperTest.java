@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.product.web.model.mapper;
 
+import it.pagopa.selfcare.product.connector.model.BackOfficeConfigurations;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
@@ -10,6 +11,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static it.pagopa.selfcare.commons.utils.TestUtils.reflectionEqualsByName;
@@ -195,6 +197,31 @@ class ProductMapperTest {
         assertNotNull(result);
         assertIterableEquals(roleMappings.entrySet(), result.entrySet());
     }
+
+
+    @Test
+    void toBackOfficeConfigurations_null() {
+        // given
+        final Map<String, ? extends BackOfficeConfigurations> backOfficeEnvironmentConfigurations = null;
+        // when
+        final Map<String, BackOfficeConfigurationsResource> result = ProductMapper.toBackOfficeConfigurations(backOfficeEnvironmentConfigurations);
+        // then
+        assertNull(result);
+    }
+
+
+    @Test
+    void toBackOfficeConfigurations_notNull() {
+        // given
+        final Map<String, ? extends BackOfficeConfigurations> backOfficeEnvironmentConfigurations
+                = Map.of("test", mockInstance(new BackOfficeConfigurationsResource()));
+        // when
+        final Map<String, BackOfficeConfigurationsResource> result = ProductMapper.toBackOfficeConfigurations(backOfficeEnvironmentConfigurations);
+        // then
+        assertNotNull(result);
+        assertIterableEquals(backOfficeEnvironmentConfigurations.entrySet(), result.entrySet());
+    }
+
 
     @Test
     void toTreeResource_null() {

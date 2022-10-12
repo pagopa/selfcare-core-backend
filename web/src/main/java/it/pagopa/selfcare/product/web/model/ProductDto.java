@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.product.web.model;
 
 
+import it.pagopa.selfcare.product.connector.model.BackOfficeConfigurations;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
@@ -8,6 +9,7 @@ import lombok.Data;
 
 import java.time.Instant;
 import java.util.EnumMap;
+import java.util.Map;
 
 @Data
 public class ProductDto implements ProductOperations {
@@ -31,5 +33,6 @@ public class ProductDto implements ProductOperations {
     private boolean enabled = true;
     private String parentId;
     private String identityTokenAudience;
+    private Map<String, ? extends BackOfficeConfigurations> backOfficeEnvironmentConfigurations;
 
 }
