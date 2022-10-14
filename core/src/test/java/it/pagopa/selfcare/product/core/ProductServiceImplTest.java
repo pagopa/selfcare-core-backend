@@ -569,6 +569,7 @@ class ProductServiceImplTest {
         map.put(PartyRole.OPERATOR, new DummyProductRoleInfo(true, list));
         product.setRoleMappings(map);
         product.setContractTemplateVersion("1.2.4");
+        product.setBackOfficeEnvironmentConfigurations(Map.of("test", mockInstance(new DummyBackOfficeConfigurations())));
         when(productConnectorMock.save(any()))
                 .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, ProductOperations.class));
         // when
@@ -583,6 +584,7 @@ class ProductServiceImplTest {
         assertEquals(savedProduct.getLogoBgColor(), product.getLogoBgColor());
         assertEquals(savedProduct.getContractTemplatePath(), product.getContractTemplatePath());
         assertEquals(savedProduct.getContractTemplateVersion(), product.getContractTemplateVersion());
+        assertEquals(savedProduct.getBackOfficeEnvironmentConfigurations(), product.getBackOfficeEnvironmentConfigurations());
         verify(productConnectorMock, times(1)).findById(productId);
         verify(productConnectorMock, times(1)).save(any());
         verifyNoMoreInteractions(productConnectorMock);
@@ -612,6 +614,7 @@ class ProductServiceImplTest {
                 "setParentId");
         product.setRoleMappings(map);
         product.setContractTemplateVersion(contractTemplateVersion);
+        product.setBackOfficeEnvironmentConfigurations(Map.of("test", mockInstance(new DummyBackOfficeConfigurations())));
         when(productConnectorMock.save(any()))
                 .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, ProductOperations.class));
         // when
@@ -626,6 +629,7 @@ class ProductServiceImplTest {
         assertEquals(savedProduct.getRoleMappings(), product.getRoleMappings());
         assertEquals(savedProduct.getContractTemplatePath(), product.getContractTemplatePath());
         assertEquals(savedProduct.getContractTemplateVersion(), product.getContractTemplateVersion());
+        assertEquals(savedProduct.getBackOfficeEnvironmentConfigurations(), product.getBackOfficeEnvironmentConfigurations());
         verify(productConnectorMock, times(1)).findById(productId);
         verify(productConnectorMock, times(1)).save(any());
         verifyNoMoreInteractions(productConnectorMock);

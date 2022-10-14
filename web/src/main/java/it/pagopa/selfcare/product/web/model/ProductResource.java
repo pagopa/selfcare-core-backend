@@ -5,11 +5,13 @@ import io.swagger.annotations.ApiModelProperty;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import lombok.Data;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.time.Instant;
 import java.util.EnumMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Data
@@ -42,6 +44,7 @@ public class ProductResource {
     private String urlBO;
 
     @ApiModelProperty(value = "${swagger.product.model.roleMappings}")
+    @Valid
     private EnumMap<PartyRole, ProductRoleInfo> roleMappings;
 
     @ApiModelProperty(value = "${swagger.product.model.contractTemplatePath}", required = true)
@@ -81,5 +84,9 @@ public class ProductResource {
 
     @ApiModelProperty(value = "${swagger.product.model.parentProduct}")
     private String parentId;
+
+    @ApiModelProperty(value = "${swagger.product.model.backOfficeEnvironmentConfigurations}")
+    @Valid
+    private Map<String, BackOfficeConfigurationsResource> backOfficeEnvironmentConfigurations;
 
 }

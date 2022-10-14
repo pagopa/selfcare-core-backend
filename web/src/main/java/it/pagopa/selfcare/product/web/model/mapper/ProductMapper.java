@@ -1,15 +1,13 @@
 package it.pagopa.selfcare.product.web.model.mapper;
 
+import it.pagopa.selfcare.product.connector.model.BackOfficeConfigurations;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
 import it.pagopa.selfcare.product.web.model.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -43,6 +41,7 @@ public class ProductMapper {
             resource.setContractTemplatePath(entity.getContractTemplatePath());
             resource.setContractTemplateVersion(entity.getContractTemplateVersion());
             resource.setIdentityTokenAudience(entity.getIdentityTokenAudience());
+            resource.setBackOfficeEnvironmentConfigurations(toBackOfficeConfigurations(entity.getBackOfficeEnvironmentConfigurations()));
             if (entity.getParentId() != null) {
                 resource.setParentId(entity.getParentId());
             }
@@ -68,6 +67,7 @@ public class ProductMapper {
             product.setContractTemplatePath(dto.getContractTemplatePath());
             product.setContractTemplateVersion(dto.getContractTemplateVersion());
             product.setLogoBgColor(dto.getLogoBgColor());
+            product.setBackOfficeEnvironmentConfigurations(dto.getBackOfficeEnvironmentConfigurations());
         }
         log.debug("fromDto result = {}", product);
         log.trace("fromDto end");
@@ -101,6 +101,7 @@ public class ProductMapper {
             product.setRoleMappings(dto.getRoleMappings());
             product.setContractTemplatePath(dto.getContractTemplatePath());
             product.setContractTemplateVersion(dto.getContractTemplateVersion());
+            product.setBackOfficeEnvironmentConfigurations(dto.getBackOfficeEnvironmentConfigurations());
         }
         log.debug("fromDto result = {}", product);
         log.trace("fromDto end");
@@ -125,6 +126,22 @@ public class ProductMapper {
         } else {
             result = new EnumMap<>(PartyRole.class);
             roleMappings.forEach((key, value) -> result.put(key, new ProductRoleInfo(value)));
+        }
+        return result;
+    }
+
+    public static Map<String, BackOfficeConfigurationsResource> toBackOfficeConfigurations(Map<String, ? extends BackOfficeConfigurations> backOfficeEnvironmentConfigurations) {
+        Map<String, BackOfficeConfigurationsResource> result;
+        if (backOfficeEnvironmentConfigurations == null) {
+            result = null;
+        } else {
+            result = new HashMap<>();
+            backOfficeEnvironmentConfigurations.forEach((key, value) -> {
+                final BackOfficeConfigurationsResource resource = new BackOfficeConfigurationsResource();
+                resource.setUrl(value.getUrl());
+                resource.setIdentityTokenAudience(value.getIdentityTokenAudience());
+                result.put(key, resource);
+            });
         }
         return result;
     }
