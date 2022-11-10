@@ -43,6 +43,7 @@ class ProductMapperTest {
         // then
         assertEquals(product.getId(), productResource.getId());
         assertEquals(product.getLogo(), productResource.getLogo());
+        assertEquals(product.getStatus(), productResource.getStatus());
         assertEquals(product.getDepictImageUrl(), productResource.getDepictImageUrl());
         assertEquals(product.getTitle(), productResource.getTitle());
         assertEquals(product.getDescription(), productResource.getDescription());

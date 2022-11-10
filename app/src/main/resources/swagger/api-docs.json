@@ -954,18 +954,26 @@
         "description" : "A \"problem detail\" as a way to carry machine-readable details of errors (https://datatracker.ietf.org/doc/html/rfc7807)"
       },
       "ProductResource" : {
-        "title" : "ProductResource",
-        "required" : [ "contractTemplatePath", "contractTemplateUpdatedAt", "contractTemplateVersion", "createdAt", "id", "title" ],
-        "type" : "object",
-        "properties" : {
-          "backOfficeEnvironmentConfigurations" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/BackOfficeConfigurationsResource"
+        "title": "ProductResource",
+        "required": [
+          "contractTemplatePath",
+          "contractTemplateUpdatedAt",
+          "contractTemplateVersion",
+          "createdAt",
+          "id",
+          "status",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "backOfficeEnvironmentConfigurations": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/BackOfficeConfigurationsResource"
             },
-            "description" : "Environment-specific configurations for back-office redirection with Token Exchange"
+            "description": "Environment-specific configurations for back-office redirection with Token Exchange"
           },
-          "contractTemplatePath" : {
+          "contractTemplatePath": {
             "type" : "string",
             "description" : "The path of contract"
           },
@@ -1025,26 +1033,36 @@
             "format" : "uuid"
           },
           "parentId" : {
-            "type" : "string",
-            "description" : "Root parent of the sub product"
+            "type": "string",
+            "description": "Root parent of the sub product"
           },
-          "roleMappings" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/ProductRoleInfoRes"
+          "roleMappings": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ProductRoleInfoRes"
             },
-            "description" : "Mappings between Party's and Product's role"
+            "description": "Mappings between Party's and Product's role"
           },
-          "title" : {
-            "type" : "string",
-            "description" : "Product's title"
+          "status": {
+            "type": "string",
+            "description": "Product's status",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "PHASE_OUT",
+              "TESTING"
+            ]
           },
-          "urlBO" : {
-            "type" : "string",
-            "description" : "URL that redirects to the back-office section, where is possible to manage the product"
+          "title": {
+            "type": "string",
+            "description": "Product's title"
           },
-          "urlPublic" : {
-            "type" : "string",
+          "urlBO": {
+            "type": "string",
+            "description": "URL that redirects to the back-office section, where is possible to manage the product"
+          },
+          "urlPublic": {
+            "type": "string",
             "description" : "URL that redirects to the public information webpage of the product"
           }
         }
