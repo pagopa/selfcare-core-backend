@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
+import it.pagopa.selfcare.product.connector.model.ProductStatus;
 import it.pagopa.selfcare.product.core.ProductService;
 import it.pagopa.selfcare.product.web.model.*;
 import it.pagopa.selfcare.product.web.model.mapper.ProductMapper;
@@ -187,14 +188,29 @@ public class ProductController {
                                                     String id,
                                             @RequestBody
                                             @Valid
-                                                    UpdateSubProductDto product) {
-        log.trace("updateProduct start");
-        log.debug("updateProduct id = {}, product = {}", id, product);
+                                            UpdateSubProductDto product) {
+        log.trace("updateSubProduct start");
+        log.debug("updateSubProduct id = {}, product = {}", id, product);
         ProductOperations updatedProduct = productService.updateProduct(id, ProductMapper.fromDto(product));
         ProductResource result = ProductMapper.toResource(updatedProduct);
-        log.debug("updateProduct result = {}", result);
-        log.trace("updateProduct end");
+        log.debug("updateSubProduct result = {}", result);
+        log.trace("updateSubProduct end");
         return result;
+    }
+
+    @PutMapping(value = "/{id}/status")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.product.operation.updateProductStatus}")
+    public void updateProductStatus(@ApiParam("${swagger.product.model.id}")
+                                    @PathVariable("id")
+                                    String id,
+                                    @ApiParam("${swagger.product.model.status}")
+                                    @RequestParam(value = "status")
+                                    ProductStatus status) {
+        log.trace("updateProductStatus start");
+        log.debug("updateProductStatus id = {}, status = {}", id, status);
+        productService.updateProductStatus(id, status);
+        log.trace("updateProductStatus end");
     }
 
 
@@ -203,7 +219,7 @@ public class ProductController {
     @ApiOperation(value = "", notes = "${swagger.product.operation.deleteProduct}")
     public void deleteProduct(@ApiParam("${swagger.product.model.id}")
                               @PathVariable("id")
-                                      String id) {
+                              String id) {
         log.trace("deleteProduct start");
         log.debug("deleteProduct id = {}", id);
         productService.deleteProduct(id);

@@ -47,6 +47,7 @@ public class ProductEntity implements ProductOperations, Persistable<String> {
     private String contractTemplateVersion;
     @FieldNameConstants.Include
     private boolean enabled = true;
+    @FieldNameConstants.Include
     private ProductStatus status;
     private String parentId;
     private String identityTokenAudience;

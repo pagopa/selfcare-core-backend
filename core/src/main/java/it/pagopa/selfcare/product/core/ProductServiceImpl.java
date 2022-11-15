@@ -6,6 +6,7 @@ import it.pagopa.selfcare.product.connector.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
+import it.pagopa.selfcare.product.connector.model.ProductStatus;
 import it.pagopa.selfcare.product.core.exception.InvalidRoleMappingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,8 @@ import java.util.List;
 @Service
 class ProductServiceImpl implements ProductService {
 
-    private static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product id is required";
+    public static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product id is required";
+    public static final String REQUIRED_PRODUCT_STATUS_MESSAGE = "A product status is required";
 
 
     private final ProductConnector productConnector;
@@ -154,6 +156,16 @@ class ProductServiceImpl implements ProductService {
         log.debug("updateProduct result = {}", updatedProduct);
         log.trace("updateProduct end");
         return updatedProduct;
+    }
+
+    @Override
+    public void updateProductStatus(String id, ProductStatus status) {
+        log.trace("updateProductStatus start");
+        log.debug("updateProductStatus id = {}, status = {}", id, status);
+        Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
+        Assert.notNull(status, REQUIRED_PRODUCT_STATUS_MESSAGE);
+        productConnector.updateProductStatus(id, status);
+        log.trace("updateProductStatus end");
     }
 
     @Override

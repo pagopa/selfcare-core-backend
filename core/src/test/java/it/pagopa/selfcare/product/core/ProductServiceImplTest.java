@@ -28,6 +28,8 @@ import java.time.OffsetDateTime;
 import java.util.*;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
+import static it.pagopa.selfcare.product.core.ProductServiceImpl.REQUIRED_PRODUCT_ID_MESSAGE;
+import static it.pagopa.selfcare.product.core.ProductServiceImpl.REQUIRED_PRODUCT_STATUS_MESSAGE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -700,6 +702,45 @@ class ProductServiceImplTest {
         verify(productConnectorMock, times(1)).save(any());
         verifyNoMoreInteractions(productConnectorMock);
 
+    }
+
+    @Test
+    void updateProductStatus_nullId() {
+        // given
+        String id = null;
+        ProductStatus status = ProductStatus.ACTIVE;
+        // when
+        Executable executable = () -> productService.updateProductStatus(id, status);
+        // then
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(REQUIRED_PRODUCT_ID_MESSAGE, e.getMessage());
+        verifyNoInteractions(productConnectorMock);
+    }
+
+    @Test
+    void updateProductStatus_nullStatus() {
+        // given
+        String id = "id";
+        ProductStatus status = null;
+        // when
+        Executable executable = () -> productService.updateProductStatus(id, status);
+        // then
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
+        assertEquals(REQUIRED_PRODUCT_STATUS_MESSAGE, e.getMessage());
+        verifyNoInteractions(productConnectorMock);
+    }
+
+    @Test
+    void updateProductStatus() {
+        // given
+        String id = "id";
+        ProductStatus status = ProductStatus.ACTIVE;
+        // when
+        Executable executable = () -> productService.updateProductStatus(id, status);
+        // then
+        assertDoesNotThrow(executable);
+        verify(productConnectorMock, times(1)).updateProductStatus(id, status);
+        verifyNoMoreInteractions(productConnectorMock);
     }
 
     @Test

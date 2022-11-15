@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.product.connector.api;
 
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
+import it.pagopa.selfcare.product.connector.model.ProductStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,4 +27,6 @@ public interface ProductConnector {
     List<ProductOperations> findByParentAndEnabled(String parent, boolean enabled);
 
     void disableById(String id);
+
+    void updateProductStatus(String id, ProductStatus status);
 }

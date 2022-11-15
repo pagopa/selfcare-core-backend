@@ -6,6 +6,7 @@ import it.pagopa.selfcare.product.connector.dao.model.ProductEntity;
 import it.pagopa.selfcare.product.connector.exception.ResourceAlreadyExistsException;
 import it.pagopa.selfcare.product.connector.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
+import it.pagopa.selfcare.product.connector.model.ProductStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -115,6 +116,7 @@ public class ProductConnectorImpl implements ProductConnector {
                 Query.query(Criteria.where(ProductEntity.Fields.id).is(id)
                         .and(ProductEntity.Fields.enabled).is(true)),
                 Update.update(ProductEntity.Fields.enabled, false)
+                        .set(ProductEntity.Fields.status, ProductStatus.INACTIVE)
                         .set(ProductEntity.Fields.modifiedBy, auditorAware.getCurrentAuditor().orElse(null))
                         .currentDate(ProductEntity.Fields.modifiedAt),
                 ProductEntity.class);
@@ -122,6 +124,22 @@ public class ProductConnectorImpl implements ProductConnector {
             throw new ResourceNotFoundException();
         }
         log.trace("disableById end");
+    }
+
+    @Override
+    public void updateProductStatus(String id, ProductStatus status) {
+        log.trace("updateProductStatus start");
+        log.debug("updateProductStatus id = {}, status = {}", id, status);
+        UpdateResult updateResult = mongoTemplate.updateFirst(
+                Query.query(Criteria.where(ProductEntity.Fields.id).is(id)),
+                Update.update(ProductEntity.Fields.status, status)
+                        .set(ProductEntity.Fields.modifiedBy, auditorAware.getCurrentAuditor().orElse(null))
+                        .currentDate(ProductEntity.Fields.modifiedAt),
+                ProductEntity.class);
+        if (updateResult.getMatchedCount() == 0) {
+            throw new ResourceNotFoundException();
+        }
+        log.trace("updateProductStatus end");
     }
 
 }
