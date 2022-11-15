@@ -644,26 +644,112 @@
             }
           },
           "500" : {
-            "description" : "Internal Server Error",
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
                 }
               }
             }
           }
         },
-        "security" : [ {
-          "bearerAuth" : [ "global" ]
-        } ]
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
       }
     },
-    "/products/{id}/sub-products" : {
-      "put" : {
-        "tags" : [ "product" ],
-        "summary" : "updateSubProduct",
-        "description" : "Service that allows the update of a previously inserted occurrence of the Product entity",
+    "/products/{id}/status": {
+      "put": {
+        "tags": [
+          "product"
+        ],
+        "summary": "updateProductStatus",
+        "description": "Service that allows to update the product status",
+        "operationId": "updateProductStatusUsingPUT",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product's unique identifier",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Product's status",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ACTIVE",
+                "INACTIVE",
+                "PHASE_OUT",
+                "TESTING"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": [
+              "global"
+            ]
+          }
+        ]
+      }
+    },
+    "/products/{id}/sub-products": {
+      "put": {
+        "tags": [
+          "product"
+        ],
+        "summary": "updateSubProduct",
+        "description": "Service that allows the update of a previously inserted occurrence of the Product entity",
         "operationId" : "updateSubProductUsingPUT",
         "parameters" : [ {
           "name" : "id",
@@ -974,12 +1060,12 @@
             "description": "Environment-specific configurations for back-office redirection with Token Exchange"
           },
           "contractTemplatePath": {
-            "type" : "string",
-            "description" : "The path of contract"
+            "type": "string",
+            "description": "The path of contract"
           },
-          "contractTemplateUpdatedAt" : {
-            "type" : "string",
-            "description" : "Date the contract was postponed",
+          "contractTemplateUpdatedAt": {
+            "type": "string",
+            "description": "Date the contract was postponed",
             "format" : "date-time"
           },
           "contractTemplateVersion" : {
@@ -1027,12 +1113,12 @@
             "description" : "Last modified date and time",
             "format" : "date-time"
           },
-          "modifiedBy" : {
-            "type" : "string",
-            "description" : "User who modified the resource",
-            "format" : "uuid"
+          "modifiedBy": {
+            "type": "string",
+            "description": "User who modified the resource",
+            "format": "uuid"
           },
-          "parentId" : {
+          "parentId": {
             "type": "string",
             "description": "Root parent of the sub product"
           },
@@ -1063,7 +1149,7 @@
           },
           "urlPublic": {
             "type": "string",
-            "description" : "URL that redirects to the public information webpage of the product"
+            "description": "URL that redirects to the public information webpage of the product"
           }
         }
       },
