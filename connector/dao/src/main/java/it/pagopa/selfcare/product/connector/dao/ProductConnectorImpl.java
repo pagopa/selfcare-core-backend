@@ -86,7 +86,7 @@ public class ProductConnectorImpl implements ProductConnector {
 
     @Override
     public List<ProductOperations> findAll() {
-        return new ArrayList<>(repository.findAll());
+        return new ArrayList<>(repository.findByStatusIsNot(ProductStatus.INACTIVE));
     }
 
 
@@ -107,6 +107,15 @@ public class ProductConnectorImpl implements ProductConnector {
         return new ArrayList<>(repository.findByParentIdAndEnabled(parent, enabled));
     }
 
+    @Override
+    public List<ProductOperations> findByParentAndStatusIsNotInactive(String parent) {
+        return new ArrayList<>(repository.findByParentIdAndStatusIsNot(parent, ProductStatus.INACTIVE));
+    }
+
+    @Override
+    public List<ProductOperations> findByStatusIsNot(ProductStatus status) {
+        return new ArrayList<>(repository.findByStatusIsNot(status));
+    }
 
     @Override
     public void disableById(String id) {

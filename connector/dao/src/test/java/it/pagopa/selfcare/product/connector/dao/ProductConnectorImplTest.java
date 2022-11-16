@@ -231,6 +231,20 @@ class ProductConnectorImplTest {
     }
 
     @Test
+    void findAllActive() {
+        //given
+        List<ProductEntity> expected = List.of(mockInstance(new ProductEntity()));
+        when(repositoryMock.findByStatusIsNot(any()))
+                .thenReturn(expected);
+        //when
+        List<ProductOperations> found = productConnector.findByStatusIsNot(ProductStatus.INACTIVE);
+        //then
+        assertEquals(expected, found);
+        verify(repositoryMock, times(1)).findByStatusIsNot(ProductStatus.INACTIVE);
+        verifyNoMoreInteractions(repositoryMock);
+    }
+
+    @Test
     void existsByIdAndEnabledFalse_found() {
         //given
         String id = "id";

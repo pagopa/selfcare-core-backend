@@ -46,9 +46,9 @@ class ProductServiceImpl implements ProductService {
         log.trace("getProducts start");
         List<ProductOperations> products;
         if (rootOnly) {
-            products = productConnector.findByParentAndEnabled(null, true);
+            products = productConnector.findByParentAndStatusIsNotInactive(null);
         } else {
-            products = productConnector.findByEnabled(true);
+            products = productConnector.findByStatusIsNot(ProductStatus.INACTIVE);
         }
         log.debug("getProducts result = {}", products);
         log.trace("getProducts end");

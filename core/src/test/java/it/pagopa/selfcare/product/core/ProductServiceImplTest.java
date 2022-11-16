@@ -69,7 +69,7 @@ class ProductServiceImplTest {
         // then
         assertTrue(products.isEmpty());
         verify(productConnectorMock, times(1))
-                .findByParentAndEnabled(parent, enabled);
+                .findByParentAndStatusIsNotInactive(parent);
         verifyNoMoreInteractions(productConnectorMock);
     }
 
@@ -80,14 +80,14 @@ class ProductServiceImplTest {
         String parent = null;
         boolean enabled = true;
         DummyProduct product = mockInstance(new DummyProduct(), "setParentId");
-        when(productConnectorMock.findByParentAndEnabled(any(), Mockito.anyBoolean()))
+        when(productConnectorMock.findByParentAndStatusIsNotInactive(any()))
                 .thenReturn(List.of(product));
         // when
         List<ProductOperations> products = productService.getProducts(true);
         // then
         assertEquals(1, products.size());
         verify(productConnectorMock, times(1))
-                .findByParentAndEnabled(parent, enabled);
+                .findByParentAndStatusIsNotInactive(parent);
         verifyNoMoreInteractions(productConnectorMock);
     }
 
@@ -100,7 +100,7 @@ class ProductServiceImplTest {
         // then
         assertTrue(products.isEmpty());
         verify(productConnectorMock, times(1))
-                .findByEnabled(enabled);
+                .findByStatusIsNot(ProductStatus.INACTIVE);
         verifyNoMoreInteractions(productConnectorMock);
     }
 
@@ -109,14 +109,14 @@ class ProductServiceImplTest {
         // given
         boolean enabled = true;
         DummyProduct product = mockInstance(new DummyProduct());
-        when(productConnectorMock.findByEnabled(Mockito.anyBoolean()))
+        when(productConnectorMock.findByStatusIsNot(any()))
                 .thenReturn(List.of(product));
         // when
         List<ProductOperations> products = productService.getProducts(false);
         // then
         assertEquals(1, products.size());
         verify(productConnectorMock, times(1))
-                .findByEnabled(enabled);
+                .findByStatusIsNot(ProductStatus.INACTIVE);
         verifyNoMoreInteractions(productConnectorMock);
     }
 

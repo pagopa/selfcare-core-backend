@@ -4,6 +4,7 @@ import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.product.connector.dao.config.DaoTestConfig;
 import it.pagopa.selfcare.product.connector.dao.model.ProductEntity;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
+import it.pagopa.selfcare.product.connector.model.ProductStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -188,6 +189,66 @@ class ProductRepositoryTest {
     }
 
     @Test
+    void findByParentIdAndStatusIsNot_found() {
+        //given
+        ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setId", "setStatus");
+        product.setStatus(ProductStatus.TESTING);
+        repository.save(product);
+        //when
+        List<ProductEntity> result = repository.findByParentIdAndStatusIsNot("setParentId", ProductStatus.INACTIVE);
+        //then
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
+    void findByParentIdAndStatusIsNot_notFound() {
+        //given
+        ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setId", "setStatus");
+        product.setStatus(ProductStatus.INACTIVE);
+        repository.save(product);
+        //when
+        List<ProductEntity> result = repository.findByParentIdAndStatusIsNot("setParentId", ProductStatus.INACTIVE);
+        //then
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void findByParentIdAndStatusIsNot_parentNull() {
+        //given
+        ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setId", "setStatus", "setParentId");
+        product.setStatus(ProductStatus.ACTIVE);
+        repository.save(product);
+        //when
+        List<ProductEntity> result = repository.findByParentIdAndStatusIsNot(null, ProductStatus.INACTIVE);
+        //then
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
+    void findByStatusIsNot_found() {
+        //given
+        ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setStatus");
+        product.setStatus(ProductStatus.ACTIVE);
+        repository.save(product);
+        //when
+        List<ProductEntity> result = repository.findByStatusIsNot(ProductStatus.INACTIVE);
+        //then
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
+    void findByStatusIsNot_notFound() {
+        //given
+        ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setStatus");
+        product.setStatus(ProductStatus.INACTIVE);
+        repository.save(product);
+        //when
+        List<ProductEntity> result = repository.findByStatusIsNot(ProductStatus.INACTIVE);
+        //then
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
     void existsByIdAndEnabledFalse() {
         //given
         String productId = "productId";
@@ -211,6 +272,34 @@ class ProductRepositoryTest {
         repository.save(product);
         //when
         boolean found = repository.existsByIdAndEnabledFalse(productId);
+        //then
+        assertFalse(found);
+    }
+
+    @Test
+    void existsByIdAndStatusInactive() {
+        //given
+        String productId = "productId";
+        ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setStatus");
+        product.setId(productId);
+        product.setStatus(ProductStatus.INACTIVE);
+        repository.save(product);
+        //when
+        boolean found = repository.existsByIdAndStatus(productId, ProductStatus.INACTIVE);
+        //then
+        assertTrue(found);
+    }
+
+    @Test
+    void existsByIdAndStatusInactive_notFound() {
+        //given
+        String productId = "productId";
+        ProductEntity product = TestUtils.mockInstance(new ProductEntity(), "setStatus");
+        product.setId(productId);
+        product.setStatus(ProductStatus.ACTIVE);
+        repository.save(product);
+        //when
+        boolean found = repository.existsByIdAndStatus(productId, ProductStatus.INACTIVE);
         //then
         assertFalse(found);
     }

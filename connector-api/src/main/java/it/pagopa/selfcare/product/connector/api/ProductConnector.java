@@ -26,6 +26,10 @@ public interface ProductConnector {
 
     List<ProductOperations> findByParentAndEnabled(String parent, boolean enabled);
 
+    List<ProductOperations> findByParentAndStatusIsNotInactive(String parent);
+
+    List<ProductOperations> findByStatusIsNot(ProductStatus status);
+
     void disableById(String id);
 
     void updateProductStatus(String id, ProductStatus status);
