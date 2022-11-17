@@ -78,6 +78,11 @@ public class ProductConnectorImpl implements ProductConnector {
         return repository.existsById(id);
     }
 
+    /**
+     * @deprecated method has been deprecated because a new method has been implemented.
+     * Remove the query from the repository
+     */
+    @Deprecated(forRemoval = true)
     @Override
     public boolean existsByIdAndEnabledFalse(String id) {
         return repository.existsByIdAndEnabledFalse(id);
@@ -100,13 +105,21 @@ public class ProductConnectorImpl implements ProductConnector {
         repository.deleteById(id);
     }
 
-
+    /**
+     * @deprecated method has been deprecated because a new method has been implemented.
+     * Remove the query from the repository
+     */
+    @Deprecated(forRemoval = true)
     @Override
     public List<ProductOperations> findByEnabled(boolean enabled) {
         return new ArrayList<>(repository.findByEnabled(enabled));
     }
 
-
+    /**
+     * @deprecated method has been deprecated because a new method has been implemented.
+     * Remove the query from the repository
+     */
+    @Deprecated(forRemoval = true)
     @Override
     public List<ProductOperations> findByParentAndEnabled(String parent, boolean enabled) {
         return new ArrayList<>(repository.findByParentIdAndEnabled(parent, enabled));
