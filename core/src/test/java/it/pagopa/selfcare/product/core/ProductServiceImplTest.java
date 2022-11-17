@@ -278,6 +278,7 @@ class ProductServiceImplTest {
         //given
         OffsetDateTime now = OffsetDateTime.now().minusSeconds(1);
         String id = "id";
+        ProductStatus status = ProductStatus.INACTIVE;
         ProductOperations input = new DummyProduct();
         EnumMap<PartyRole, DummyProductRoleInfo> map = new EnumMap<>(PartyRole.class);
         List<DummyProductRole> list = new ArrayList<>();
@@ -291,7 +292,7 @@ class ProductServiceImplTest {
                 .thenReturn(LOGO_URL);
         when(productDepictImageServiceMock.getDefaultImageUrl())
                 .thenReturn(DEPICT_IMAGE_URL);
-        when(productConnectorMock.existsByIdAndEnabledFalse(id))
+        when(productConnectorMock.existsByIdAndStatus(anyString(), any()))
                 .thenReturn(true);
         //when
         Executable executable = () -> productService.createProduct(input);
@@ -304,7 +305,7 @@ class ProductServiceImplTest {
         verify(productConnectorMock, times(1))
                 .insert(input);
         verify(productConnectorMock, times(1))
-                .existsByIdAndEnabledFalse(id);
+                .existsByIdAndStatus(id, status);
         verify(productConnectorMock, times(1))
                 .save(input);
         verifyNoMoreInteractions(productConnectorMock);
@@ -315,6 +316,7 @@ class ProductServiceImplTest {
     void createProduct_alreadyExistsActive() {
         //given
         String id = "id";
+        ProductStatus status = ProductStatus.INACTIVE;
         ProductOperations input = new DummyProduct();
         EnumMap<PartyRole, DummyProductRoleInfo> map = new EnumMap<>(PartyRole.class);
         List<DummyProductRole> list = new ArrayList<>();
@@ -328,7 +330,7 @@ class ProductServiceImplTest {
                 .thenReturn(LOGO_URL);
         when(productDepictImageServiceMock.getDefaultImageUrl())
                 .thenReturn(DEPICT_IMAGE_URL);
-        when(productConnectorMock.existsByIdAndEnabledFalse(id))
+        when(productConnectorMock.existsByIdAndStatus(anyString(), any()))
                 .thenReturn(false);
         //when
         Executable executable = () -> productService.createProduct(input);
@@ -342,7 +344,7 @@ class ProductServiceImplTest {
         verify(productConnectorMock, times(1))
                 .insert(input);
         verify(productConnectorMock, times(1))
-                .existsByIdAndEnabledFalse(id);
+                .existsByIdAndStatus(id, status);
         verifyNoMoreInteractions(productConnectorMock);
     }
 
@@ -472,7 +474,7 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void getProduct_Enabled() {
+    void getProduct_NotInactive() {
         // given
         String productId = "productId";
         when(productConnectorMock.findById(Mockito.anyString()))
@@ -486,14 +488,17 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void getProduct_notEnabled() {
+    void getProduct_Inactive() {
         // given
         String id = "id";
         when(productConnectorMock.findById(Mockito.anyString()))
                 .thenAnswer(invocationOnMock -> {
-                    ProductOperations product = mockInstance(new DummyProduct(), "setId", "setEnabled", "setRoleMappings");
+                    ProductOperations product = mockInstance(new DummyProduct(), "setId",
+                            "setEnabled",
+                            "setRoleMappings",
+                            "setStatus");
                     product.setId(invocationOnMock.getArgument(0, String.class));
-                    product.setEnabled(false);
+                    product.setStatus(ProductStatus.INACTIVE);
                     return Optional.of(product);
                 });
         // when
@@ -558,10 +563,11 @@ class ProductServiceImplTest {
 
 
     @Test
-    void updateProduct_foundProductEnabledDiffVersionContract() {
+    void updateProduct_foundProductActiveDiffVersionContract() {
         // given
         String productId = "productId";
-        ProductOperations product = mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setParentId");
+        ProductOperations product = mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setParentId", "setStatus");
+        product.setStatus(ProductStatus.ACTIVE);
         when(productConnectorMock.findById(productId))
                 .thenReturn(Optional.of(new DummyProduct()));
         EnumMap<PartyRole, DummyProductRoleInfo> map = new EnumMap<>(PartyRole.class);
@@ -594,7 +600,7 @@ class ProductServiceImplTest {
 
 
     @Test
-    void updateProduct_foundProductEnabledSameVersionContract() {
+    void updateProduct_foundProductActiveSameVersionContract() {
         // given
         String productId = "productId";
         String contractTemplateVersion = "1.2.4";
@@ -603,6 +609,7 @@ class ProductServiceImplTest {
                     DummyProduct foundProductMock = new DummyProduct();
                     foundProductMock.setId(invocationOnMock.getArgument(0, String.class));
                     foundProductMock.setContractTemplateVersion(contractTemplateVersion);
+                    foundProductMock.setStatus(ProductStatus.ACTIVE);
                     return Optional.of(foundProductMock);
                 });
         EnumMap<PartyRole, DummyProductRoleInfo> map = new EnumMap<>(PartyRole.class);
@@ -613,10 +620,12 @@ class ProductServiceImplTest {
         ProductOperations product = mockInstance(new DummyProduct(), "setId",
                 "setRoleMappings",
                 "setContractTemplateVersion",
-                "setParentId");
+                "setParentId",
+                "setStatus");
         product.setRoleMappings(map);
         product.setContractTemplateVersion(contractTemplateVersion);
         product.setBackOfficeEnvironmentConfigurations(Map.of("test", mockInstance(new DummyBackOfficeConfigurations())));
+        product.setStatus(ProductStatus.ACTIVE);
         when(productConnectorMock.save(any()))
                 .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, ProductOperations.class));
         // when
@@ -638,11 +647,11 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void updateProduct_foundProductNotEnabled() {
+    void updateProduct_foundProductInactive() {
         // given
         String productId = "productId";
-        ProductOperations product = mockInstance(new DummyProduct(), "setId", "setRoleMappings");
-        product.setEnabled(false);
+        ProductOperations product = mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setStatus");
+        product.setStatus(ProductStatus.INACTIVE);
         when(productConnectorMock.findById(Mockito.anyString()))
                 .thenReturn(Optional.of(product));
         // when
@@ -678,14 +687,17 @@ class ProductServiceImplTest {
                     foundProductMock.setId(invocationOnMock.getArgument(0, String.class));
                     foundProductMock.setContractTemplateVersion(contractTemplateVersion);
                     foundProductMock.setParentId(parentId);
+                    foundProductMock.setStatus(ProductStatus.ACTIVE);
                     return Optional.of(foundProductMock);
                 });
         ProductOperations product = mockInstance(new DummyProduct(),
                 "setId",
                 "setRoleMappings",
-                "setContractTemplateVersion"
+                "setContractTemplateVersion",
+                "setStatus"
         );
         product.setContractTemplateVersion(contractTemplateVersion);
+        product.setStatus(ProductStatus.ACTIVE);
         when(productConnectorMock.save(any()))
                 .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, ProductOperations.class));
         // when

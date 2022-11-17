@@ -72,7 +72,7 @@ class ProductServiceImpl implements ProductService {
         try {
             insert = productConnector.insert(product);
         } catch (ResourceAlreadyExistsException e) {
-            if (productConnector.existsByIdAndEnabledFalse(product.getId())) {
+            if (productConnector.existsByIdAndStatus(product.getId(), ProductStatus.INACTIVE)) {
                 insert = productConnector.save(product);
             } else {
                 throw new ResourceAlreadyExistsException(String.format("Product %s already exists and is still active", product.getId()), e);
@@ -115,7 +115,7 @@ class ProductServiceImpl implements ProductService {
         log.debug("getProduct id = {}", id);
         Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
         ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
-        if (!foundProduct.isEnabled()) {
+        if (foundProduct.getStatus() == ProductStatus.INACTIVE) {
             throw new ResourceNotFoundException();
         }
         log.debug("getProduct result = {}", foundProduct);
@@ -132,7 +132,7 @@ class ProductServiceImpl implements ProductService {
         Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
         Assert.notNull(product, "A product is required");
         ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
-        if (!foundProduct.isEnabled()) {
+        if (foundProduct.getStatus() == ProductStatus.INACTIVE) {
             throw new ResourceNotFoundException();
         }
         if (foundProduct.getParentId() == null) {

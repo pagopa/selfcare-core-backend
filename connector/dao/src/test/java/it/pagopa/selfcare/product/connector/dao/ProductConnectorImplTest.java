@@ -231,6 +231,23 @@ class ProductConnectorImplTest {
     }
 
     @Test
+    void findByParentAndStatusIsNotInactive() {
+        // given
+        String parent = "parentId";
+        ProductStatus status = ProductStatus.INACTIVE;
+        List<ProductEntity> expected = List.of(mockInstance(new ProductEntity()));
+        when(repositoryMock.findByParentIdAndStatusIsNot(anyString(), any()))
+                .thenReturn(expected);
+        // when
+        List<ProductOperations> found = productConnector.findByParentAndStatusIsNotInactive(parent);
+        //then
+        assertEquals(expected, found);
+        verify(repositoryMock, times(1))
+                .findByParentIdAndStatusIsNot(parent, status);
+        verifyNoMoreInteractions(repositoryMock);
+    }
+
+    @Test
     void findAllActive() {
         //given
         List<ProductEntity> expected = List.of(mockInstance(new ProductEntity()));
@@ -277,7 +294,39 @@ class ProductConnectorImplTest {
     }
 
     @Test
-    void disableById_notEnabled() {
+    void existsByIdAndStatusInactive_found() {
+        //given
+        String id = "id";
+        boolean expected = true;
+        when(repositoryMock.existsByIdAndStatus(anyString(), any()))
+                .thenReturn(expected);
+        //when
+        boolean found = productConnector.existsByIdAndStatus(id, ProductStatus.INACTIVE);
+        //then
+        assertTrue(found);
+        verify(repositoryMock, times(1))
+                .existsByIdAndStatus(id, ProductStatus.INACTIVE);
+        verifyNoMoreInteractions(repositoryMock);
+    }
+
+    @Test
+    void existsByIdAndStatusInactive_notFound() {
+        //given
+        String id = "id";
+        boolean expected = false;
+        when(repositoryMock.existsByIdAndStatus(anyString(), any()))
+                .thenReturn(expected);
+        //when
+        boolean found = productConnector.existsByIdAndStatus(id, ProductStatus.INACTIVE);
+        //then
+        assertFalse(found);
+        verify(repositoryMock, times(1))
+                .existsByIdAndStatus(id, ProductStatus.INACTIVE);
+        verifyNoMoreInteractions(repositoryMock);
+    }
+
+    @Test
+    void disableById_Inactive() {
         // given
         String id = "id";
         UpdateResult result = mockInstance(new UpdateResult() {
@@ -353,7 +402,6 @@ class ProductConnectorImplTest {
         Map<String, Object> set = (Map<String, Object>) update.getUpdateObject().get("$set");
         Map<String, Object> currentDate = (Map<String, Object>) update.getUpdateObject().get("$currentDate");
         assertEquals(id, query.getQueryObject().get(ProductEntity.Fields.id));
-        assertEquals(false, set.get("enabled"));
         assertEquals(ProductStatus.INACTIVE, set.get("status"));
         assertEquals(selfCareUser.getId(), set.get("modifiedBy"));
         assertTrue(currentDate.containsKey("modifiedAt"));

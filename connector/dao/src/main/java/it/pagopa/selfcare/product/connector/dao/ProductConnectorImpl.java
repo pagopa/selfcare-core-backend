@@ -83,10 +83,15 @@ public class ProductConnectorImpl implements ProductConnector {
         return repository.existsByIdAndEnabledFalse(id);
     }
 
+    @Override
+    public boolean existsByIdAndStatus(String id, ProductStatus status) {
+        return repository.existsByIdAndStatus(id, status);
+    }
+
 
     @Override
     public List<ProductOperations> findAll() {
-        return new ArrayList<>(repository.findByStatusIsNot(ProductStatus.INACTIVE));
+        return new ArrayList<>(repository.findAll());
     }
 
 
@@ -124,8 +129,7 @@ public class ProductConnectorImpl implements ProductConnector {
         UpdateResult updateResult = mongoTemplate.updateFirst(
                 Query.query(Criteria.where(ProductEntity.Fields.id).is(id)
                         .and(ProductEntity.Fields.enabled).is(true)),
-                Update.update(ProductEntity.Fields.enabled, false)
-                        .set(ProductEntity.Fields.status, ProductStatus.INACTIVE)
+                Update.update(ProductEntity.Fields.status, ProductStatus.INACTIVE)
                         .set(ProductEntity.Fields.modifiedBy, auditorAware.getCurrentAuditor().orElse(null))
                         .currentDate(ProductEntity.Fields.modifiedAt),
                 ProductEntity.class);

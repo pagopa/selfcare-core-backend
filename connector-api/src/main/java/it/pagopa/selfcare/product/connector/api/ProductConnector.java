@@ -18,6 +18,8 @@ public interface ProductConnector {
 
     boolean existsByIdAndEnabledFalse(String id);
 
+    boolean existsByIdAndStatus(String id, ProductStatus status);
+
     List<ProductOperations> findAll();
 
     void deleteById(String id);
