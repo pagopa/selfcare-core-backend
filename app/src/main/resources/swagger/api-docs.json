@@ -659,7 +659,7 @@
         } ]
       }
     },
-    "/products/{id}/status" : {
+    "/products/{id}/status/{status}" : {
       "put" : {
         "tags" : [ "product" ],
         "summary" : "updateProductStatus",
@@ -676,10 +676,10 @@
           }
         }, {
           "name" : "status",
-          "in" : "query",
+          "in" : "path",
           "description" : "Product's status",
           "required" : true,
-          "style" : "form",
+          "style" : "simple",
           "schema" : {
             "type" : "string",
             "enum" : [ "ACTIVE", "INACTIVE", "PHASE_OUT", "TESTING" ]

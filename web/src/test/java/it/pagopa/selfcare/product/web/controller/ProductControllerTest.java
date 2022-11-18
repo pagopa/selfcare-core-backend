@@ -365,8 +365,7 @@ class ProductControllerTest {
                 .when(productServiceMock).updateProductStatus(anyString(), any());
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .put(BASE_URL + "/" + id + "/status")
-                        .param("status", String.valueOf(status))
+                        .put(BASE_URL + "/" + id + "/status/" + status)
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
@@ -386,8 +385,7 @@ class ProductControllerTest {
                 .when(productServiceMock).updateProductStatus(anyString(), any());
         // when
         mvc.perform(MockMvcRequestBuilders
-                        .put(BASE_URL + "/" + id + "/status")
-                        .param("status", String.valueOf(status))
+                        .put(BASE_URL + "/" + id + "/status/" + status)
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isNotFound())

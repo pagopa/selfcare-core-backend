@@ -198,14 +198,14 @@ public class ProductController {
         return result;
     }
 
-    @PutMapping(value = "/{id}/status")
+    @PutMapping(value = "/{id}/status/{status}")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.product.operation.updateProductStatus}")
     public void updateProductStatus(@ApiParam("${swagger.product.model.id}")
                                     @PathVariable("id")
                                     String id,
                                     @ApiParam("${swagger.product.model.status}")
-                                    @RequestParam(value = "status")
+                                    @PathVariable("status")
                                     ProductStatus status) {
         log.trace("updateProductStatus start");
         log.debug("updateProductStatus id = {}, status = {}", id, status);

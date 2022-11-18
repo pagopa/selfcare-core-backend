@@ -16,6 +16,11 @@ public interface ProductConnector {
 
     boolean existsById(String id);
 
+    /**
+     * @deprecated method has been deprecated because a new method has been implemented.
+     * Remove the query from the repository
+     */
+    @Deprecated(forRemoval = true)
     boolean existsByIdAndEnabledFalse(String id);
 
     boolean existsByIdAndStatus(String id, ProductStatus status);
@@ -24,8 +29,18 @@ public interface ProductConnector {
 
     void deleteById(String id);
 
+    /**
+     * @deprecated method has been deprecated because a new method has been implemented.
+     * Remove the query from the repository
+     */
+    @Deprecated(forRemoval = true)
     List<ProductOperations> findByEnabled(boolean enabled);
 
+    /**
+     * @deprecated method has been deprecated because a new method has been implemented.
+     * Remove the query from the repository
+     */
+    @Deprecated(forRemoval = true)
     List<ProductOperations> findByParentAndEnabled(String parent, boolean enabled);
 
     List<ProductOperations> findByParentAndStatusIsNotInactive(String parent);
