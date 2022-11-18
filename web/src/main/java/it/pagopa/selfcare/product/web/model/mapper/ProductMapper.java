@@ -29,6 +29,7 @@ public class ProductMapper {
             resource.setUrlPublic(entity.getUrlPublic());
             resource.setUrlBO(entity.getUrlBO());
             resource.setCreatedAt(entity.getCreatedAt());
+            resource.setStatus(entity.getStatus());
             if (entity.getCreatedBy() != null) {
                 resource.setCreatedBy(UUID.fromString(entity.getCreatedBy()));
             }

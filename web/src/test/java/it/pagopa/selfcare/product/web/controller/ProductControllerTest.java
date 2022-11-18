@@ -6,6 +6,7 @@ import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.product.connector.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
+import it.pagopa.selfcare.product.connector.model.ProductStatus;
 import it.pagopa.selfcare.product.core.ProductService;
 import it.pagopa.selfcare.product.web.config.WebTestConfig;
 import it.pagopa.selfcare.product.web.handler.ProductExceptionsHandler;
@@ -37,7 +38,7 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -107,7 +108,7 @@ class ProductControllerTest {
                 .andExpect(status().isOk());
         //then
         ArgumentCaptor<InputStream> inputStreamArgumentCaptor = ArgumentCaptor.forClass(InputStream.class);
-        Mockito.verify(productServiceMock, Mockito.times(1))
+        verify(productServiceMock, times(1))
                 .saveProductLogo(Mockito.eq(productId), inputStreamArgumentCaptor.capture(), Mockito.eq(contentType), Mockito.eq(filename));
         assertArrayEquals(inputStream.readAllBytes(), inputStreamArgumentCaptor.getValue().readAllBytes());
         Mockito.verifyNoMoreInteractions(productServiceMock);
@@ -133,7 +134,7 @@ class ProductControllerTest {
                 .andExpect(status().isOk());
         //then
         ArgumentCaptor<InputStream> inputStreamArgumentCaptor = ArgumentCaptor.forClass(InputStream.class);
-        Mockito.verify(productServiceMock, Mockito.times(1))
+        verify(productServiceMock, times(1))
                 .saveProductDepictImage(Mockito.eq(productId), inputStreamArgumentCaptor.capture(), Mockito.eq(contentType), Mockito.eq(filename));
         assertArrayEquals(inputStream.readAllBytes(), inputStreamArgumentCaptor.getValue().readAllBytes());
         Mockito.verifyNoMoreInteractions(productServiceMock);
@@ -345,8 +346,8 @@ class ProductControllerTest {
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                 .put(BASE_URL + "/id/sub-products")
                 .content(objectMapper.writeValueAsString(UPDATE_SUB_PRODUCT_DTO))
-                .contentType(APPLICATION_JSON_VALUE)
-                .accept(APPLICATION_JSON_VALUE))
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         // then
@@ -356,14 +357,54 @@ class ProductControllerTest {
     }
 
     @Test
+    void updateProductStatus() throws Exception {
+        // given
+        String id = "id";
+        ProductStatus status = ProductStatus.ACTIVE;
+        Mockito.doNothing()
+                .when(productServiceMock).updateProductStatus(anyString(), any());
+        // when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .put(BASE_URL + "/" + id + "/status/" + status)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+        // then
+        assertEquals("", result.getResponse().getContentAsString());
+        verify(productServiceMock, times(1)).updateProductStatus(id, status);
+        verifyNoMoreInteractions(productServiceMock);
+    }
+
+    @Test
+    void updateProductStatus_notExists() throws Exception {
+        // given
+        String id = "id";
+        ProductStatus status = ProductStatus.ACTIVE;
+        Mockito.doThrow(ResourceNotFoundException.class)
+                .when(productServiceMock).updateProductStatus(anyString(), any());
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .put(BASE_URL + "/" + id + "/status/" + status)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
+                .andExpect(content().string(not(emptyString())));
+        // then
+        verify(productServiceMock, times(1)).updateProductStatus(id, status);
+        verifyNoMoreInteractions(productServiceMock);
+    }
+
+    @Test
     void deleteProduct_exists() throws Exception {
         // given
         Mockito.doNothing()
                 .when(productServiceMock).deleteProduct(anyString());
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                .delete(BASE_URL + "/id")
-                .contentType(APPLICATION_JSON_VALUE)
+                        .delete(BASE_URL + "/id")
+                        .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
@@ -467,7 +508,7 @@ class ProductControllerTest {
                 });
         assertNotNull(treeResources);
         assertEquals(1, treeResources.size());
-        Mockito.verify(productServiceMock, Mockito.times(1))
+        verify(productServiceMock, times(1))
                 .getProducts(false);
         Mockito.verifyNoMoreInteractions(productServiceMock);
 

@@ -3,6 +3,7 @@ package it.pagopa.selfcare.product.web.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
+import it.pagopa.selfcare.product.connector.model.ProductStatus;
 import lombok.Data;
 
 import javax.validation.Valid;
@@ -51,6 +52,11 @@ public class ProductResource {
     @JsonProperty(required = true)
     @NotBlank
     private String contractTemplatePath;
+
+    @ApiModelProperty(value = "${swagger.product.model.status}", required = true)
+    @JsonProperty(required = true)
+    @NotNull
+    private ProductStatus status;
 
     @ApiModelProperty(value = "${swagger.product.model.contractTemplateVersion}", required = true)
     @JsonProperty(required = true)

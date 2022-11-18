@@ -1,10 +1,7 @@
 package it.pagopa.selfcare.product.web.model;
 
 
-import it.pagopa.selfcare.product.connector.model.BackOfficeConfigurations;
-import it.pagopa.selfcare.product.connector.model.PartyRole;
-import it.pagopa.selfcare.product.connector.model.ProductOperations;
-import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
+import it.pagopa.selfcare.product.connector.model.*;
 import lombok.Data;
 
 import java.time.Instant;
@@ -31,6 +28,7 @@ public class ProductDto implements ProductOperations {
     private String contractTemplatePath;
     private String contractTemplateVersion;
     private boolean enabled = true;
+    private ProductStatus status = ProductStatus.TESTING;
     private String parentId;
     private String identityTokenAudience;
     private Map<String, ? extends BackOfficeConfigurations> backOfficeEnvironmentConfigurations;

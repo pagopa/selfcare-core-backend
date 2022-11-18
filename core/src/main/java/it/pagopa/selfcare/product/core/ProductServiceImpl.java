@@ -6,6 +6,7 @@ import it.pagopa.selfcare.product.connector.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
+import it.pagopa.selfcare.product.connector.model.ProductStatus;
 import it.pagopa.selfcare.product.core.exception.InvalidRoleMappingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,8 @@ import java.util.List;
 @Service
 class ProductServiceImpl implements ProductService {
 
-    private static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product id is required";
+    public static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product id is required";
+    public static final String REQUIRED_PRODUCT_STATUS_MESSAGE = "A product status is required";
 
 
     private final ProductConnector productConnector;
@@ -44,9 +46,9 @@ class ProductServiceImpl implements ProductService {
         log.trace("getProducts start");
         List<ProductOperations> products;
         if (rootOnly) {
-            products = productConnector.findByParentAndEnabled(null, true);
+            products = productConnector.findByParentAndStatusIsNotInactive(null);
         } else {
-            products = productConnector.findByEnabled(true);
+            products = productConnector.findByStatusIsNot(ProductStatus.INACTIVE);
         }
         log.debug("getProducts result = {}", products);
         log.trace("getProducts end");
@@ -70,7 +72,7 @@ class ProductServiceImpl implements ProductService {
         try {
             insert = productConnector.insert(product);
         } catch (ResourceAlreadyExistsException e) {
-            if (productConnector.existsByIdAndEnabledFalse(product.getId())) {
+            if (productConnector.existsByIdAndStatus(product.getId(), ProductStatus.INACTIVE)) {
                 insert = productConnector.save(product);
             } else {
                 throw new ResourceAlreadyExistsException(String.format("Product %s already exists and is still active", product.getId()), e);
@@ -113,7 +115,7 @@ class ProductServiceImpl implements ProductService {
         log.debug("getProduct id = {}", id);
         Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
         ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
-        if (!foundProduct.isEnabled()) {
+        if (foundProduct.getStatus() == ProductStatus.INACTIVE) {
             throw new ResourceNotFoundException();
         }
         log.debug("getProduct result = {}", foundProduct);
@@ -130,7 +132,7 @@ class ProductServiceImpl implements ProductService {
         Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
         Assert.notNull(product, "A product is required");
         ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
-        if (!foundProduct.isEnabled()) {
+        if (foundProduct.getStatus() == ProductStatus.INACTIVE) {
             throw new ResourceNotFoundException();
         }
         if (foundProduct.getParentId() == null) {
@@ -154,6 +156,16 @@ class ProductServiceImpl implements ProductService {
         log.debug("updateProduct result = {}", updatedProduct);
         log.trace("updateProduct end");
         return updatedProduct;
+    }
+
+    @Override
+    public void updateProductStatus(String id, ProductStatus status) {
+        log.trace("updateProductStatus start");
+        log.debug("updateProductStatus id = {}, status = {}", id, status);
+        Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
+        Assert.notNull(status, REQUIRED_PRODUCT_STATUS_MESSAGE);
+        productConnector.updateProductStatus(id, status);
+        log.trace("updateProductStatus end");
     }
 
     @Override

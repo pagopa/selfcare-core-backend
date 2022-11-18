@@ -47,6 +47,8 @@ public class ProductEntity implements ProductOperations, Persistable<String> {
     private String contractTemplateVersion;
     @FieldNameConstants.Include
     private boolean enabled = true;
+    @FieldNameConstants.Include
+    private ProductStatus status;
     private String parentId;
     private String identityTokenAudience;
     private Map<String, ? extends BackOfficeConfigurations> backOfficeEnvironmentConfigurations;
@@ -96,6 +98,7 @@ public class ProductEntity implements ProductOperations, Persistable<String> {
         contractTemplatePath = product.getContractTemplatePath();
         contractTemplateVersion = product.getContractTemplateVersion();
         enabled = product.isEnabled();
+        status = product.getStatus();
         parentId = product.getParentId();
         identityTokenAudience = product.getIdentityTokenAudience();
         backOfficeEnvironmentConfigurations = product.getBackOfficeEnvironmentConfigurations();

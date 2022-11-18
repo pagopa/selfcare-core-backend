@@ -7,6 +7,7 @@ import it.pagopa.selfcare.product.connector.dao.model.ProductEntity;
 import it.pagopa.selfcare.product.connector.exception.ResourceAlreadyExistsException;
 import it.pagopa.selfcare.product.connector.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
+import it.pagopa.selfcare.product.connector.model.ProductStatus;
 import org.bson.BsonValue;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -230,6 +231,37 @@ class ProductConnectorImplTest {
     }
 
     @Test
+    void findByParentAndStatusIsNotInactive() {
+        // given
+        String parent = "parentId";
+        ProductStatus status = ProductStatus.INACTIVE;
+        List<ProductEntity> expected = List.of(mockInstance(new ProductEntity()));
+        when(repositoryMock.findByParentIdAndStatusIsNot(anyString(), any()))
+                .thenReturn(expected);
+        // when
+        List<ProductOperations> found = productConnector.findByParentAndStatusIsNotInactive(parent);
+        //then
+        assertEquals(expected, found);
+        verify(repositoryMock, times(1))
+                .findByParentIdAndStatusIsNot(parent, status);
+        verifyNoMoreInteractions(repositoryMock);
+    }
+
+    @Test
+    void findAllActive() {
+        //given
+        List<ProductEntity> expected = List.of(mockInstance(new ProductEntity()));
+        when(repositoryMock.findByStatusIsNot(any()))
+                .thenReturn(expected);
+        //when
+        List<ProductOperations> found = productConnector.findByStatusIsNot(ProductStatus.INACTIVE);
+        //then
+        assertEquals(expected, found);
+        verify(repositoryMock, times(1)).findByStatusIsNot(ProductStatus.INACTIVE);
+        verifyNoMoreInteractions(repositoryMock);
+    }
+
+    @Test
     void existsByIdAndEnabledFalse_found() {
         //given
         String id = "id";
@@ -262,7 +294,39 @@ class ProductConnectorImplTest {
     }
 
     @Test
-    void disableById_notEnabled() {
+    void existsByIdAndStatusInactive_found() {
+        //given
+        String id = "id";
+        boolean expected = true;
+        when(repositoryMock.existsByIdAndStatus(anyString(), any()))
+                .thenReturn(expected);
+        //when
+        boolean found = productConnector.existsByIdAndStatus(id, ProductStatus.INACTIVE);
+        //then
+        assertTrue(found);
+        verify(repositoryMock, times(1))
+                .existsByIdAndStatus(id, ProductStatus.INACTIVE);
+        verifyNoMoreInteractions(repositoryMock);
+    }
+
+    @Test
+    void existsByIdAndStatusInactive_notFound() {
+        //given
+        String id = "id";
+        boolean expected = false;
+        when(repositoryMock.existsByIdAndStatus(anyString(), any()))
+                .thenReturn(expected);
+        //when
+        boolean found = productConnector.existsByIdAndStatus(id, ProductStatus.INACTIVE);
+        //then
+        assertFalse(found);
+        verify(repositoryMock, times(1))
+                .existsByIdAndStatus(id, ProductStatus.INACTIVE);
+        verifyNoMoreInteractions(repositoryMock);
+    }
+
+    @Test
+    void disableById_Inactive() {
         // given
         String id = "id";
         UpdateResult result = mockInstance(new UpdateResult() {
@@ -338,9 +402,94 @@ class ProductConnectorImplTest {
         Map<String, Object> set = (Map<String, Object>) update.getUpdateObject().get("$set");
         Map<String, Object> currentDate = (Map<String, Object>) update.getUpdateObject().get("$currentDate");
         assertEquals(id, query.getQueryObject().get(ProductEntity.Fields.id));
-        assertEquals(false, set.get("enabled"));
+        assertEquals(ProductStatus.INACTIVE, set.get("status"));
         assertEquals(selfCareUser.getId(), set.get("modifiedBy"));
         assertTrue(currentDate.containsKey("modifiedAt"));
+        verifyNoMoreInteractions(mongoTemplateMock);
+        verifyNoInteractions(repositoryMock);
+    }
+
+    @Test
+    void updateProductStatus() {
+        //given
+        String id = "id";
+        ProductStatus status = ProductStatus.ACTIVE;
+        UpdateResult resultMock = mockInstance(new UpdateResult() {
+            @Override
+            public boolean wasAcknowledged() {
+                return false;
+            }
+
+            @Override
+            public long getMatchedCount() {
+                return 1;
+            }
+
+            @Override
+            public long getModifiedCount() {
+                return 1;
+            }
+
+            @Override
+            public BsonValue getUpsertedId() {
+                return null;
+            }
+        });
+        when(mongoTemplateMock.updateFirst(any(Query.class), any(Update.class), (Class<?>) any()))
+                .thenReturn(resultMock);
+        //when
+        productConnector.updateProductStatus(id, status);
+        //then
+        ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
+        ArgumentCaptor<Update> updateCaptor = ArgumentCaptor.forClass(Update.class);
+        verify(mongoTemplateMock, times(1))
+                .updateFirst(queryCaptor.capture(), updateCaptor.capture(), (Class<?>) any());
+        Query query = queryCaptor.getValue();
+        Update update = updateCaptor.getValue();
+        Map<String, Object> set = (Map<String, Object>) update.getUpdateObject().get("$set");
+        Map<String, Object> currentDate = (Map<String, Object>) update.getUpdateObject().get("$currentDate");
+        assertEquals(id, query.getQueryObject().get(ProductEntity.Fields.id));
+        assertEquals(status, set.get("status"));
+        assertEquals(selfCareUser.getId(), set.get("modifiedBy"));
+        assertTrue(currentDate.containsKey("modifiedAt"));
+        verifyNoMoreInteractions(mongoTemplateMock);
+        verifyNoInteractions(repositoryMock);
+    }
+
+    @Test
+    void updateProductStatus_notFound() {
+        // given
+        String id = "id";
+        ProductStatus status = ProductStatus.INACTIVE;
+        UpdateResult result = mockInstance(new UpdateResult() {
+            @Override
+            public boolean wasAcknowledged() {
+                return false;
+            }
+
+            @Override
+            public long getMatchedCount() {
+                return 0;
+            }
+
+            @Override
+            public long getModifiedCount() {
+                return 0;
+            }
+
+            @Override
+            public BsonValue getUpsertedId() {
+                return null;
+            }
+        });
+        when(mongoTemplateMock.updateFirst(any(Query.class), any(Update.class), (Class<?>) any()))
+                .thenReturn(result);
+        // when
+        final Executable executable = () -> productConnector.updateProductStatus(id, status);
+        // then
+        assertThrows(ResourceNotFoundException.class, executable);
+        verify(mongoTemplateMock, times(1))
+                .updateFirst(any(Query.class), any(Update.class), (Class<?>) any());
         verifyNoMoreInteractions(mongoTemplateMock);
         verifyNoInteractions(repositoryMock);
     }

@@ -21,6 +21,7 @@ public class DummyProduct implements ProductOperations {
     private String createdBy;
     private Instant modifiedAt;
     private String modifiedBy;
+    private ProductStatus status;
     private Instant contractTemplateUpdatedAt;
     private EnumMap<PartyRole, ? extends ProductRoleInfoOperations> roleMappings;
     private String contractTemplatePath;
