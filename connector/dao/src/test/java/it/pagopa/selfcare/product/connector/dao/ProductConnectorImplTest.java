@@ -9,6 +9,7 @@ import it.pagopa.selfcare.product.connector.exception.ResourceNotFoundException;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductStatus;
 import org.bson.BsonValue;
+import org.bson.Document;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -398,10 +399,12 @@ class ProductConnectorImplTest {
         verify(mongoTemplateMock, times(1))
                 .updateFirst(queryCaptor.capture(), updateCaptor.capture(), (Class<?>) any());
         Query query = queryCaptor.getValue();
+        Document productStatusQuery = (Document) query.getQueryObject().get(ProductEntity.Fields.status);
         Update update = updateCaptor.getValue();
         Map<String, Object> set = (Map<String, Object>) update.getUpdateObject().get("$set");
         Map<String, Object> currentDate = (Map<String, Object>) update.getUpdateObject().get("$currentDate");
         assertEquals(id, query.getQueryObject().get(ProductEntity.Fields.id));
+        assertEquals(productStatusQuery, query.getQueryObject().get("status"));
         assertEquals(ProductStatus.INACTIVE, set.get("status"));
         assertEquals(selfCareUser.getId(), set.get("modifiedBy"));
         assertTrue(currentDate.containsKey("modifiedAt"));
