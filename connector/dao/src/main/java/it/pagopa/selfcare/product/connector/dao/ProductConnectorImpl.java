@@ -129,7 +129,7 @@ public class ProductConnectorImpl implements ProductConnector {
         log.debug("disableById id = {} ", id);
         UpdateResult updateResult = mongoTemplate.updateFirst(
                 Query.query(Criteria.where(ProductEntity.Fields.id).is(id)
-                        .and(ProductEntity.Fields.enabled).is(true)),
+                        .and(ProductEntity.Fields.status).not().in(ProductStatus.INACTIVE)),
                 Update.update(ProductEntity.Fields.status, ProductStatus.INACTIVE)
                         .set(ProductEntity.Fields.modifiedBy, auditorAware.getCurrentAuditor().orElse(null))
                         .currentDate(ProductEntity.Fields.modifiedAt),
