@@ -37,6 +37,7 @@ class ProductResourceTest {
         toCheckMap.put("contractTemplateUpdatedAt", NotNull.class);
         toCheckMap.put("contractTemplatePath", NotBlank.class);
         toCheckMap.put("contractTemplateVersion", NotBlank.class);
+        toCheckMap.put("status", NotNull.class);
         ProductResource productResource = new ProductResource();
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(productResource);

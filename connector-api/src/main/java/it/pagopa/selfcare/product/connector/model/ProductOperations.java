@@ -74,6 +74,10 @@ public interface ProductOperations {
 
     void setEnabled(boolean enabled);
 
+    ProductStatus getStatus();
+
+    void setStatus(ProductStatus status);
+
     void setParentId(String parentId);
 
     String getParentId();
