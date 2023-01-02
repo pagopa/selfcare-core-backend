@@ -65,6 +65,7 @@ public class ProductMapper {
             product.setUrlPublic(dto.getUrlPublic());
             product.setUrlBO(dto.getUrlBO());
             product.setRoleMappings(dto.getRoleMappings());
+            product.setInstitutionContractMappings(dto.getInstitutionContractMappings());
             product.setContractTemplatePath(dto.getContractTemplatePath());
             product.setContractTemplateVersion(dto.getContractTemplateVersion());
             product.setLogoBgColor(dto.getLogoBgColor());

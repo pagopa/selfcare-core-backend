@@ -885,6 +885,26 @@
           }
         }
       },
+      "ContractResource" : {
+        "title" : "ContractResource",
+        "required" : [ "contractTemplatePath", "contractTemplateUpdatedAt", "contractTemplateVersion" ],
+        "type" : "object",
+        "properties" : {
+          "contractTemplatePath" : {
+            "type" : "string",
+            "description" : "The path of contract"
+          },
+          "contractTemplateUpdatedAt" : {
+            "type" : "string",
+            "description" : "Date the contract was postponed",
+            "format" : "date-time"
+          },
+          "contractTemplateVersion" : {
+            "type" : "string",
+            "description" : "Version of the contract"
+          }
+        }
+      },
       "CreateProductDto" : {
         "title" : "CreateProductDto",
         "required" : [ "contractTemplatePath", "contractTemplateVersion", "description", "id", "identityTokenAudience", "roleMappings", "title", "urlBO", "urlPublic" ],
@@ -1021,7 +1041,7 @@
       },
       "ProductResource" : {
         "title" : "ProductResource",
-        "required" : [ "contractTemplatePath", "contractTemplateUpdatedAt", "contractTemplateVersion", "createdAt", "id", "status", "title" ],
+        "required" : [ "contractTemplatePath", "contractTemplateUpdatedAt", "contractTemplateVersion", "createdAt", "id", "institutionContractMappings", "status", "title" ],
         "type" : "object",
         "properties" : {
           "backOfficeEnvironmentConfigurations" : {
@@ -1069,6 +1089,13 @@
           "identityTokenAudience" : {
             "type" : "string",
             "description" : "Product's identity token audience"
+          },
+          "institutionContractMappings" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/ContractResource"
+            },
+            "description" : "Product contract based on institutionType"
           },
           "logo" : {
             "type" : "string",

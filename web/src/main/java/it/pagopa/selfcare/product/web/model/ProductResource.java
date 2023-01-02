@@ -2,6 +2,7 @@ package it.pagopa.selfcare.product.web.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
+import it.pagopa.selfcare.product.connector.model.InstitutionType;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductStatus;
 import lombok.Data;
@@ -48,20 +49,30 @@ public class ProductResource {
     @Valid
     private EnumMap<PartyRole, ProductRoleInfo> roleMappings;
 
-    @ApiModelProperty(value = "${swagger.product.model.contractTemplatePath}", required = true)
-    @JsonProperty(required = true)
-    @NotBlank
-    private String contractTemplatePath;
-
     @ApiModelProperty(value = "${swagger.product.model.status}", required = true)
     @JsonProperty(required = true)
     @NotNull
     private ProductStatus status;
 
+    @ApiModelProperty(value = "${swagger.product.model.contractTemplatePath}", required = true)
+    @JsonProperty(required = true)
+    @NotBlank
+    private String contractTemplatePath;
+
     @ApiModelProperty(value = "${swagger.product.model.contractTemplateVersion}", required = true)
     @JsonProperty(required = true)
     @NotBlank
     private String contractTemplateVersion;
+
+    @ApiModelProperty(value = "${swagger.product.model.contractTemplateUpdateDateTime}", required = true)
+    @JsonProperty(required = true)
+    @NotNull
+    private Instant contractTemplateUpdatedAt;
+
+    @ApiModelProperty(value = "${swagger.product.model.institutionContractMappings}", required = true)
+    @JsonProperty(required = true)
+    @NotNull
+    private Map<InstitutionType, ContractResource> institutionContractMappings;
 
     @ApiModelProperty(value = "${swagger.product.model.logo}")
     private String logo;
@@ -82,11 +93,6 @@ public class ProductResource {
 
     @ApiModelProperty(value = "${swagger.product.model.modifiedBy}")
     private UUID modifiedBy;
-
-    @ApiModelProperty(value = "${swagger.product.model.contractTemplateUpdateDateTime}", required = true)
-    @JsonProperty(required = true)
-    @NotNull
-    private Instant contractTemplateUpdatedAt;
 
     @ApiModelProperty(value = "${swagger.product.model.parentProduct}")
     private String parentId;
