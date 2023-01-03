@@ -45,7 +45,7 @@ public class ProductEntity implements ProductOperations, Persistable<String> {
     private Instant contractTemplateUpdatedAt;
     private String contractTemplatePath;
     private String contractTemplateVersion;
-    Map<InstitutionType, ? extends ContractOperations> institutionContractMappings;
+    private Map<InstitutionType, ? extends ContractOperations> institutionContractMappings;
     @FieldNameConstants.Include
     private boolean enabled = true;
     @FieldNameConstants.Include

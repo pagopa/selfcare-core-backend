@@ -11,6 +11,7 @@ import java.time.Instant;
 
 @Data
 public class ContractResource implements ContractOperations {
+
     @ApiModelProperty(value = "${swagger.product.model.contractTemplatePath}", required = true)
     @JsonProperty(required = true)
     @NotBlank
@@ -25,4 +26,5 @@ public class ContractResource implements ContractOperations {
     @JsonProperty(required = true)
     @NotNull
     private Instant contractTemplateUpdatedAt;
+
 }

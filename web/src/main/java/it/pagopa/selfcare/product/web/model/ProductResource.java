@@ -69,9 +69,8 @@ public class ProductResource {
     @NotNull
     private Instant contractTemplateUpdatedAt;
 
-    @ApiModelProperty(value = "${swagger.product.model.institutionContractMappings}", required = true)
-    @JsonProperty(required = true)
-    @NotNull
+    @ApiModelProperty(value = "${swagger.product.model.institutionContractMappings}")
+    @Valid
     private Map<InstitutionType, ContractResource> institutionContractMappings;
 
     @ApiModelProperty(value = "${swagger.product.model.logo}")

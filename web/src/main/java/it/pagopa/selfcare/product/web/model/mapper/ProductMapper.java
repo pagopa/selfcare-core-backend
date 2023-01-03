@@ -1,9 +1,6 @@
 package it.pagopa.selfcare.product.web.model.mapper;
 
-import it.pagopa.selfcare.product.connector.model.BackOfficeConfigurations;
-import it.pagopa.selfcare.product.connector.model.PartyRole;
-import it.pagopa.selfcare.product.connector.model.ProductOperations;
-import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
+import it.pagopa.selfcare.product.connector.model.*;
 import it.pagopa.selfcare.product.web.model.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,6 +40,7 @@ public class ProductMapper {
             resource.setContractTemplateVersion(entity.getContractTemplateVersion());
             resource.setIdentityTokenAudience(entity.getIdentityTokenAudience());
             resource.setBackOfficeEnvironmentConfigurations(toBackOfficeConfigurations(entity.getBackOfficeEnvironmentConfigurations()));
+            resource.setInstitutionContractMappings(toInstitutionContractMappings(entity.getInstitutionContractMappings()));
             if (entity.getParentId() != null) {
                 resource.setParentId(entity.getParentId());
             }
@@ -82,6 +80,7 @@ public class ProductMapper {
             product = new ProductDto();
             product.setId(dto.getId());
             product.setTitle(dto.getTitle());
+            product.setInstitutionContractMappings(dto.getInstitutionContractMappings());
             product.setContractTemplatePath(dto.getContractTemplatePath());
             product.setContractTemplateVersion(dto.getContractTemplateVersion());
         }
@@ -103,6 +102,7 @@ public class ProductMapper {
             product.setRoleMappings(dto.getRoleMappings());
             product.setContractTemplatePath(dto.getContractTemplatePath());
             product.setContractTemplateVersion(dto.getContractTemplateVersion());
+            product.setInstitutionContractMappings(dto.getInstitutionContractMappings());
             product.setBackOfficeEnvironmentConfigurations(dto.getBackOfficeEnvironmentConfigurations());
         }
         log.debug("fromDto result = {}", product);
@@ -117,6 +117,7 @@ public class ProductMapper {
             product.setTitle(dto.getTitle());
             product.setContractTemplatePath(dto.getContractTemplatePath());
             product.setContractTemplateVersion(dto.getContractTemplateVersion());
+            product.setInstitutionContractMappings(dto.getInstitutionContractMappings());
         }
         return product;
     }
@@ -128,6 +129,23 @@ public class ProductMapper {
         } else {
             result = new EnumMap<>(PartyRole.class);
             roleMappings.forEach((key, value) -> result.put(key, new ProductRoleInfo(value)));
+        }
+        return result;
+    }
+
+    public static Map<InstitutionType, ContractResource> toInstitutionContractMappings(Map<InstitutionType, ? extends ContractOperations> institutionContractMappings) {
+        Map<InstitutionType, ContractResource> result;
+        if (institutionContractMappings == null) {
+            result = null;
+        } else {
+            result = new HashMap<>();
+            institutionContractMappings.forEach((key, value) -> {
+                final ContractResource resource = new ContractResource();
+                resource.setContractTemplatePath(value.getContractTemplatePath());
+                resource.setContractTemplateVersion(value.getContractTemplateVersion());
+                resource.setContractTemplateUpdatedAt(value.getContractTemplateUpdatedAt());
+                result.put(key, resource);
+            });
         }
         return result;
     }

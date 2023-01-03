@@ -68,6 +68,9 @@ class ProductServiceImpl implements ProductService {
             throw new ValidationException("Parent not found", new ResourceNotFoundException("For id = " + product.getParentId()));
         }
         product.setContractTemplateUpdatedAt(Instant.now());
+        product.getInstitutionContractMappings().forEach((key, value) -> {
+            value.setContractTemplateUpdatedAt(Instant.now());
+        });
         ProductOperations insert;
         try {
             insert = productConnector.insert(product);
@@ -151,6 +154,13 @@ class ProductServiceImpl implements ProductService {
             foundProduct.setContractTemplateUpdatedAt(Instant.now());
         }
         foundProduct.setContractTemplateVersion(product.getContractTemplateVersion());
+        foundProduct.getInstitutionContractMappings().forEach((key, value) -> {
+            value.setContractTemplatePath(product.getInstitutionContractMappings().get(key).getContractTemplatePath());
+            if (!value.getContractTemplateVersion().equals(product.getInstitutionContractMappings().get(key).getContractTemplateVersion())) {
+                value.setContractTemplateUpdatedAt(Instant.now());
+                value.setContractTemplateVersion(product.getInstitutionContractMappings().get(key).getContractTemplateVersion());
+            }
+        });
 
         ProductOperations updatedProduct = productConnector.save(foundProduct);
         log.debug("updateProduct result = {}", updatedProduct);
