@@ -256,6 +256,9 @@ class ProductServiceImplTest {
         map.put(PartyRole.OPERATOR, new DummyProductRoleInfo(true, list));
         input.setRoleMappings(map);
         input.setId(id);
+        Map<InstitutionType, ContractOperations> institutionContract = new HashMap<>();
+        institutionContract.put(InstitutionType.PA, mockInstance(new DummyContract()));
+        input.setInstitutionContractMappings(institutionContract);
         // when
         Executable executable = () -> productService.createProduct(input);
         // then
@@ -286,6 +289,9 @@ class ProductServiceImplTest {
         map.put(PartyRole.MANAGER, new DummyProductRoleInfo(true, list));
         input.setRoleMappings(map);
         input.setId(id);
+        Map<InstitutionType, ContractOperations> institutionContract = new HashMap<>();
+        institutionContract.put(InstitutionType.PA, mockInstance(new DummyContract()));
+        input.setInstitutionContractMappings(institutionContract);
         when(productConnectorMock.insert(any(ProductOperations.class)))
                 .thenThrow(ResourceAlreadyExistsException.class);
         when(productLogoImageServiceMock.getDefaultImageUrl())
@@ -324,6 +330,9 @@ class ProductServiceImplTest {
         map.put(PartyRole.MANAGER, new DummyProductRoleInfo(true, list));
         input.setRoleMappings(map);
         input.setId(id);
+        Map<InstitutionType, ContractOperations> institutionContract = new HashMap<>();
+        institutionContract.put(InstitutionType.PA, mockInstance(new DummyContract()));
+        input.setInstitutionContractMappings(institutionContract);
         when(productConnectorMock.insert(any(ProductOperations.class)))
                 .thenThrow(ResourceAlreadyExistsException.class);
         when(productLogoImageServiceMock.getDefaultImageUrl())
@@ -360,6 +369,9 @@ class ProductServiceImplTest {
         map.put(PartyRole.MANAGER, new DummyProductRoleInfo(true, list));
         input.setRoleMappings(map);
         input.setId(id);
+        Map<InstitutionType, ContractOperations> institutionContract = new HashMap<>();
+        institutionContract.put(InstitutionType.PA, mockInstance(new DummyContract()));
+        input.setInstitutionContractMappings(institutionContract);
         when(productConnectorMock.insert(any(ProductOperations.class)))
                 .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, ProductOperations.class));
         when(productLogoImageServiceMock.getDefaultImageUrl())
@@ -398,6 +410,9 @@ class ProductServiceImplTest {
         input.setContractTemplatePath("templatePath");
         input.setContractTemplateVersion("contractVersion");
         input.setTitle("title");
+        Map<InstitutionType, ContractOperations> institutionContract = new HashMap<>();
+        institutionContract.put(InstitutionType.PA, mockInstance(new DummyContract()));
+        input.setInstitutionContractMappings(institutionContract);
         when(productConnectorMock.existsById(any()))
                 .thenReturn(true);
         when(productConnectorMock.insert(any(ProductOperations.class)))
@@ -569,15 +584,29 @@ class ProductServiceImplTest {
         ProductOperations product = mockInstance(new DummyProduct(), "setId", "setRoleMappings", "setParentId", "setStatus");
         product.setStatus(ProductStatus.ACTIVE);
         when(productConnectorMock.findById(productId))
-                .thenReturn(Optional.of(new DummyProduct()));
+                .thenAnswer(invocationOnMock -> {
+                    DummyProduct foundProductMock = new DummyProduct();
+                    foundProductMock.setId(invocationOnMock.getArgument(0, String.class));
+                    foundProductMock.setContractTemplateVersion("1.2.4");
+                    foundProductMock.setStatus(ProductStatus.ACTIVE);
+                    Map<InstitutionType, ContractOperations> institutionContract1 = new HashMap<>();
+                    DummyContract dummyContract = mockInstance(new DummyContract());
+                    dummyContract.setContractTemplateVersion("123");
+                    institutionContract1.put(InstitutionType.PA, dummyContract);
+                    foundProductMock.setInstitutionContractMappings(institutionContract1);
+                    return Optional.of(foundProductMock);
+                });
         EnumMap<PartyRole, DummyProductRoleInfo> map = new EnumMap<>(PartyRole.class);
         List<DummyProductRole> list = new ArrayList<>();
         list.add(mockInstance(new DummyProductRole(), 1));
         list.add(mockInstance(new DummyProductRole(), 2));
         map.put(PartyRole.OPERATOR, new DummyProductRoleInfo(true, list));
         product.setRoleMappings(map);
-        product.setContractTemplateVersion("1.2.4");
+        product.setContractTemplateVersion("1.24");
         product.setBackOfficeEnvironmentConfigurations(Map.of("test", mockInstance(new DummyBackOfficeConfigurations())));
+        Map<InstitutionType, ContractOperations> institutionContract = new HashMap<>();
+        institutionContract.put(InstitutionType.PA, mockInstance(new DummyContract()));
+        product.setInstitutionContractMappings(institutionContract);
         when(productConnectorMock.save(any()))
                 .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, ProductOperations.class));
         // when
@@ -610,6 +639,11 @@ class ProductServiceImplTest {
                     foundProductMock.setId(invocationOnMock.getArgument(0, String.class));
                     foundProductMock.setContractTemplateVersion(contractTemplateVersion);
                     foundProductMock.setStatus(ProductStatus.ACTIVE);
+                    Map<InstitutionType, ContractOperations> institutionContract = new HashMap<>();
+                    DummyContract dummyContract = mockInstance(new DummyContract());
+                    dummyContract.setContractTemplateVersion(contractTemplateVersion);
+                    institutionContract.put(InstitutionType.PA, dummyContract);
+                    foundProductMock.setInstitutionContractMappings(institutionContract);
                     return Optional.of(foundProductMock);
                 });
         EnumMap<PartyRole, DummyProductRoleInfo> map = new EnumMap<>(PartyRole.class);
@@ -626,6 +660,11 @@ class ProductServiceImplTest {
         product.setContractTemplateVersion(contractTemplateVersion);
         product.setBackOfficeEnvironmentConfigurations(Map.of("test", mockInstance(new DummyBackOfficeConfigurations())));
         product.setStatus(ProductStatus.ACTIVE);
+        Map<InstitutionType, ContractOperations> institutionContract = new HashMap<>();
+        DummyContract dummyContract = mockInstance(new DummyContract());
+        dummyContract.setContractTemplateVersion(contractTemplateVersion);
+        institutionContract.put(InstitutionType.PA, dummyContract);
+        product.setInstitutionContractMappings(institutionContract);
         when(productConnectorMock.save(any()))
                 .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, ProductOperations.class));
         // when
@@ -688,6 +727,9 @@ class ProductServiceImplTest {
                     foundProductMock.setContractTemplateVersion(contractTemplateVersion);
                     foundProductMock.setParentId(parentId);
                     foundProductMock.setStatus(ProductStatus.ACTIVE);
+                    Map<InstitutionType, ContractOperations> institutionContract = new HashMap<>();
+                    institutionContract.put(InstitutionType.PA, mockInstance(new DummyContract()));
+                    foundProductMock.setInstitutionContractMappings(institutionContract);
                     return Optional.of(foundProductMock);
                 });
         ProductOperations product = mockInstance(new DummyProduct(),
@@ -698,6 +740,11 @@ class ProductServiceImplTest {
         );
         product.setContractTemplateVersion(contractTemplateVersion);
         product.setStatus(ProductStatus.ACTIVE);
+        Map<InstitutionType, ContractOperations> institutionContract = new HashMap<>();
+        DummyContract dummyContract = mockInstance(new DummyContract());
+        dummyContract.setContractTemplateVersion(contractTemplateVersion);
+        institutionContract.put(InstitutionType.PA, dummyContract);
+        product.setInstitutionContractMappings(institutionContract);
         when(productConnectorMock.save(any()))
                 .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0, ProductOperations.class));
         // when
