@@ -937,6 +937,13 @@
             "type" : "string",
             "description" : "Product's identity token audience"
           },
+          "institutionContractMappings" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/ContractResource"
+            },
+            "description" : "Product contract based on institutionType"
+          },
           "logoBgColor" : {
             "pattern" : "^#[0-9A-F]{6}$",
             "type" : "string",
@@ -980,6 +987,13 @@
           "id" : {
             "type" : "string",
             "description" : "Product's unique identifier"
+          },
+          "institutionContractMappings" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/ContractResource"
+            },
+            "description" : "Product contract based on institutionType"
           },
           "title" : {
             "type" : "string",
@@ -1041,7 +1055,7 @@
       },
       "ProductResource" : {
         "title" : "ProductResource",
-        "required" : [ "contractTemplatePath", "contractTemplateUpdatedAt", "contractTemplateVersion", "createdAt", "id", "institutionContractMappings", "status", "title" ],
+        "required" : [ "contractTemplatePath", "contractTemplateUpdatedAt", "contractTemplateVersion", "createdAt", "id", "status", "title" ],
         "type" : "object",
         "properties" : {
           "backOfficeEnvironmentConfigurations" : {
@@ -1262,6 +1276,13 @@
             "type" : "string",
             "description" : "Product's identity token audience"
           },
+          "institutionContractMappings" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/ContractResource"
+            },
+            "description" : "Product contract based on institutionType"
+          },
           "logoBgColor" : {
             "pattern" : "^#[0-9A-F]{6}$",
             "type" : "string",
@@ -1301,6 +1322,13 @@
           "contractTemplateVersion" : {
             "type" : "string",
             "description" : "Version of the contract"
+          },
+          "institutionContractMappings" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/ContractResource"
+            },
+            "description" : "Product contract based on institutionType"
           },
           "title" : {
             "type" : "string",
