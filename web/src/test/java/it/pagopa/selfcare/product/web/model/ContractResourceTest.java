@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContractResourceTest {
+class ContractResourceTest {
 
     private Validator validator;
 
