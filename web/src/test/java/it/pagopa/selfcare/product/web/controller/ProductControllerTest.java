@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.product.connector.exception.ResourceNotFoundException;
+import it.pagopa.selfcare.product.connector.model.InstitutionType;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductStatus;
@@ -69,11 +70,18 @@ class ProductControllerTest {
             productRoleInfo.setMultiroleAllowed(true);
             roleMappings.put(partyRole, productRoleInfo);
         }
+        Map<InstitutionType, ContractResource> institutionContractMappings = new HashMap<>();
+        for (InstitutionType type : InstitutionType.values()) {
+            ContractResource contract = mockInstance(new ContractResource());
+            institutionContractMappings.put(type, contract);
+        }
         CREATE_PRODUCT_DTO.setRoleMappings(roleMappings);
         CREATE_PRODUCT_DTO.setLogoBgColor("#000000");
+        CREATE_PRODUCT_DTO.setInstitutionContractMappings(institutionContractMappings);
         CREATE_PRODUCT_DTO.setBackOfficeEnvironmentConfigurations(Map.of("test", mockInstance(new BackOfficeConfigurationsResource())));
         UPDATE_PRODUCT_DTO.setRoleMappings(roleMappings);
         UPDATE_PRODUCT_DTO.setLogoBgColor("#000000");
+        UPDATE_PRODUCT_DTO.setInstitutionContractMappings(institutionContractMappings);
         UPDATE_PRODUCT_DTO.setBackOfficeEnvironmentConfigurations(Map.of("test", mockInstance(new BackOfficeConfigurationsResource())));
     }
 
