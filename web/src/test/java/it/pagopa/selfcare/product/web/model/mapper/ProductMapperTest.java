@@ -1,6 +1,9 @@
 package it.pagopa.selfcare.product.web.model.mapper;
 
-import it.pagopa.selfcare.product.connector.model.*;
+import it.pagopa.selfcare.product.connector.model.BackOfficeConfigurations;
+import it.pagopa.selfcare.product.connector.model.PartyRole;
+import it.pagopa.selfcare.product.connector.model.ProductOperations;
+import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
 import it.pagopa.selfcare.product.web.model.*;
 import org.junit.jupiter.api.Test;
 
@@ -218,28 +221,6 @@ class ProductMapperTest {
         // then
         assertNotNull(result);
         assertIterableEquals(backOfficeEnvironmentConfigurations.entrySet(), result.entrySet());
-    }
-
-    @Test
-    void toContractResource_null() {
-        //given
-        Map<InstitutionType, ? extends ContractOperations> institutionContractMap = null;
-        //when
-        final Map<InstitutionType, ContractResource> result = ProductMapper.toInstitutionContractMappings(institutionContractMap);
-        //then
-        assertNull(result);
-
-    }
-
-    @Test
-    void toContractResource_notNull() {
-        //given
-        final Map<InstitutionType, ? extends ContractOperations> institutionContractMap = Map.of(InstitutionType.PA, mockInstance(new ContractResource()));
-        //when
-        final Map<InstitutionType, ContractResource> result = ProductMapper.toInstitutionContractMappings(institutionContractMap);
-        //then
-        assertNotNull(result);
-        assertIterableEquals(institutionContractMap.entrySet(), result.entrySet());
     }
 
     @Test

@@ -498,6 +498,89 @@
         } ]
       }
     },
+    "/products/{id}/institution-type/{institutionType}" : {
+      "get" : {
+        "tags" : [ "product" ],
+        "summary" : "getProductByInstitutionType",
+        "description" : "Service that returns the information for a single product given its product id and institutionType",
+        "operationId" : "getProductByInstitutionTypeUsingGET",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "Product's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "institutionType",
+          "in" : "path",
+          "description" : "Institution's type",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "GSP", "PA", "PSP", "PT", "SCP" ]
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProductResource"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
+    },
     "/products/{id}/logo" : {
       "put" : {
         "tags" : [ "product" ],
@@ -1103,13 +1186,6 @@
           "identityTokenAudience" : {
             "type" : "string",
             "description" : "Product's identity token audience"
-          },
-          "institutionContractMappings" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/ContractResource"
-            },
-            "description" : "Product contract based on institutionType"
           },
           "logo" : {
             "type" : "string",

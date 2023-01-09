@@ -2,7 +2,6 @@ package it.pagopa.selfcare.product.web.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
-import it.pagopa.selfcare.product.connector.model.InstitutionType;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductStatus;
 import lombok.Data;
@@ -68,10 +67,6 @@ public class ProductResource {
     @JsonProperty(required = true)
     @NotNull
     private Instant contractTemplateUpdatedAt;
-
-    @ApiModelProperty(value = "${swagger.product.model.institutionContractMappings}")
-    @Valid
-    private Map<InstitutionType, ContractResource> institutionContractMappings;
 
     @ApiModelProperty(value = "${swagger.product.model.logo}")
     private String logo;

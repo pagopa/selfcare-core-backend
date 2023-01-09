@@ -3,10 +3,7 @@ package it.pagopa.selfcare.product.core;
 import it.pagopa.selfcare.product.connector.api.ProductConnector;
 import it.pagopa.selfcare.product.connector.exception.ResourceAlreadyExistsException;
 import it.pagopa.selfcare.product.connector.exception.ResourceNotFoundException;
-import it.pagopa.selfcare.product.connector.model.PartyRole;
-import it.pagopa.selfcare.product.connector.model.ProductOperations;
-import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
-import it.pagopa.selfcare.product.connector.model.ProductStatus;
+import it.pagopa.selfcare.product.connector.model.*;
 import it.pagopa.selfcare.product.core.exception.InvalidRoleMappingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +21,9 @@ import java.util.List;
 @Service
 class ProductServiceImpl implements ProductService {
 
-    public static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product id is required";
-    public static final String REQUIRED_PRODUCT_STATUS_MESSAGE = "A product status is required";
+    protected static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product id is required";
+    protected static final String REQUIRED_PRODUCT_STATUS_MESSAGE = "A product status is required";
+    protected static final String REQUIRED_INSTITUTION_TYPE = "An institutionType is required";
 
 
     private final ProductConnector productConnector;
@@ -122,6 +120,24 @@ class ProductServiceImpl implements ProductService {
         log.debug("getProduct result = {}", foundProduct);
         log.trace("getProduct end");
 
+        return foundProduct;
+    }
+
+    @Override
+    public ProductOperations getProductByInstitutionType(String id, InstitutionType type) {
+        log.trace("getProductByInstitutionType start");
+        log.debug("getProductByInstitutionType id = {}, institutionType = {}", id, type);
+        Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
+        Assert.notNull(type, REQUIRED_INSTITUTION_TYPE);
+        ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
+        try {
+            foundProduct.setContractTemplateVersion(foundProduct.getInstitutionContractMappings().get(type).getContractTemplateVersion());
+            foundProduct.setContractTemplatePath(foundProduct.getInstitutionContractMappings().get(type).getContractTemplatePath());
+        } catch (NullPointerException e) {
+            throw new ResourceNotFoundException(String.format("No contract found for %s institution type and product %s(%s)", type, foundProduct.getTitle(), id));
+        }
+        log.debug("getProductByInstitutionType result = {}", foundProduct);
+        log.trace("getProductByInstitutionType end");
         return foundProduct;
     }
 

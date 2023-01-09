@@ -122,6 +122,7 @@ class ProductControllerTest {
         Mockito.verifyNoMoreInteractions(productServiceMock);
     }
 
+
     @Test
     void saveProductDepictImage() throws Exception {
         String productId = "productId";
@@ -228,9 +229,44 @@ class ProductControllerTest {
                 });
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                .get(BASE_URL + "/id")
-                .contentType(APPLICATION_JSON_VALUE)
-                .accept(APPLICATION_JSON_VALUE))
+                        .get(BASE_URL + "/id")
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+        // then
+        ProductResource product = objectMapper.readValue(result.getResponse().getContentAsString(), ProductResource.class);
+        assertNotNull(product);
+    }
+
+    @Test
+    void getProductByInstitutionType() throws Exception {
+        //given
+        InstitutionType type = InstitutionType.PA;
+        when(productServiceMock.getProductByInstitutionType(anyString(), any()))
+                .thenAnswer(invocationOnMock -> {
+                    String id = invocationOnMock.getArgument(0, String.class);
+                    ProductOperations product = mockInstance(new ProductDto(), "setId", "setRoleMappings", "setCreatedBy", "setModifiedBy");
+                    product.setId(id);
+                    product.setCreatedBy(randomUUID().toString());
+                    product.setModifiedBy(randomUUID().toString());
+                    EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+                    for (PartyRole partyRole : PartyRole.values()) {
+                        ProductRoleInfo productRoleInfo = new ProductRoleInfo();
+                        List<ProductRole> roles = new ArrayList<>();
+                        roles.add(mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+                        roles.add(mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+                        productRoleInfo.setRoles(roles);
+                        roleMappings.put(partyRole, productRoleInfo);
+                    }
+                    product.setRoleMappings(roleMappings);
+                    return product;
+                });
+        // when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/id/institution-type/" + type)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         // then
@@ -245,8 +281,8 @@ class ProductControllerTest {
                 .thenThrow(ResourceNotFoundException.class);
         // when
         mvc.perform(MockMvcRequestBuilders
-                .get(BASE_URL + "/id")
-                .contentType(APPLICATION_JSON_VALUE)
+                        .get(BASE_URL + "/id")
+                        .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))

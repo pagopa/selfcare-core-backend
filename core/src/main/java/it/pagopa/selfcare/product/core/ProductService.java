@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.product.core;
 
+import it.pagopa.selfcare.product.connector.model.InstitutionType;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductStatus;
 
@@ -23,4 +24,6 @@ public interface ProductService {
     void saveProductLogo(String logoId, InputStream logo, String contentType, String fileName);
 
     void saveProductDepictImage(String id, InputStream depictImage, String contentType, String fileName);
+
+    ProductOperations getProductByInstitutionType(String id, InstitutionType type);
 }
