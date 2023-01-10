@@ -22,10 +22,11 @@ public class DummyProduct implements ProductOperations {
     private Instant modifiedAt;
     private String modifiedBy;
     private ProductStatus status;
-    private Instant contractTemplateUpdatedAt;
     private EnumMap<PartyRole, ? extends ProductRoleInfoOperations> roleMappings;
+    private Instant contractTemplateUpdatedAt;
     private String contractTemplatePath;
     private String contractTemplateVersion;
+    private Map<InstitutionType, ? extends ContractOperations> institutionContractMappings;
     private String identityTokenAudience;
     private boolean enabled = true;
     private String parentId;

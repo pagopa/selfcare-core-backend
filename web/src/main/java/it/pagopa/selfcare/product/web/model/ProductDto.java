@@ -23,10 +23,11 @@ public class ProductDto implements ProductOperations {
     private String createdBy;
     private Instant modifiedAt;
     private String modifiedBy;
-    private Instant contractTemplateUpdatedAt;
     private EnumMap<PartyRole, ? extends ProductRoleInfoOperations> roleMappings;
+    private Instant contractTemplateUpdatedAt;
     private String contractTemplatePath;
     private String contractTemplateVersion;
+    private Map<InstitutionType, ? extends ContractOperations> institutionContractMappings;
     private boolean enabled = true;
     private ProductStatus status = ProductStatus.TESTING;
     private String parentId;

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.product.connector.exception.ResourceNotFoundException;
+import it.pagopa.selfcare.product.connector.model.InstitutionType;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductStatus;
@@ -69,11 +70,18 @@ class ProductControllerTest {
             productRoleInfo.setMultiroleAllowed(true);
             roleMappings.put(partyRole, productRoleInfo);
         }
+        Map<InstitutionType, ContractResource> institutionContractMappings = new HashMap<>();
+        for (InstitutionType type : InstitutionType.values()) {
+            ContractResource contract = mockInstance(new ContractResource());
+            institutionContractMappings.put(type, contract);
+        }
         CREATE_PRODUCT_DTO.setRoleMappings(roleMappings);
         CREATE_PRODUCT_DTO.setLogoBgColor("#000000");
+        CREATE_PRODUCT_DTO.setInstitutionContractMappings(institutionContractMappings);
         CREATE_PRODUCT_DTO.setBackOfficeEnvironmentConfigurations(Map.of("test", mockInstance(new BackOfficeConfigurationsResource())));
         UPDATE_PRODUCT_DTO.setRoleMappings(roleMappings);
         UPDATE_PRODUCT_DTO.setLogoBgColor("#000000");
+        UPDATE_PRODUCT_DTO.setInstitutionContractMappings(institutionContractMappings);
         UPDATE_PRODUCT_DTO.setBackOfficeEnvironmentConfigurations(Map.of("test", mockInstance(new BackOfficeConfigurationsResource())));
     }
 
@@ -113,6 +121,7 @@ class ProductControllerTest {
         assertArrayEquals(inputStream.readAllBytes(), inputStreamArgumentCaptor.getValue().readAllBytes());
         Mockito.verifyNoMoreInteractions(productServiceMock);
     }
+
 
     @Test
     void saveProductDepictImage() throws Exception {
@@ -220,9 +229,44 @@ class ProductControllerTest {
                 });
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                .get(BASE_URL + "/id")
-                .contentType(APPLICATION_JSON_VALUE)
-                .accept(APPLICATION_JSON_VALUE))
+                        .get(BASE_URL + "/id")
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+        // then
+        ProductResource product = objectMapper.readValue(result.getResponse().getContentAsString(), ProductResource.class);
+        assertNotNull(product);
+    }
+
+    @Test
+    void getProductByInstitutionType() throws Exception {
+        //given
+        InstitutionType type = InstitutionType.PA;
+        when(productServiceMock.getProductByInstitutionType(anyString(), any()))
+                .thenAnswer(invocationOnMock -> {
+                    String id = invocationOnMock.getArgument(0, String.class);
+                    ProductOperations product = mockInstance(new ProductDto(), "setId", "setRoleMappings", "setCreatedBy", "setModifiedBy");
+                    product.setId(id);
+                    product.setCreatedBy(randomUUID().toString());
+                    product.setModifiedBy(randomUUID().toString());
+                    EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+                    for (PartyRole partyRole : PartyRole.values()) {
+                        ProductRoleInfo productRoleInfo = new ProductRoleInfo();
+                        List<ProductRole> roles = new ArrayList<>();
+                        roles.add(mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+                        roles.add(mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+                        productRoleInfo.setRoles(roles);
+                        roleMappings.put(partyRole, productRoleInfo);
+                    }
+                    product.setRoleMappings(roleMappings);
+                    return product;
+                });
+        // when
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/id/institution-contract-mappings/" + type)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         // then
@@ -237,8 +281,8 @@ class ProductControllerTest {
                 .thenThrow(ResourceNotFoundException.class);
         // when
         mvc.perform(MockMvcRequestBuilders
-                .get(BASE_URL + "/id")
-                .contentType(APPLICATION_JSON_VALUE)
+                        .get(BASE_URL + "/id")
+                        .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
