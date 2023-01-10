@@ -498,7 +498,7 @@
         } ]
       }
     },
-    "/products/{id}/institution-type/{institutionType}" : {
+    "/products/{id}/institution-contract-mappings/{institutionType}" : {
       "get" : {
         "tags" : [ "product" ],
         "summary" : "getProductByInstitutionType",

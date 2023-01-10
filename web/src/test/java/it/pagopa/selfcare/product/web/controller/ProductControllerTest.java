@@ -264,7 +264,7 @@ class ProductControllerTest {
                 });
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .get(BASE_URL + "/id/institution-type/" + type)
+                        .get(BASE_URL + "/id/institution-contract-mappings/" + type)
                         .contentType(APPLICATION_JSON_VALUE)
                         .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().is2xxSuccessful())

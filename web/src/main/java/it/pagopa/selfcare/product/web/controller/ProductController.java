@@ -111,7 +111,7 @@ public class ProductController {
         return productResource;
     }
 
-    @GetMapping("/{id}/institution-type/{institutionType}")
+    @GetMapping("/{id}/institution-contract-mappings/{institutionType}")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.product.operation.getProductByInstitutionType}")
     public ProductResource getProductByInstitutionType(@ApiParam("${swagger.product.model.id}")
