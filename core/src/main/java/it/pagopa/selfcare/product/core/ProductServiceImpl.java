@@ -117,11 +117,9 @@ class ProductServiceImpl implements ProductService {
         if (foundProduct.getStatus() == ProductStatus.INACTIVE) {
             throw new ResourceNotFoundException();
         }
-        if (institutionType != null) {
-            if (foundProduct.getInstitutionContractMappings().containsKey(institutionType)) {
-                foundProduct.setContractTemplatePath(foundProduct.getInstitutionContractMappings().get(institutionType).getContractTemplatePath());
-                foundProduct.setContractTemplateVersion(foundProduct.getInstitutionContractMappings().get(institutionType).getContractTemplateVersion());
-            }
+        if (institutionType != null && foundProduct.getInstitutionContractMappings().containsKey(institutionType)) {
+            foundProduct.setContractTemplatePath(foundProduct.getInstitutionContractMappings().get(institutionType).getContractTemplatePath());
+            foundProduct.setContractTemplateVersion(foundProduct.getInstitutionContractMappings().get(institutionType).getContractTemplateVersion());
         }
         log.debug("getProduct result = {}", foundProduct);
         log.trace("getProduct end");
