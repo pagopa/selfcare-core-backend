@@ -28,7 +28,8 @@ import java.time.OffsetDateTime;
 import java.util.*;
 
 import static it.pagopa.selfcare.commons.utils.TestUtils.mockInstance;
-import static it.pagopa.selfcare.product.core.ProductServiceImpl.*;
+import static it.pagopa.selfcare.product.core.ProductServiceImpl.REQUIRED_PRODUCT_ID_MESSAGE;
+import static it.pagopa.selfcare.product.core.ProductServiceImpl.REQUIRED_PRODUCT_STATUS_MESSAGE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -488,15 +489,60 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void getProduct_NotInactive() {
+    void getProduct_institutionTypePresent() {
         // given
         String productId = "productId";
+        InstitutionType institutionType = InstitutionType.PA;
+        DummyContract contract = mockInstance(new DummyContract());
+        contract.setContractTemplatePath("paContract");
         when(productConnectorMock.findById(Mockito.anyString()))
-                .thenAnswer(invocationOnMock -> Optional.of(new DummyProduct()));
+                .thenAnswer(invocationOnMock -> {
+                    ProductOperations product = mockInstance(new DummyProduct());
+                    product.setInstitutionContractMappings(Map.of(InstitutionType.PA, contract));
+                    return Optional.of(product);
+                });
         // when
-        ProductOperations product = productService.getProduct(productId);
+        ProductOperations product = productService.getProduct(productId, institutionType);
         // then
         assertNotNull(product);
+        assertEquals(contract.getContractTemplatePath(), product.getContractTemplatePath());
+        verify(productConnectorMock, times(1)).findById(productId);
+        verifyNoMoreInteractions(productConnectorMock);
+    }
+
+    @Test
+    void getProduct_institutionTypeNotPresent() {
+        //given
+        String productId = "productId";
+        InstitutionType institutionType = InstitutionType.PT;
+        DummyContract contract = mockInstance(new DummyContract());
+        contract.setContractTemplatePath("paContract");
+        ProductOperations productMock = mockInstance(new DummyProduct());
+        productMock.setInstitutionContractMappings(Map.of(InstitutionType.PA, contract));
+        when(productConnectorMock.findById(Mockito.anyString()))
+                .thenReturn(Optional.of(productMock));
+        // when
+        ProductOperations product = productService.getProduct(productId, institutionType);
+        // then
+        assertNotNull(product);
+        assertEquals(productMock.getContractTemplatePath(), product.getContractTemplatePath());
+        verify(productConnectorMock, times(1)).findById(productId);
+        verifyNoMoreInteractions(productConnectorMock);
+    }
+
+    @Test
+    void getProduct_institutionTypeNull() {
+        //given
+        String productId = "productId";
+        InstitutionType institutionType = null;
+        ProductOperations productMock = mockInstance(new DummyProduct());
+        when(productConnectorMock.findById(Mockito.anyString()))
+                .thenReturn(Optional.of(productMock));
+        // when
+        ProductOperations product = productService.getProduct(productId, institutionType);
+        // then
+        assertNotNull(product);
+        assertEquals(productMock.getContractTemplatePath(), product.getContractTemplatePath());
         verify(productConnectorMock, times(1)).findById(productId);
         verifyNoMoreInteractions(productConnectorMock);
     }
@@ -516,7 +562,7 @@ class ProductServiceImplTest {
                     return Optional.of(product);
                 });
         // when
-        Executable executable = () -> productService.getProduct(id);
+        Executable executable = () -> productService.getProduct(id, null);
         // then
         assertThrows(ResourceNotFoundException.class, executable);
         verify(productConnectorMock, times(1)).findById(id);
@@ -528,7 +574,7 @@ class ProductServiceImplTest {
         // given
         String id = null;
         // when
-        Executable executable = () -> productService.getProduct(id);
+        Executable executable = () -> productService.getProduct(id, null);
         // then
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         assertEquals("A product id is required", e.getMessage());
@@ -540,75 +586,10 @@ class ProductServiceImplTest {
         // given
         String productId = "productId";
         // when
-        Executable executable = () -> productService.getProduct(productId);
+        Executable executable = () -> productService.getProduct(productId, null);
         // then
         Assertions.assertThrows(ResourceNotFoundException.class, executable);
         verify(productConnectorMock, times(1)).findById(productId);
-        verifyNoMoreInteractions(productConnectorMock);
-    }
-
-    @Test
-    void getProductByInstitutionType_nullId() {
-        // given
-        String id = null;
-        InstitutionType type = InstitutionType.PA;
-        // when
-        Executable executable = () -> productService.getProductByInstitutionType(id, type);
-        // then
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
-        assertEquals("A product id is required", e.getMessage());
-        verifyNoInteractions(productConnectorMock);
-    }
-
-    @Test
-    void getProductByInstitutionType_nullType() {
-        // given
-        String id = "productId";
-        InstitutionType type = null;
-        // when
-        Executable executable = () -> productService.getProductByInstitutionType(id, type);
-        // then
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
-        assertEquals(REQUIRED_INSTITUTION_TYPE, e.getMessage());
-        verifyNoInteractions(productConnectorMock);
-    }
-
-    @Test
-    void getProductByInstitutionType_noContract() {
-        //given
-        String id = "productId";
-        InstitutionType type = InstitutionType.PA;
-        when(productConnectorMock.findById(any())).thenAnswer(invocationOnMock -> {
-            ProductOperations product = mockInstance(new DummyProduct(), "setInstitutionContractMappings");
-            product.setId(invocationOnMock.getArgument(0, String.class));
-            product.setInstitutionContractMappings(Map.of(InstitutionType.PSP, mockInstance(new Contract())));
-            return Optional.of(product);
-        });
-        //when
-        Executable executable = () -> productService.getProductByInstitutionType(id, type);
-        //then
-        ResourceNotFoundException e = assertThrows(ResourceNotFoundException.class, executable);
-        assertEquals(String.format("No contract found for %s institution type and product %s(%s)", type, "setTitle", id), e.getMessage());
-        verify(productConnectorMock, times(1)).findById(id);
-        verifyNoMoreInteractions(productConnectorMock);
-    }
-
-    @Test
-    void getProductByInstitutionType() {
-        //given
-        String id = "productId";
-        InstitutionType type = InstitutionType.PA;
-        when(productConnectorMock.findById(any())).thenAnswer(invocationOnMock -> {
-            ProductOperations product = mockInstance(new DummyProduct(), "setInstitutionContractMappings");
-            product.setId(invocationOnMock.getArgument(0, String.class));
-            product.setInstitutionContractMappings(Map.of(InstitutionType.PA, mockInstance(new Contract())));
-            return Optional.of(product);
-        });
-        //when
-        ProductOperations product = productService.getProductByInstitutionType(id, type);
-        //then
-        assertNotNull(product);
-        verify(productConnectorMock, times(1)).findById(id);
         verifyNoMoreInteractions(productConnectorMock);
     }
 
