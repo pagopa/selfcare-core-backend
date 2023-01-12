@@ -531,6 +531,23 @@ class ProductServiceImplTest {
     }
 
     @Test
+    void getProduct_nullInstitutionContractMap() {
+        //given
+        String productId = "productId";
+        InstitutionType institutionType = InstitutionType.PT;
+        ProductOperations productMock = mockInstance(new DummyProduct());
+        when(productConnectorMock.findById(Mockito.anyString()))
+                .thenReturn(Optional.of(productMock));
+        // when
+        ProductOperations product = productService.getProduct(productId, institutionType);
+        // then
+        assertNotNull(product);
+        assertEquals(productMock.getContractTemplatePath(), product.getContractTemplatePath());
+        verify(productConnectorMock, times(1)).findById(productId);
+        verifyNoMoreInteractions(productConnectorMock);
+    }
+
+    @Test
     void getProduct_institutionTypeNull() {
         //given
         String productId = "productId";
