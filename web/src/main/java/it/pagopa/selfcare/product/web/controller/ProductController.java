@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -101,31 +102,16 @@ public class ProductController {
     @ApiOperation(value = "", notes = "${swagger.product.operation.getProduct}")
     public ProductResource getProduct(@ApiParam("${swagger.product.model.id}")
                                       @PathVariable("id")
-                                      String id) {
+                                      String id,
+                                      @ApiParam("${swagger.product.model.institutionType}")
+                                      @RequestParam(value = "institutionType", required = false)
+                                      Optional<InstitutionType> institutionType) {
         log.trace("getProduct start");
-        log.debug("getProduct id = {}", id);
-        ProductOperations product = productService.getProduct(id);
+        log.debug("getProduct id = {}, institutionType = {}", id, institutionType);
+        ProductOperations product = productService.getProduct(id, institutionType.orElse(null));
         ProductResource productResource = ProductMapper.toResource(product);
         log.debug("getProduct result = {}", productResource);
         log.trace("getProduct end");
-        return productResource;
-    }
-
-    @GetMapping("/{id}/institution-contract-mappings/{institutionType}")
-    @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "", notes = "${swagger.product.operation.getProductByInstitutionType}")
-    public ProductResource getProductByInstitutionType(@ApiParam("${swagger.product.model.id}")
-                                                       @PathVariable("id")
-                                                       String id,
-                                                       @ApiParam("${swagger.product.model.institutionType}")
-                                                       @PathVariable("institutionType")
-                                                       InstitutionType institutionType) {
-        log.trace("getProductByInstitutionType start");
-        log.debug("getProductByInstitutionType id = {}, institutionType = {}", id, institutionType);
-        ProductOperations product = productService.getProductByInstitutionType(id, institutionType);
-        ProductResource productResource = ProductMapper.toResource(product);
-        log.debug("getProductByInstitutionType result = {}", productResource);
-        log.trace("getProductByInstitutionType end");
         return productResource;
     }
 
@@ -137,7 +123,7 @@ public class ProductController {
                                                            String id) {
         log.trace("getProductRoles start");
         log.debug("getProductRoles id = {}", id);
-        EnumMap<PartyRole, ProductRoleInfo> productRoles = ProductMapper.toRoleMappings(productService.getProduct(id).getRoleMappings());
+        EnumMap<PartyRole, ProductRoleInfo> productRoles = ProductMapper.toRoleMappings(productService.getProduct(id, null).getRoleMappings());
         log.debug("getProductRoles result = {}", productRoles);
         log.trace("getProductRoles end");
 

@@ -15,7 +15,7 @@ public interface ProductService {
 
     void deleteProduct(String id);
 
-    ProductOperations getProduct(String id);
+    ProductOperations getProduct(String id, InstitutionType institutionType);
 
     ProductOperations updateProduct(String id, ProductOperations product);
 
@@ -24,6 +24,4 @@ public interface ProductService {
     void saveProductLogo(String logoId, InputStream logo, String contentType, String fileName);
 
     void saveProductDepictImage(String id, InputStream depictImage, String contentType, String fileName);
-
-    ProductOperations getProductByInstitutionType(String id, InstitutionType type);
 }

@@ -109,7 +109,7 @@ class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public ProductOperations getProduct(String id) {
+    public ProductOperations getProduct(String id, InstitutionType institutionType) {
         log.trace("getProduct start");
         log.debug("getProduct id = {}", id);
         Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
@@ -117,27 +117,12 @@ class ProductServiceImpl implements ProductService {
         if (foundProduct.getStatus() == ProductStatus.INACTIVE) {
             throw new ResourceNotFoundException();
         }
+        if (institutionType != null && foundProduct.getInstitutionContractMappings() != null && foundProduct.getInstitutionContractMappings().containsKey(institutionType)) {
+            foundProduct.setContractTemplatePath(foundProduct.getInstitutionContractMappings().get(institutionType).getContractTemplatePath());
+            foundProduct.setContractTemplateVersion(foundProduct.getInstitutionContractMappings().get(institutionType).getContractTemplateVersion());
+        }
         log.debug("getProduct result = {}", foundProduct);
         log.trace("getProduct end");
-
-        return foundProduct;
-    }
-
-    @Override
-    public ProductOperations getProductByInstitutionType(String id, InstitutionType type) {
-        log.trace("getProductByInstitutionType start");
-        log.debug("getProductByInstitutionType id = {}, institutionType = {}", id, type);
-        Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
-        Assert.notNull(type, REQUIRED_INSTITUTION_TYPE);
-        ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
-        try {
-            foundProduct.setContractTemplateVersion(foundProduct.getInstitutionContractMappings().get(type).getContractTemplateVersion());
-            foundProduct.setContractTemplatePath(foundProduct.getInstitutionContractMappings().get(type).getContractTemplatePath());
-        } catch (NullPointerException e) {
-            throw new ResourceNotFoundException(String.format("No contract found for %s institution type and product %s(%s)", type, foundProduct.getTitle(), id));
-        }
-        log.debug("getProductByInstitutionType result = {}", foundProduct);
-        log.trace("getProductByInstitutionType end");
         return foundProduct;
     }
 
@@ -196,7 +181,7 @@ class ProductServiceImpl implements ProductService {
     public void saveProductLogo(String id, InputStream logo, String contentType, String fileName) {
         log.trace("saveProductLogo start");
         log.debug("saveProductLogo id = {}, logo = {}, contentType = {}, fileName = {}", id, logo, contentType, fileName);
-        ProductOperations productToUpdate = getProduct(id);
+        ProductOperations productToUpdate = getProduct(id, null);
         if (productToUpdate.getParentId() != null) {
             throw new ValidationException("Given product Id = " + id + " is of a subProduct");
         }
@@ -209,7 +194,7 @@ class ProductServiceImpl implements ProductService {
         log.trace("saveProductDepictImage start");
         log.debug("saveProductDepictImage id = {}, logo = {}, contentType = {}, fileName = {}", id, depictImage, contentType, fileName);
         Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
-        ProductOperations productToUpdate = getProduct(id);
+        ProductOperations productToUpdate = getProduct(id, null);
         if (productToUpdate.getParentId() != null) {
             throw new ValidationException("Given product Id = " + id + " is of a subProduct");
         }
