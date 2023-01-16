@@ -3,10 +3,7 @@ package it.pagopa.selfcare.product.core;
 import it.pagopa.selfcare.product.connector.api.ProductConnector;
 import it.pagopa.selfcare.product.connector.exception.ResourceAlreadyExistsException;
 import it.pagopa.selfcare.product.connector.exception.ResourceNotFoundException;
-import it.pagopa.selfcare.product.connector.model.PartyRole;
-import it.pagopa.selfcare.product.connector.model.ProductOperations;
-import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
-import it.pagopa.selfcare.product.connector.model.ProductStatus;
+import it.pagopa.selfcare.product.connector.model.*;
 import it.pagopa.selfcare.product.core.exception.InvalidRoleMappingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +21,9 @@ import java.util.List;
 @Service
 class ProductServiceImpl implements ProductService {
 
-    public static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product id is required";
-    public static final String REQUIRED_PRODUCT_STATUS_MESSAGE = "A product status is required";
+    protected static final String REQUIRED_PRODUCT_ID_MESSAGE = "A product id is required";
+    protected static final String REQUIRED_PRODUCT_STATUS_MESSAGE = "A product status is required";
+    protected static final String REQUIRED_INSTITUTION_TYPE = "An institutionType is required";
 
 
     private final ProductConnector productConnector;
@@ -68,6 +66,7 @@ class ProductServiceImpl implements ProductService {
             throw new ValidationException("Parent not found", new ResourceNotFoundException("For id = " + product.getParentId()));
         }
         product.setContractTemplateUpdatedAt(Instant.now());
+        product.getInstitutionContractMappings().forEach((key, value) -> value.setContractTemplateUpdatedAt(Instant.now()));
         ProductOperations insert;
         try {
             insert = productConnector.insert(product);
@@ -110,7 +109,7 @@ class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public ProductOperations getProduct(String id) {
+    public ProductOperations getProduct(String id, InstitutionType institutionType) {
         log.trace("getProduct start");
         log.debug("getProduct id = {}", id);
         Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
@@ -118,9 +117,12 @@ class ProductServiceImpl implements ProductService {
         if (foundProduct.getStatus() == ProductStatus.INACTIVE) {
             throw new ResourceNotFoundException();
         }
+        if (institutionType != null && foundProduct.getInstitutionContractMappings() != null && foundProduct.getInstitutionContractMappings().containsKey(institutionType)) {
+            foundProduct.setContractTemplatePath(foundProduct.getInstitutionContractMappings().get(institutionType).getContractTemplatePath());
+            foundProduct.setContractTemplateVersion(foundProduct.getInstitutionContractMappings().get(institutionType).getContractTemplateVersion());
+        }
         log.debug("getProduct result = {}", foundProduct);
         log.trace("getProduct end");
-
         return foundProduct;
     }
 
@@ -151,6 +153,13 @@ class ProductServiceImpl implements ProductService {
             foundProduct.setContractTemplateUpdatedAt(Instant.now());
         }
         foundProduct.setContractTemplateVersion(product.getContractTemplateVersion());
+        foundProduct.getInstitutionContractMappings().forEach((key, value) -> {
+            value.setContractTemplatePath(product.getInstitutionContractMappings().get(key).getContractTemplatePath());
+            if (!value.getContractTemplateVersion().equals(product.getInstitutionContractMappings().get(key).getContractTemplateVersion())) {
+                value.setContractTemplateUpdatedAt(Instant.now());
+                value.setContractTemplateVersion(product.getInstitutionContractMappings().get(key).getContractTemplateVersion());
+            }
+        });
 
         ProductOperations updatedProduct = productConnector.save(foundProduct);
         log.debug("updateProduct result = {}", updatedProduct);
@@ -172,7 +181,7 @@ class ProductServiceImpl implements ProductService {
     public void saveProductLogo(String id, InputStream logo, String contentType, String fileName) {
         log.trace("saveProductLogo start");
         log.debug("saveProductLogo id = {}, logo = {}, contentType = {}, fileName = {}", id, logo, contentType, fileName);
-        ProductOperations productToUpdate = getProduct(id);
+        ProductOperations productToUpdate = getProduct(id, null);
         if (productToUpdate.getParentId() != null) {
             throw new ValidationException("Given product Id = " + id + " is of a subProduct");
         }
@@ -185,7 +194,7 @@ class ProductServiceImpl implements ProductService {
         log.trace("saveProductDepictImage start");
         log.debug("saveProductDepictImage id = {}, logo = {}, contentType = {}, fileName = {}", id, depictImage, contentType, fileName);
         Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
-        ProductOperations productToUpdate = getProduct(id);
+        ProductOperations productToUpdate = getProduct(id, null);
         if (productToUpdate.getParentId() != null) {
             throw new ValidationException("Given product Id = " + id + " is of a subProduct");
         }

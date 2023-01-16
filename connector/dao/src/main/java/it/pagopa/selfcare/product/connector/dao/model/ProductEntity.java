@@ -41,10 +41,11 @@ public class ProductEntity implements ProductOperations, Persistable<String> {
     @LastModifiedBy
     @FieldNameConstants.Include
     private String modifiedBy;
-    private Instant contractTemplateUpdatedAt;
     private EnumMap<PartyRole, ? extends ProductRoleInfoOperations> roleMappings;
+    private Instant contractTemplateUpdatedAt;
     private String contractTemplatePath;
     private String contractTemplateVersion;
+    private Map<InstitutionType, ? extends ContractOperations> institutionContractMappings;
     @FieldNameConstants.Include
     private boolean enabled = true;
     @FieldNameConstants.Include
@@ -78,6 +79,12 @@ public class ProductEntity implements ProductOperations, Persistable<String> {
         private String identityTokenAudience;
     }
 
+    @Data
+    public static class EntityContract implements ContractOperations {
+        private Instant contractTemplateUpdatedAt;
+        private String contractTemplatePath;
+        private String contractTemplateVersion;
+    }
 
     public ProductEntity(ProductOperations product) {
         this();
@@ -93,10 +100,11 @@ public class ProductEntity implements ProductOperations, Persistable<String> {
         createdBy = product.getCreatedBy();
         modifiedAt = product.getModifiedAt();
         modifiedBy = product.getModifiedBy();
-        contractTemplateUpdatedAt = product.getContractTemplateUpdatedAt();
         roleMappings = product.getRoleMappings();
+        contractTemplateUpdatedAt = product.getContractTemplateUpdatedAt();
         contractTemplatePath = product.getContractTemplatePath();
         contractTemplateVersion = product.getContractTemplateVersion();
+        institutionContractMappings = product.getInstitutionContractMappings();
         enabled = product.isEnabled();
         status = product.getStatus();
         parentId = product.getParentId();

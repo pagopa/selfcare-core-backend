@@ -65,6 +65,7 @@ public class ProductMapper {
             product.setUrlPublic(dto.getUrlPublic());
             product.setUrlBO(dto.getUrlBO());
             product.setRoleMappings(dto.getRoleMappings());
+            product.setInstitutionContractMappings(dto.getInstitutionContractMappings());
             product.setContractTemplatePath(dto.getContractTemplatePath());
             product.setContractTemplateVersion(dto.getContractTemplateVersion());
             product.setLogoBgColor(dto.getLogoBgColor());
@@ -81,6 +82,7 @@ public class ProductMapper {
             product = new ProductDto();
             product.setId(dto.getId());
             product.setTitle(dto.getTitle());
+            product.setInstitutionContractMappings(dto.getInstitutionContractMappings());
             product.setContractTemplatePath(dto.getContractTemplatePath());
             product.setContractTemplateVersion(dto.getContractTemplateVersion());
         }
@@ -102,6 +104,7 @@ public class ProductMapper {
             product.setRoleMappings(dto.getRoleMappings());
             product.setContractTemplatePath(dto.getContractTemplatePath());
             product.setContractTemplateVersion(dto.getContractTemplateVersion());
+            product.setInstitutionContractMappings(dto.getInstitutionContractMappings());
             product.setBackOfficeEnvironmentConfigurations(dto.getBackOfficeEnvironmentConfigurations());
         }
         log.debug("fromDto result = {}", product);
@@ -116,6 +119,7 @@ public class ProductMapper {
             product.setTitle(dto.getTitle());
             product.setContractTemplatePath(dto.getContractTemplatePath());
             product.setContractTemplateVersion(dto.getContractTemplateVersion());
+            product.setInstitutionContractMappings(dto.getInstitutionContractMappings());
         }
         return product;
     }

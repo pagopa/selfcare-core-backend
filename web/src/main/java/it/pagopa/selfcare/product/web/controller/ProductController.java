@@ -3,6 +3,7 @@ package it.pagopa.selfcare.product.web.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import it.pagopa.selfcare.product.connector.model.InstitutionType;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductStatus;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -100,10 +102,13 @@ public class ProductController {
     @ApiOperation(value = "", notes = "${swagger.product.operation.getProduct}")
     public ProductResource getProduct(@ApiParam("${swagger.product.model.id}")
                                       @PathVariable("id")
-                                              String id) {
+                                      String id,
+                                      @ApiParam("${swagger.product.model.institutionType}")
+                                      @RequestParam(value = "institutionType", required = false)
+                                      Optional<InstitutionType> institutionType) {
         log.trace("getProduct start");
-        log.debug("getProduct id = {}", id);
-        ProductOperations product = productService.getProduct(id);
+        log.debug("getProduct id = {}, institutionType = {}", id, institutionType);
+        ProductOperations product = productService.getProduct(id, institutionType.orElse(null));
         ProductResource productResource = ProductMapper.toResource(product);
         log.debug("getProduct result = {}", productResource);
         log.trace("getProduct end");
@@ -115,10 +120,10 @@ public class ProductController {
     @ApiOperation(value = "", notes = "${swagger.product.operation.getProductRoleMappings}")
     public Map<PartyRole, ProductRoleInfo> getProductRoles(@ApiParam("${swagger.product.model.id}")
                                                            @PathVariable("id")
-                                                                   String id) {
+                                                           String id) {
         log.trace("getProductRoles start");
         log.debug("getProductRoles id = {}", id);
-        EnumMap<PartyRole, ProductRoleInfo> productRoles = ProductMapper.toRoleMappings(productService.getProduct(id).getRoleMappings());
+        EnumMap<PartyRole, ProductRoleInfo> productRoles = ProductMapper.toRoleMappings(productService.getProduct(id, null).getRoleMappings());
         log.debug("getProductRoles result = {}", productRoles);
         log.trace("getProductRoles end");
 
@@ -131,7 +136,7 @@ public class ProductController {
     @ApiOperation(value = "", notes = "${swagger.product.operation.createProduct}")
     public ProductResource createProduct(@RequestBody
                                          @Valid
-                                                 CreateProductDto product) {
+                                         CreateProductDto product) {
         log.trace("createProduct start");
         log.debug("createProduct product = {}", product);
         ProductOperations p = productService.createProduct(ProductMapper.fromDto(product));
@@ -149,7 +154,7 @@ public class ProductController {
                                             @PathVariable("id") String id,
                                             @RequestBody
                                             @Valid
-                                                    CreateSubProductDto product) {
+                                            CreateSubProductDto product) {
         log.trace("createProduct start");
         log.debug("createProduct product = {}", product);
         ProductOperations productOps = ProductMapper.fromDto(product);
@@ -167,10 +172,10 @@ public class ProductController {
     @ApiOperation(value = "", notes = "${swagger.product.operation.updateProduct}")
     public ProductResource updateProduct(@ApiParam("${swagger.product.model.id}")
                                          @PathVariable("id")
-                                                 String id,
+                                         String id,
                                          @RequestBody
                                          @Valid
-                                                 UpdateProductDto product) {
+                                         UpdateProductDto product) {
         log.trace("updateProduct start");
         log.debug("updateProduct id = {}, product = {}", id, product);
         ProductOperations updatedProduct = productService.updateProduct(id, ProductMapper.fromDto(product));
@@ -184,11 +189,11 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.product.operation.updateProduct}")
     public ProductResource updateSubProduct(@ApiParam("${swagger.product.model.id}")
-                                            @PathVariable("id")
-                                                    String id,
+                                                @PathVariable("id")
+                                                String id,
                                             @RequestBody
-                                            @Valid
-                                            UpdateSubProductDto product) {
+                                                @Valid
+                                                UpdateSubProductDto product) {
         log.trace("updateSubProduct start");
         log.debug("updateSubProduct id = {}, product = {}", id, product);
         ProductOperations updatedProduct = productService.updateProduct(id, ProductMapper.fromDto(product));
@@ -197,6 +202,7 @@ public class ProductController {
         log.trace("updateSubProduct end");
         return result;
     }
+
 
     @PutMapping(value = "/{id}/status/{status}")
     @ResponseStatus(HttpStatus.OK)
