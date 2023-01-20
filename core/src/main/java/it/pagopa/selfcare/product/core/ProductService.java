@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.product.core;
 
+import it.pagopa.selfcare.product.connector.model.InstitutionType;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductStatus;
 
@@ -14,7 +15,7 @@ public interface ProductService {
 
     void deleteProduct(String id);
 
-    ProductOperations getProduct(String id);
+    ProductOperations getProduct(String id, InstitutionType institutionType);
 
     ProductOperations updateProduct(String id, ProductOperations product);
 

@@ -231,6 +231,16 @@
           "schema" : {
             "type" : "string"
           }
+        }, {
+          "name" : "institutionType",
+          "in" : "query",
+          "description" : "Institution's type",
+          "required" : false,
+          "style" : "form",
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "GSP", "PA", "PSP", "PT", "SCP" ]
+          }
         } ],
         "responses" : {
           "200" : {
@@ -885,6 +895,26 @@
           }
         }
       },
+      "ContractResource" : {
+        "title" : "ContractResource",
+        "required" : [ "contractTemplatePath", "contractTemplateUpdatedAt", "contractTemplateVersion" ],
+        "type" : "object",
+        "properties" : {
+          "contractTemplatePath" : {
+            "type" : "string",
+            "description" : "The path of contract"
+          },
+          "contractTemplateUpdatedAt" : {
+            "type" : "string",
+            "description" : "Date the contract was postponed",
+            "format" : "date-time"
+          },
+          "contractTemplateVersion" : {
+            "type" : "string",
+            "description" : "Version of the contract"
+          }
+        }
+      },
       "CreateProductDto" : {
         "title" : "CreateProductDto",
         "required" : [ "contractTemplatePath", "contractTemplateVersion", "description", "id", "identityTokenAudience", "roleMappings", "title", "urlBO", "urlPublic" ],
@@ -916,6 +946,13 @@
           "identityTokenAudience" : {
             "type" : "string",
             "description" : "Product's identity token audience"
+          },
+          "institutionContractMappings" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/ContractResource"
+            },
+            "description" : "Product contract based on institutionType"
           },
           "logoBgColor" : {
             "pattern" : "^#[0-9A-F]{6}$",
@@ -960,6 +997,13 @@
           "id" : {
             "type" : "string",
             "description" : "Product's unique identifier"
+          },
+          "institutionContractMappings" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/ContractResource"
+            },
+            "description" : "Product contract based on institutionType"
           },
           "title" : {
             "type" : "string",
@@ -1235,6 +1279,13 @@
             "type" : "string",
             "description" : "Product's identity token audience"
           },
+          "institutionContractMappings" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/ContractResource"
+            },
+            "description" : "Product contract based on institutionType"
+          },
           "logoBgColor" : {
             "pattern" : "^#[0-9A-F]{6}$",
             "type" : "string",
@@ -1274,6 +1325,13 @@
           "contractTemplateVersion" : {
             "type" : "string",
             "description" : "Version of the contract"
+          },
+          "institutionContractMappings" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/ContractResource"
+            },
+            "description" : "Product contract based on institutionType"
           },
           "title" : {
             "type" : "string",

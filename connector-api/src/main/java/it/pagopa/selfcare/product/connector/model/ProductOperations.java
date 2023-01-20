@@ -54,13 +54,13 @@ public interface ProductOperations {
 
     void setModifiedBy(String modifiedBy);
 
-    Instant getContractTemplateUpdatedAt();
-
-    void setContractTemplateUpdatedAt(Instant contractTemplateUpdatedAt);
-
     EnumMap<PartyRole, ? extends ProductRoleInfoOperations> getRoleMappings();
 
     void setRoleMappings(EnumMap<PartyRole, ? extends ProductRoleInfoOperations> roleMappings);
+
+    Instant getContractTemplateUpdatedAt();
+
+    void setContractTemplateUpdatedAt(Instant contractTemplateUpdatedAt);
 
     String getContractTemplatePath();
 
@@ -69,6 +69,10 @@ public interface ProductOperations {
     String getContractTemplateVersion();
 
     void setContractTemplateVersion(String contractTemplateVersion);
+
+    Map<InstitutionType, ? extends ContractOperations> getInstitutionContractMappings();
+
+    void setInstitutionContractMappings(Map<InstitutionType, ? extends ContractOperations> contractMap);
 
     boolean isEnabled();
 

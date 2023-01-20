@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.product.connector.exception.ResourceNotFoundException;
+import it.pagopa.selfcare.product.connector.model.InstitutionType;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductStatus;
@@ -69,11 +70,18 @@ class ProductControllerTest {
             productRoleInfo.setMultiroleAllowed(true);
             roleMappings.put(partyRole, productRoleInfo);
         }
+        Map<InstitutionType, ContractResource> institutionContractMappings = new HashMap<>();
+        for (InstitutionType type : InstitutionType.values()) {
+            ContractResource contract = mockInstance(new ContractResource());
+            institutionContractMappings.put(type, contract);
+        }
         CREATE_PRODUCT_DTO.setRoleMappings(roleMappings);
         CREATE_PRODUCT_DTO.setLogoBgColor("#000000");
+        CREATE_PRODUCT_DTO.setInstitutionContractMappings(institutionContractMappings);
         CREATE_PRODUCT_DTO.setBackOfficeEnvironmentConfigurations(Map.of("test", mockInstance(new BackOfficeConfigurationsResource())));
         UPDATE_PRODUCT_DTO.setRoleMappings(roleMappings);
         UPDATE_PRODUCT_DTO.setLogoBgColor("#000000");
+        UPDATE_PRODUCT_DTO.setInstitutionContractMappings(institutionContractMappings);
         UPDATE_PRODUCT_DTO.setBackOfficeEnvironmentConfigurations(Map.of("test", mockInstance(new BackOfficeConfigurationsResource())));
     }
 
@@ -113,6 +121,7 @@ class ProductControllerTest {
         assertArrayEquals(inputStream.readAllBytes(), inputStreamArgumentCaptor.getValue().readAllBytes());
         Mockito.verifyNoMoreInteractions(productServiceMock);
     }
+
 
     @Test
     void saveProductDepictImage() throws Exception {
@@ -199,7 +208,7 @@ class ProductControllerTest {
     @Test
     void getProduct_exists() throws Exception {
         // given
-        when(productServiceMock.getProduct(anyString()))
+        when(productServiceMock.getProduct(anyString(), any()))
                 .thenAnswer(invocationOnMock -> {
                     String id = invocationOnMock.getArgument(0, String.class);
                     ProductOperations product = mockInstance(new ProductDto(), "setId", "setRoleMappings", "setCreatedBy", "setModifiedBy");
@@ -220,9 +229,9 @@ class ProductControllerTest {
                 });
         // when
         MvcResult result = mvc.perform(MockMvcRequestBuilders
-                .get(BASE_URL + "/id")
-                .contentType(APPLICATION_JSON_VALUE)
-                .accept(APPLICATION_JSON_VALUE))
+                        .get(BASE_URL + "/id")
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         // then
@@ -233,12 +242,12 @@ class ProductControllerTest {
     @Test
     void getProduct_notExists() throws Exception {
         // given
-        when(productServiceMock.getProduct(anyString()))
+        when(productServiceMock.getProduct(anyString(), any()))
                 .thenThrow(ResourceNotFoundException.class);
         // when
         mvc.perform(MockMvcRequestBuilders
-                .get(BASE_URL + "/id")
-                .contentType(APPLICATION_JSON_VALUE)
+                        .get(BASE_URL + "/id")
+                        .contentType(APPLICATION_JSON_VALUE)
                 .accept(APPLICATION_JSON_VALUE))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
@@ -433,7 +442,7 @@ class ProductControllerTest {
     @Test
     void getProductRoles_exists() throws Exception {
         // given
-        when(productServiceMock.getProduct(anyString()))
+        when(productServiceMock.getProduct(anyString(), any()))
                 .thenAnswer(invocationOnMock -> {
                     String id = invocationOnMock.getArgument(0, String.class);
                     ProductOperations product = mockInstance(new ProductDto(), "setId", "setRoleMappings");
@@ -469,7 +478,7 @@ class ProductControllerTest {
     @Test
     void getProductRoles_notExists() throws Exception {
         // given
-        when(productServiceMock.getProduct(anyString()))
+        when(productServiceMock.getProduct(anyString(), any()))
                 .thenThrow(ResourceNotFoundException.class);
         // when
         mvc.perform(MockMvcRequestBuilders

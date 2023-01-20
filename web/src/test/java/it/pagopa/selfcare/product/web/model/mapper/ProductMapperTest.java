@@ -223,7 +223,6 @@ class ProductMapperTest {
         assertIterableEquals(backOfficeEnvironmentConfigurations.entrySet(), result.entrySet());
     }
 
-
     @Test
     void toTreeResource_null() {
         //given

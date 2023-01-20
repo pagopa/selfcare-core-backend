@@ -2,6 +2,7 @@ package it.pagopa.selfcare.product.web.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
+import it.pagopa.selfcare.product.connector.model.InstitutionType;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import lombok.Data;
 
@@ -57,6 +58,10 @@ public class UpdateProductDto {
     @JsonProperty(required = true)
     @NotBlank
     private String contractTemplateVersion;
+
+    @ApiModelProperty(value = "${swagger.product.model.institutionContractMappings}")
+    @Valid
+    private Map<InstitutionType, ContractResource> institutionContractMappings;
 
     @ApiModelProperty(value = "${swagger.product.model.backOfficeEnvironmentConfigurations}")
     @Valid
