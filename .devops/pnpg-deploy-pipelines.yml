@@ -47,7 +47,7 @@ variables:
     containerRegistry: '$(UAT_CONTAINER_REGISTRY_NAME)'
     selfHostedAgentPool: $(UAT_AGENT_POOL)
     mavenGoals: 'package'
-    settingsXmlsecureFileName: '$(SETTINGS_XML_RO_SECURE_FILE_NAME)'
+    settingsXmlsecureFileName: '$(SETTINGS_XML_RW_SECURE_FILE_NAME)'
 
   ${{ elseif or(eq(variables['Build.SourceBranch'], 'refs/heads/main'),eq(variables['Build.SourceBranch'], 'refs/heads/release-prod')) }}:
     environment: 'PROD'
@@ -56,7 +56,7 @@ variables:
     containerRegistry: '$(PROD_CONTAINER_REGISTRY_NAME)'
     selfHostedAgentPool: $(PROD_AGENT_POOL)
     mavenGoals: 'package'
-    settingsXmlsecureFileName: '$(SETTINGS_XML_RO_SECURE_FILE_NAME)'
+    settingsXmlsecureFileName: '$(SETTINGS_XML_RW_SECURE_FILE_NAME)'
 
   ${{ else }}:
     environment: 'DEV'
@@ -65,7 +65,7 @@ variables:
     containerRegistry: '$(DEV_CONTAINER_REGISTRY_NAME)'
     selfHostedAgentPool: $(DEV_AGENT_POOL)
     mavenGoals: 'package'
-    settingsXmlsecureFileName: '$(SETTINGS_XML_RO_SECURE_FILE_NAME)'
+    settingsXmlsecureFileName: '$(SETTINGS_XML_RW_SECURE_FILE_NAME)'
 
 stages:
   - stage: Release
@@ -99,12 +99,12 @@ stages:
         pool:
           vmImage: $(vmImageNameDefault)
         steps:
-          # - task: DownloadSecureFile@1
-          #   displayName: 'download settings.xml for Maven'
-          #   name: settingsxml
-          #   inputs:
-          #     secureFile: '$(settingsXmlsecureFileName)'
-          #     retryCount: '2'
+          - task: DownloadSecureFile@1
+            displayName: 'download settings.xml for Maven'
+            name: settingsxml
+            inputs:
+              secureFile: '$(settingsXmlsecureFileName)'
+              retryCount: '2'
           - task: Maven@3
             inputs:
               mavenPomFile: 'pom.xml'
@@ -171,25 +171,6 @@ stages:
                     buildType: 'current'
                     artifactName: 'helm'
                     targetPath: '$(Pipeline.Workspace)/helm'
-                - task: Bash@3
-                  displayName: ls
-                  name: ls
-                  condition: succeeded()
-                  inputs:
-                    targetType: 'inline'
-                    script: |
-                      ls -la $(Pipeline.Workspace)/helm/$(product)/$(deployNamespace)
-                    failOnStderr: true
-                - task: Bash@3
-                  name: helm_dependency_build
-                  displayName: Helm dependency build
-                  inputs:
-                    workingDirectory: '$(Pipeline.Workspace)/helm/$(product)/$(deployNamespace)'
-                    targetType: 'inline'
-                    script: |
-                      helm repo add pagopa-microservice https://pagopa.github.io/aks-microservice-chart-blueprint
-                      helm dep build
-                    failOnStderr: true
                 - task: HelmDeploy@0
                   displayName: Helm upgrade
                   inputs:
@@ -197,10 +178,20 @@ stages:
                     namespace: '$(deployNamespace)'
                     command: upgrade
                     chartType: filepath
-                    chartPath: $(Pipeline.Workspace)/helm/$(product)/$(deployNamespace)
+                    chartPath: $(Pipeline.Workspace)/helm
                     chartName: $(K8S_IMAGE_REPOSITORY_NAME)
                     releaseName: $(K8S_IMAGE_REPOSITORY_NAME)
-                    valueFile: "$(Pipeline.Workspace)/helm/$(product)/$(deployNamespace)/values-${{ lower(variables.environment) }}.yaml"
+                    valueFile: "$(Pipeline.Workspace)/helm/values-${{ lower(variables.environment) }}.yaml"
                     install: true
                     waitForExecution: true
                     arguments: "--timeout 2m0s"
+                - task: KubernetesManifest@0
+                  displayName: Patch
+                  inputs:
+                    kubernetesServiceConnection: ${{ variables.kubernetesServiceConnection }}
+                    namespace: '$(deployNamespace)'
+                    action: patch
+                    kind: deployment
+                    name: '$(deploymentName)'
+                    mergeStrategy: strategic
+                    patch: '{"spec":{"template":{"metadata":{"annotations":{"buildNumber":"$(Build.BuildNumber)"}}}}}'
