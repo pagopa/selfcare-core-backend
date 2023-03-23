@@ -94,4 +94,8 @@ public interface ProductOperations {
 
     void setBackOfficeEnvironmentConfigurations(Map<String, ? extends BackOfficeConfigurations> backOfficeEnvironmentConfigurations);
 
+    String getRoleManagementURL();
+
+    void setRoleManagementURL(String roleManagementURL);
+
 }

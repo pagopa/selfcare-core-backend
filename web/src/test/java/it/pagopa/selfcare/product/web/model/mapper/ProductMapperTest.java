@@ -53,6 +53,7 @@ class ProductMapperTest {
         assertTrue(now.isBefore(productResource.getContractTemplateUpdatedAt()));
         assertEquals(product.getContractTemplateVersion(), productResource.getContractTemplateVersion());
         assertEquals(product.getContractTemplatePath(), productResource.getContractTemplatePath());
+        assertEquals(product.getRoleManagementURL(), productResource.getRoleManagementURL());
         assertEquals(product.getRoleMappings(), productResource.getRoleMappings());
         assertEquals(product.getCreatedBy(), productResource.getCreatedBy().toString());
         assertEquals(product.getModifiedBy(), productResource.getModifiedBy().toString());
