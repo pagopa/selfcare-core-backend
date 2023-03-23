@@ -24,6 +24,7 @@ public class ProductDto implements ProductOperations {
     private Instant modifiedAt;
     private String modifiedBy;
     private EnumMap<PartyRole, ? extends ProductRoleInfoOperations> roleMappings;
+    private String roleManagementURL;
     private Instant contractTemplateUpdatedAt;
     private String contractTemplatePath;
     private String contractTemplateVersion;
