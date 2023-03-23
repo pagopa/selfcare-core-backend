@@ -31,5 +31,6 @@ public class DummyProduct implements ProductOperations {
     private boolean enabled = true;
     private String parentId;
     private Map<String, ? extends BackOfficeConfigurations> backOfficeEnvironmentConfigurations;
+    private String roleManagementURL;
 
 }

@@ -39,6 +39,7 @@ public class ProductMapper {
             }
             resource.setContractTemplateUpdatedAt(entity.getContractTemplateUpdatedAt());
             resource.setRoleMappings(toRoleMappings(entity.getRoleMappings()));
+            resource.setRoleManagementURL(entity.getRoleManagementURL());
             resource.setContractTemplatePath(entity.getContractTemplatePath());
             resource.setContractTemplateVersion(entity.getContractTemplateVersion());
             resource.setIdentityTokenAudience(entity.getIdentityTokenAudience());
