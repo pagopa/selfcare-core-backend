@@ -27,7 +27,7 @@ podSecurityContext: { }
 securityContext: { }
   # capabilities:
   #   drop:
-  #   - ALL
+#   - ALL
 # readOnlyRootFilesystem: true
 # runAsNonRoot: true
 # runAsUser: 1000
@@ -48,11 +48,7 @@ ingress:
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/cors-allow-headers: "*"
     nginx.ingress.kubernetes.io/cors-allow-origin: "https://selfcare.pagopa.it"
-  hosts:
-    - host: "dev01.pnpg.internal.dev.selfcare.pagopa.it"
-      paths:
-        - path: /ms-product/v1/(.*)
-          pathType: ImplementationSpecific
+
   tls: [ ]
   #  - secretName: chart-example-tls
   #    hosts:
@@ -65,7 +61,7 @@ resources: { }
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   # limits:
   #   cpu: 100m
-  #   memory: 128Mi
+#   memory: 128Mi
 # requests:
 #   cpu: 100m
 #   memory: 128Mi
