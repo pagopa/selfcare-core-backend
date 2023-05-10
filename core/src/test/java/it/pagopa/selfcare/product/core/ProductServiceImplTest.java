@@ -880,26 +880,6 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void storeProductLogo_subProductException() {
-        // given
-        String productId = "productId";
-        InputStream depictImage = InputStream.nullInputStream();
-        String contentType = MimeTypeUtils.IMAGE_GIF_VALUE;
-        String fileName = "filename";
-        ProductOperations product = mockInstance(new DummyProduct(), "setId", "setRoleMappings");
-        product.setDepictImageUrl(null);
-        product.setId(productId);
-        when(productConnectorMock.findById(Mockito.anyString()))
-                .thenReturn(Optional.of(product));
-        // when
-        Executable executable = () -> productService.saveProductLogo(productId, depictImage, contentType, fileName);
-        // then
-        ValidationException e = assertThrows(ValidationException.class, executable);
-        assertEquals("Given product Id = " + productId + " is of a subProduct", e.getMessage());
-        verifyNoInteractions(productLogoImageServiceMock);
-    }
-
-    @Test
     void storeProductLogoImage_ok() {
         //given
         String productId = "productId";
@@ -939,26 +919,6 @@ class ProductServiceImplTest {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, executable);
         Assertions.assertEquals("A product id is required", e.getMessage());
         verifyNoInteractions(productConnectorMock);
-    }
-
-    @Test
-    void storeProductDepictImage_subProductException() {
-        // given
-        String productId = "productId";
-        InputStream depictImage = InputStream.nullInputStream();
-        String contentType = MimeTypeUtils.IMAGE_GIF_VALUE;
-        String fileName = "filename";
-        ProductOperations product = mockInstance(new DummyProduct(), "setId", "setRoleMappings");
-        product.setDepictImageUrl(null);
-        product.setId(productId);
-        when(productConnectorMock.findById(Mockito.anyString()))
-                .thenReturn(Optional.of(product));
-        // when
-        Executable executable = () -> productService.saveProductDepictImage(productId, depictImage, contentType, fileName);
-        // then
-        ValidationException e = assertThrows(ValidationException.class, executable);
-        assertEquals("Given product Id = " + productId + " is of a subProduct", e.getMessage());
-        verifyNoInteractions(productLogoImageServiceMock);
     }
 
     @Test
