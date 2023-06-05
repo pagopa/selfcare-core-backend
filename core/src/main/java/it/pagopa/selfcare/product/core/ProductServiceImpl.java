@@ -182,9 +182,6 @@ class ProductServiceImpl implements ProductService {
         log.trace("saveProductLogo start");
         log.debug("saveProductLogo id = {}, logo = {}, contentType = {}, fileName = {}", id, logo, contentType, fileName);
         ProductOperations productToUpdate = getProduct(id, null);
-        if (productToUpdate.getParentId() != null) {
-            throw new ValidationException("Given product Id = " + id + " is of a subProduct");
-        }
         productLogoImageService.saveImage(productToUpdate, logo, contentType, fileName);
         log.trace("saveProductLogo end");
     }
@@ -195,9 +192,6 @@ class ProductServiceImpl implements ProductService {
         log.debug("saveProductDepictImage id = {}, logo = {}, contentType = {}, fileName = {}", id, depictImage, contentType, fileName);
         Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
         ProductOperations productToUpdate = getProduct(id, null);
-        if (productToUpdate.getParentId() != null) {
-            throw new ValidationException("Given product Id = " + id + " is of a subProduct");
-        }
         productDepictImageService.saveImage(productToUpdate, depictImage, contentType, fileName);
         log.trace("saveProductDepictImage end");
     }
