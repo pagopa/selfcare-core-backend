@@ -239,14 +239,7 @@
           "style" : "form",
           "schema" : {
             "type" : "string",
-            "enum": [
-              "GSP",
-              "PA",
-              "PG",
-              "PSP",
-              "PT",
-              "SCP"
-            ]
+            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SCP" ]
           }
         } ],
         "responses" : {
@@ -904,7 +897,6 @@
       },
       "ContractResource" : {
         "title" : "ContractResource",
-        "required" : [ "contractTemplatePath", "contractTemplateUpdatedAt", "contractTemplateVersion" ],
         "type" : "object",
         "properties" : {
           "contractTemplatePath" : {
@@ -1072,7 +1064,6 @@
       },
       "ProductResource" : {
         "title" : "ProductResource",
-        "required" : [ "contractTemplatePath", "contractTemplateUpdatedAt", "contractTemplateVersion", "createdAt", "id", "status", "title" ],
         "type" : "object",
         "properties" : {
           "backOfficeEnvironmentConfigurations" : {
@@ -1126,7 +1117,6 @@
             "description" : "Product's logo url"
           },
           "logoBgColor" : {
-            "pattern" : "^#[0-9A-F]{6}$",
             "type" : "string",
             "description" : "Product logo's background color",
             "example" : "#000000"
