@@ -10,6 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * It's better using sdk such as <a href="https://reflectoring.io/java-mapping-with-mapstruct/">mapstruct</a>, look at @classes ProductResourceMapper
+ * */
+@Deprecated
 @Slf4j
 public class ProductMapper {
 

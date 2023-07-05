@@ -12,6 +12,7 @@ import it.pagopa.selfcare.product.core.ProductService;
 import it.pagopa.selfcare.product.web.config.WebTestConfig;
 import it.pagopa.selfcare.product.web.handler.ProductExceptionsHandler;
 import it.pagopa.selfcare.product.web.model.*;
+import it.pagopa.selfcare.product.web.model.mapper.ProductResourceMapperImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -49,8 +50,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {
         ProductController.class,
         ProductExceptionsHandler.class,
-        WebTestConfig.class
-})
+        WebTestConfig.class,
+        ProductResourceMapperImpl.class})
 class ProductControllerTest {
 
     private static final String BASE_URL = "/products";
