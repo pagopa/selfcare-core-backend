@@ -22,44 +22,14 @@ public interface ProductResourceMapper {
     @Mapping(source = "roleMappings", target = "roleMappings", qualifiedByName = "toRoleMappings")
     ProductResource toResource(ProductOperations entity);
 
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "title", target = "title")
-    @Mapping(source = "identityTokenAudience", target = "identityTokenAudience")
-    @Mapping(source = "logoBgColor", target = "logoBgColor")
-    @Mapping(source = "description", target = "description")
     @Mapping(source = "roleMappings", target = "roleMappings", qualifiedByName = "toRoleMappings")
-    @Mapping(source = "urlBO", target = "urlBO")
-    @Mapping(source = "urlPublic", target = "urlPublic")
-    @Mapping(source = "contractTemplatePath", target = "contractTemplatePath")
-    @Mapping(source = "contractTemplateVersion", target = "contractTemplateVersion")
-    @Mapping(source = "institutionContractMappings", target = "institutionContractMappings")
-    @Mapping(source = "backOfficeEnvironmentConfigurations", target = "backOfficeEnvironmentConfigurations")
     ProductDto fromDto(CreateProductDto dto);
 
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "title", target = "title")
-    @Mapping(source = "contractTemplatePath", target = "contractTemplatePath")
-    @Mapping(source = "contractTemplateVersion", target = "contractTemplateVersion")
-    @Mapping(source = "institutionContractMappings", target = "institutionContractMappings")
     ProductDto fromDto(CreateSubProductDto dto);
 
-    @Mapping(source = "title", target = "title")
-    @Mapping(source = "identityTokenAudience", target = "identityTokenAudience")
-    @Mapping(source = "logoBgColor", target = "logoBgColor")
-    @Mapping(source = "description", target = "description")
     @Mapping(source = "roleMappings", target = "roleMappings", qualifiedByName = "toRoleMappings")
-    @Mapping(source = "urlBO", target = "urlBO")
-    @Mapping(source = "urlPublic", target = "urlPublic")
-    @Mapping(source = "contractTemplatePath", target = "contractTemplatePath")
-    @Mapping(source = "contractTemplateVersion", target = "contractTemplateVersion")
-    @Mapping(source = "institutionContractMappings", target = "institutionContractMappings")
-    @Mapping(source = "backOfficeEnvironmentConfigurations", target = "backOfficeEnvironmentConfigurations")
     ProductDto fromDto(UpdateProductDto dto);
 
-    @Mapping(source = "title", target = "title")
-    @Mapping(source = "contractTemplatePath", target = "contractTemplatePath")
-    @Mapping(source = "contractTemplateVersion", target = "contractTemplateVersion")
-    @Mapping(source = "institutionContractMappings", target = "institutionContractMappings")
     ProductDto fromDto(UpdateSubProductDto dto);
 
     @Named("toBackOfficeConfigurations")
