@@ -9,7 +9,7 @@ import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductStatus;
 import it.pagopa.selfcare.product.core.ProductService;
 import it.pagopa.selfcare.product.web.model.*;
-import it.pagopa.selfcare.product.web.model.mapper.ProductMapper;
+import it.pagopa.selfcare.product.web.model.mapper.ProductResourceMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,11 +32,12 @@ import java.util.stream.Collectors;
 public class ProductController {
 
     private final ProductService productService;
-
+    private final ProductResourceMapper productResourceMapper;
 
     @Autowired
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, ProductResourceMapper productResourceMapper) {
         this.productService = productService;
+        this.productResourceMapper = productResourceMapper;
     }
 
 
@@ -47,7 +48,7 @@ public class ProductController {
         log.trace("getProducts start");
         List<ProductOperations> products = productService.getProducts(true);
         List<ProductResource> productResources = products.stream()
-                .map(ProductMapper::toResource)
+                .map(productResourceMapper::toResource)
                 .collect(Collectors.toList());
         log.debug("getProducts result = {}", productResources);
         log.trace("getProducts end");
@@ -61,7 +62,7 @@ public class ProductController {
     public List<ProductTreeResource> getProductsTree() {
         log.trace("getProductsTree start");
         List<ProductOperations> products = productService.getProducts(false);
-        List<ProductTreeResource> result = ProductMapper.toTreeResource(products);
+        List<ProductTreeResource> result = productResourceMapper.toTreeResource(products);
         log.debug("getProductsTree result = {}", result);
         log.trace("getProductsTree end");
         return result;
@@ -109,7 +110,7 @@ public class ProductController {
         log.trace("getProduct start");
         log.debug("getProduct id = {}, institutionType = {}", id, institutionType);
         ProductOperations product = productService.getProduct(id, institutionType.orElse(null));
-        ProductResource productResource = ProductMapper.toResource(product);
+        ProductResource productResource = productResourceMapper.toResource(product);
         log.debug("getProduct result = {}", productResource);
         log.trace("getProduct end");
         return productResource;
@@ -123,7 +124,7 @@ public class ProductController {
                                                            String id) {
         log.trace("getProductRoles start");
         log.debug("getProductRoles id = {}", id);
-        EnumMap<PartyRole, ProductRoleInfo> productRoles = ProductMapper.toRoleMappings(productService.getProduct(id, null).getRoleMappings());
+        EnumMap<PartyRole, ProductRoleInfo> productRoles = ProductResourceMapper.toRoleMappings(productService.getProduct(id, null).getRoleMappings());
         log.debug("getProductRoles result = {}", productRoles);
         log.trace("getProductRoles end");
 
@@ -139,8 +140,8 @@ public class ProductController {
                                          CreateProductDto product) {
         log.trace("createProduct start");
         log.debug("createProduct product = {}", product);
-        ProductOperations p = productService.createProduct(ProductMapper.fromDto(product));
-        ProductResource createdProduct = ProductMapper.toResource(p);
+        ProductOperations p = productService.createProduct(productResourceMapper.fromDto(product));
+        ProductResource createdProduct = productResourceMapper.toResource(p);
         log.debug("createProduct result = {}", createdProduct);
         log.trace("createProduct end");
         return createdProduct;
@@ -157,10 +158,10 @@ public class ProductController {
                                             CreateSubProductDto product) {
         log.trace("createProduct start");
         log.debug("createProduct product = {}", product);
-        ProductOperations productOps = ProductMapper.fromDto(product);
+        ProductOperations productOps = productResourceMapper.fromDto(product);
         productOps.setParentId(id);
         ProductOperations p = productService.createProduct(productOps);
-        ProductResource createdProduct = ProductMapper.toResource(p);
+        ProductResource createdProduct = productResourceMapper.toResource(p);
         log.debug("createProduct result = {}", createdProduct);
         log.trace("createProduct end");
         return createdProduct;
@@ -178,8 +179,8 @@ public class ProductController {
                                          UpdateProductDto product) {
         log.trace("updateProduct start");
         log.debug("updateProduct id = {}, product = {}", id, product);
-        ProductOperations updatedProduct = productService.updateProduct(id, ProductMapper.fromDto(product));
-        ProductResource result = ProductMapper.toResource(updatedProduct);
+        ProductOperations updatedProduct = productService.updateProduct(id, productResourceMapper.fromDto(product));
+        ProductResource result = productResourceMapper.toResource(updatedProduct);
         log.debug("updateProduct result = {}", result);
         log.trace("updateProduct end");
         return result;
@@ -196,8 +197,8 @@ public class ProductController {
                                                 UpdateSubProductDto product) {
         log.trace("updateSubProduct start");
         log.debug("updateSubProduct id = {}, product = {}", id, product);
-        ProductOperations updatedProduct = productService.updateProduct(id, ProductMapper.fromDto(product));
-        ProductResource result = ProductMapper.toResource(updatedProduct);
+        ProductOperations updatedProduct = productService.updateProduct(id, productResourceMapper.fromDto(product));
+        ProductResource result = productResourceMapper.toResource(updatedProduct);
         log.debug("updateSubProduct result = {}", result);
         log.trace("updateSubProduct end");
         return result;
