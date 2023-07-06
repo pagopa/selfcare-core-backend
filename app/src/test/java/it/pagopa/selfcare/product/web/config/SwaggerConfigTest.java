@@ -2,6 +2,7 @@ package it.pagopa.selfcare.product.web.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.selfcare.product.core.ProductService;
+import it.pagopa.selfcare.product.web.model.mapper.ProductResourceMapperImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,7 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(classes = {
         SwaggerConfig.class,
-        WebConfig.class
+        WebConfig.class,
+        ProductResourceMapperImpl.class
 })
 @EnableOpenApi
 @EnableWebMvc
