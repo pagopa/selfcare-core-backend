@@ -40,6 +40,9 @@ public class ProductResource {
     @ApiModelProperty(value = "${swagger.product.model.status}")
     private ProductStatus status;
 
+    @ApiModelProperty(value = "${swagger.product.model.delegable}")
+    private boolean delegable;
+
     @ApiModelProperty(value = "${swagger.product.model.contractTemplatePath}")
     private String contractTemplatePath;
 

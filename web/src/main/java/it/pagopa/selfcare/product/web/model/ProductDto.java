@@ -30,6 +30,7 @@ public class ProductDto implements ProductOperations {
     private String contractTemplateVersion;
     private Map<InstitutionType, ? extends ContractOperations> institutionContractMappings;
     private boolean enabled = true;
+    private boolean delegable;
     private ProductStatus status = ProductStatus.TESTING;
     private String parentId;
     private String identityTokenAudience;

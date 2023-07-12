@@ -97,5 +97,8 @@ public interface ProductOperations {
     String getRoleManagementURL();
 
     void setRoleManagementURL(String roleManagementURL);
+    boolean isDelegable();
+
+    void setDelegable(boolean delegable);
 
 }
