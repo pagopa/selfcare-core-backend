@@ -29,6 +29,7 @@ public class DummyProduct implements ProductOperations {
     private Map<InstitutionType, ? extends ContractOperations> institutionContractMappings;
     private String identityTokenAudience;
     private boolean enabled = true;
+    private boolean delegable;
     private String parentId;
     private Map<String, ? extends BackOfficeConfigurations> backOfficeEnvironmentConfigurations;
     private String roleManagementURL;

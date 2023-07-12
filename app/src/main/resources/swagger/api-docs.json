@@ -1096,6 +1096,11 @@
             "description" : "User who created/activated the resource",
             "format" : "uuid"
           },
+          "delegable" : {
+            "type" : "boolean",
+            "description" : "If a product is delegable to a technical partner ",
+            "example" : false
+          },
           "depictImageUrl" : {
             "type" : "string",
             "description" : "Product's depiction image url"

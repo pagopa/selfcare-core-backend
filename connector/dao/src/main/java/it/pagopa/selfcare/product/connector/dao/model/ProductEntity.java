@@ -49,6 +49,7 @@ public class ProductEntity implements ProductOperations, Persistable<String> {
     private Map<InstitutionType, ? extends ContractOperations> institutionContractMappings;
     @FieldNameConstants.Include
     private boolean enabled = true;
+    private boolean delegable;
     @FieldNameConstants.Include
     private ProductStatus status;
     private String parentId;
