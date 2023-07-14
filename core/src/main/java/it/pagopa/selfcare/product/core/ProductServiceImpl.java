@@ -42,12 +42,10 @@ class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductOperations> getProducts(boolean rootOnly) {
         log.trace("getProducts start");
-        List<ProductOperations> products;
-        if (rootOnly) {
-            products = productConnector.findByParentAndStatusIsNotInactive(null);
-        } else {
-            products = productConnector.findByStatusIsNot(ProductStatus.INACTIVE);
-        }
+        List<ProductOperations> products = rootOnly
+            ? productConnector.findByParentAndStatusIsNotInactive(null)
+            : productConnector.findByStatusIsNot(ProductStatus.INACTIVE);
+
         log.debug("getProducts result = {}", products);
         log.trace("getProducts end");
         return products;
