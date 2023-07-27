@@ -12,6 +12,7 @@ import it.pagopa.selfcare.product.core.ProductService;
 import it.pagopa.selfcare.product.web.config.WebTestConfig;
 import it.pagopa.selfcare.product.web.handler.ProductExceptionsHandler;
 import it.pagopa.selfcare.product.web.model.*;
+import it.pagopa.selfcare.product.web.model.mapper.ProductResourceMapperImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -49,8 +50,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {
         ProductController.class,
         ProductExceptionsHandler.class,
-        WebTestConfig.class
-})
+        WebTestConfig.class,
+        ProductResourceMapperImpl.class})
 class ProductControllerTest {
 
     private static final String BASE_URL = "/products";
@@ -181,6 +182,17 @@ class ProductControllerTest {
                 });
         assertNotNull(products);
         assertFalse(products.isEmpty());
+
+        assertProduct(product, products.get(0));
+    }
+
+    private void assertProduct(ProductOperations expected, ProductResource actual) {
+
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getDescription(), actual.getDescription());
+        assertEquals(expected.getParentId(), actual.getParentId());
+        assertEquals(expected.getContractTemplatePath(), actual.getContractTemplatePath());
+        assertEquals(expected.isDelegable(), actual.isDelegable());
     }
 
     @Test
@@ -207,24 +219,25 @@ class ProductControllerTest {
 
     @Test
     void getProduct_exists() throws Exception {
+
+        final ProductOperations product = mockInstance(new ProductDto(), "setId", "setRoleMappings", "setCreatedBy", "setModifiedBy");
+        product.setCreatedBy(randomUUID().toString());
+        product.setModifiedBy(randomUUID().toString());
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+        for (PartyRole partyRole : PartyRole.values()) {
+            ProductRoleInfo productRoleInfo = new ProductRoleInfo();
+            List<ProductRole> roles = new ArrayList<>();
+            roles.add(mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+            roles.add(mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+            productRoleInfo.setRoles(roles);
+            roleMappings.put(partyRole, productRoleInfo);
+        }
+        product.setRoleMappings(roleMappings);
+
         // given
         when(productServiceMock.getProduct(anyString(), any()))
                 .thenAnswer(invocationOnMock -> {
-                    String id = invocationOnMock.getArgument(0, String.class);
-                    ProductOperations product = mockInstance(new ProductDto(), "setId", "setRoleMappings", "setCreatedBy", "setModifiedBy");
-                    product.setId(id);
-                    product.setCreatedBy(randomUUID().toString());
-                    product.setModifiedBy(randomUUID().toString());
-                    EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
-                    for (PartyRole partyRole : PartyRole.values()) {
-                        ProductRoleInfo productRoleInfo = new ProductRoleInfo();
-                        List<ProductRole> roles = new ArrayList<>();
-                        roles.add(mockInstance(new ProductRole(), partyRole.ordinal() + 1));
-                        roles.add(mockInstance(new ProductRole(), partyRole.ordinal() + 2));
-                        productRoleInfo.setRoles(roles);
-                        roleMappings.put(partyRole, productRoleInfo);
-                    }
-                    product.setRoleMappings(roleMappings);
+                    product.setId(invocationOnMock.getArgument(0, String.class));
                     return product;
                 });
         // when
@@ -235,8 +248,9 @@ class ProductControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
         // then
-        ProductResource product = objectMapper.readValue(result.getResponse().getContentAsString(), ProductResource.class);
+        ProductResource actual = objectMapper.readValue(result.getResponse().getContentAsString(), ProductResource.class);
         assertNotNull(product);
+        assertProduct(product, actual);
     }
 
     @Test
