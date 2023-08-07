@@ -1,3 +1,5 @@
+[![Build Status](https://dev.azure.com/pagopaspa/selfcare-platform-app-projects/_apis/build/status%2Fselfcare_legacy%2Fselfcare-ms-product%2Fselfcare-ms-product.deploy?branchName=main)](https://dev.azure.com/pagopaspa/selfcare-platform-app-projects/_build/latest?definitionId=1123&branchName=main)
+
 # selfcare-ms-product
 
 ## Configuration Properties
