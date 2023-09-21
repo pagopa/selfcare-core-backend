@@ -17,6 +17,8 @@ public interface ProductService {
 
     ProductOperations getProduct(String id, InstitutionType institutionType);
 
+    ProductOperations getProductIsValid(String id);
+
     ProductOperations updateProduct(String id, ProductOperations product);
 
     void updateProductStatus(String id, ProductStatus status);
