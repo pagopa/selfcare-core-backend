@@ -124,6 +124,30 @@ class ProductServiceImpl implements ProductService {
         return foundProduct;
     }
 
+    public ProductOperations getProductIsValid(String id) {
+        log.trace("getProduct start");
+        log.debug("getProduct id = {}", id);
+        Assert.hasText(id, REQUIRED_PRODUCT_ID_MESSAGE);
+        ProductOperations foundProduct = productConnector.findById(id).orElseThrow(ResourceNotFoundException::new);
+        ProductOperations baseProduct = null;
+        if (foundProduct.getParentId() != null) {
+            baseProduct = productConnector.findById(foundProduct.getParentId()).orElseThrow(ResourceNotFoundException::new);
+            if (baseProduct.getStatus() == ProductStatus.PHASE_OUT) {
+                return null;
+            } else if  (foundProduct.getStatus() != ProductStatus.PHASE_OUT){
+                foundProduct.setProductOperations(baseProduct);
+                return foundProduct;
+            }
+        } else if (foundProduct.getStatus() != ProductStatus.PHASE_OUT) {
+            return foundProduct;
+        }
+
+        log.debug("getProduct result = {}", foundProduct);
+        log.debug("getBaseProduct result = {}", baseProduct);
+        log.trace("getProduct end");
+        return null;
+    }
+
 
     @Override
     public ProductOperations updateProduct(String id, ProductOperations product) {
