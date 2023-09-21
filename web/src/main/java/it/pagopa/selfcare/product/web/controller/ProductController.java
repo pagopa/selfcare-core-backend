@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -231,6 +232,21 @@ public class ProductController {
         log.debug("deleteProduct id = {}", id);
         productService.deleteProduct(id);
         log.trace("deleteProduct end");
+    }
+    @GetMapping("/{id}/valid")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "", notes = "${swagger.product.operation.getProduct}")
+    public ResponseEntity <ProductResource> getProductIsValid(@ApiParam("${swagger.product.model.id}")
+                                      @PathVariable("id")
+                                      String id) {
+        log.trace("getProduct start");
+        ProductOperations product = productService.getProductIsValid(id);
+        ProductResource productResource = productResourceMapper.toResource(product);
+        log.debug("getProduct result = {}", productResource);
+        log.trace("getProduct end");
+        if(productResource != null) {
+            return ResponseEntity.ok().body(productResource);
+        } else return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

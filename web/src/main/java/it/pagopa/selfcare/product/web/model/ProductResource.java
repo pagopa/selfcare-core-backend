@@ -2,6 +2,7 @@ package it.pagopa.selfcare.product.web.model;
 
 import io.swagger.annotations.ApiModelProperty;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
+import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductStatus;
 import lombok.Data;
 
@@ -79,4 +80,5 @@ public class ProductResource {
     @ApiModelProperty(value = "${swagger.product.model.roleManagementURL}")
     private String roleManagementURL;
 
+    private ProductOperations productOperations;
 }

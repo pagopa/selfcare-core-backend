@@ -57,6 +57,17 @@ public class ProductEntity implements ProductOperations, Persistable<String> {
     private Map<String, ? extends BackOfficeConfigurations> backOfficeEnvironmentConfigurations;
     @Transient
     private boolean isNew = true;
+    private ProductOperations productOperations;
+
+    @Override
+    public ProductOperations getProductOperations() {
+        return productOperations;
+    }
+
+    @Override
+    public void setProductOperations(ProductOperations productOperations) {
+        this.productOperations = productOperations;
+    }
 
 
     @Data

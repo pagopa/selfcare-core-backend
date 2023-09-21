@@ -948,5 +948,86 @@ class ProductServiceImplTest {
 
     }
 
+   @Test
+   void getProductAndBaseProductIsValid() {
+       //given
+       String productId = "prod-io-premium";
+       String baseProductId = "prod-io";
+       ProductOperations foundProduct = new DummyProduct();
+       foundProduct.setId(productId);
+       foundProduct.setStatus(ProductStatus.ACTIVE);
+       foundProduct.setParentId(baseProductId);
+       ProductOperations baseProduct = new DummyProduct();
+       baseProduct.setId(baseProductId);
+       baseProduct.setStatus(ProductStatus.ACTIVE);
+       when(productConnectorMock.findById(productId))
+               .thenReturn(Optional.of(foundProduct));
+       when(productConnectorMock.findById(baseProductId))
+               .thenReturn(Optional.of(baseProduct));
+       // when
+       ProductOperations product = productService.getProductIsValid(productId);
+       // then
+       assertNotNull(product);
+       verify(productConnectorMock, times(1)).findById(productId);
+       verify(productConnectorMock, times(1)).findById(baseProductId);
+   }
+
+    @Test
+    void getProductIsValidAndBaseProductIsNotValid() {
+        //given
+        String productId = "prod-io-premium";
+        String baseProductId = "prod-io";
+        ProductOperations foundProduct = new DummyProduct();
+        foundProduct.setId(productId);
+        foundProduct.setStatus(ProductStatus.ACTIVE);
+        foundProduct.setParentId(baseProductId);
+        ProductOperations baseProduct = new DummyProduct();
+        baseProduct.setId(baseProductId);
+        baseProduct.setStatus(ProductStatus.PHASE_OUT);
+        when(productConnectorMock.findById(productId))
+                .thenReturn(Optional.of(foundProduct));
+        when(productConnectorMock.findById(baseProductId))
+                .thenReturn(Optional.of(baseProduct));
+        // when
+        ProductOperations product = productService.getProductIsValid(productId);
+        // then
+        assertNull(product);
+        verify(productConnectorMock, times(1)).findById(productId);
+        verify(productConnectorMock, times(1)).findById(baseProductId);
+    }
+
+    @Test
+    void getProductIsValid() {
+        //given
+        String productId = "prod-io";
+        ProductOperations foundProduct = new DummyProduct();
+        foundProduct.setId(productId);
+        foundProduct.setStatus(ProductStatus.ACTIVE);
+        when(productConnectorMock.findById(productId))
+                .thenReturn(Optional.of(foundProduct));
+        // when
+        ProductOperations product = productService.getProductIsValid(productId);
+        // then
+        assertNotNull(product);
+        verify(productConnectorMock, times(1)).findById(productId);
+        verifyNoMoreInteractions(productConnectorMock);
+    }
+
+    @Test
+    void getProductIsNotValid() {
+        //given
+        String productId = "prod-io";
+        ProductOperations foundProduct = new DummyProduct();
+        foundProduct.setId(productId);
+        foundProduct.setStatus(ProductStatus.PHASE_OUT);
+        when(productConnectorMock.findById(productId))
+                .thenReturn(Optional.of(foundProduct));
+        // when
+        ProductOperations product = productService.getProductIsValid(productId);
+        // then
+        assertNull(product);
+        verify(productConnectorMock, times(1)).findById(productId);
+        verifyNoMoreInteractions(productConnectorMock);
+    }
 
 }
