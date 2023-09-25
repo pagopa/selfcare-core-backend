@@ -33,5 +33,16 @@ public class DummyProduct implements ProductOperations {
     private String parentId;
     private Map<String, ? extends BackOfficeConfigurations> backOfficeEnvironmentConfigurations;
     private String roleManagementURL;
+    private ProductOperations productOperations;
 
+
+    @Override
+    public ProductOperations getProductOperations() {
+        return productOperations;
+    }
+
+    @Override
+    public void setProductOperations(ProductOperations productOperations) {
+        this.productOperations = productOperations;
+    }
 }

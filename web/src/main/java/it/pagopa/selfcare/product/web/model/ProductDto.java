@@ -35,5 +35,16 @@ public class ProductDto implements ProductOperations {
     private String parentId;
     private String identityTokenAudience;
     private Map<String, ? extends BackOfficeConfigurations> backOfficeEnvironmentConfigurations;
+    private ProductOperations productOperations;
 
+
+    @Override
+    public ProductOperations getProductOperations() {
+        return productOperations;
+    }
+
+    @Override
+    public void setProductOperations(ProductOperations productOperations) {
+        this.productOperations = productOperations;
+    }
 }

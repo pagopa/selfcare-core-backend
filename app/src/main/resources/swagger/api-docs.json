@@ -876,10 +876,95 @@
           "bearerAuth" : [ "global" ]
         } ]
       }
+    },
+    "/products/{id}/valid" : {
+      "get" : {
+        "tags" : [ "product" ],
+        "summary" : "getProductIsValid",
+        "description" : "Service that returns the information for a single product given its product id",
+        "operationId" : "getProductIsValidUsingGET",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "Product's unique identifier",
+          "required" : true,
+          "style" : "simple",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProductResource"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ "global" ]
+        } ]
+      }
     }
   },
   "components" : {
     "schemas" : {
+      "BackOfficeConfigurations" : {
+        "title" : "BackOfficeConfigurations",
+        "type" : "object",
+        "properties" : {
+          "identityTokenAudience" : {
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          }
+        }
+      },
       "BackOfficeConfigurationsResource" : {
         "title" : "BackOfficeConfigurationsResource",
         "required" : [ "identityTokenAudience", "url" ],
@@ -892,6 +977,22 @@
           "url" : {
             "type" : "string",
             "description" : "URL that redirects to the back-office section, where is possible to manage the product"
+          }
+        }
+      },
+      "ContractOperations" : {
+        "title" : "ContractOperations",
+        "type" : "object",
+        "properties" : {
+          "contractTemplatePath" : {
+            "type" : "string"
+          },
+          "contractTemplateUpdatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "contractTemplateVersion" : {
+            "type" : "string"
           }
         }
       },
@@ -1062,6 +1163,100 @@
         },
         "description" : "A \"problem detail\" as a way to carry machine-readable details of errors (https://datatracker.ietf.org/doc/html/rfc7807)"
       },
+      "ProductOperations" : {
+        "title" : "ProductOperations",
+        "type" : "object",
+        "properties" : {
+          "backOfficeEnvironmentConfigurations" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/BackOfficeConfigurations"
+            }
+          },
+          "contractTemplatePath" : {
+            "type" : "string"
+          },
+          "contractTemplateUpdatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "contractTemplateVersion" : {
+            "type" : "string"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "createdBy" : {
+            "type" : "string"
+          },
+          "delegable" : {
+            "type" : "boolean"
+          },
+          "depictImageUrl" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "enabled" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "identityTokenAudience" : {
+            "type" : "string"
+          },
+          "institutionContractMappings" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/ContractOperations"
+            }
+          },
+          "logo" : {
+            "type" : "string"
+          },
+          "logoBgColor" : {
+            "type" : "string"
+          },
+          "modifiedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "modifiedBy" : {
+            "type" : "string"
+          },
+          "parentId" : {
+            "type" : "string"
+          },
+          "productOperations" : {
+            "$ref" : "#/components/schemas/ProductOperations"
+          },
+          "roleManagementURL" : {
+            "type" : "string"
+          },
+          "roleMappings" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/ProductRoleInfoOperations"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "ACTIVE", "INACTIVE", "PHASE_OUT", "TESTING" ]
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "urlBO" : {
+            "type" : "string"
+          },
+          "urlPublic" : {
+            "type" : "string"
+          }
+        }
+      },
       "ProductResource" : {
         "title" : "ProductResource",
         "type" : "object",
@@ -1140,6 +1335,9 @@
             "type" : "string",
             "description" : "Root parent of the sub product"
           },
+          "productOperations" : {
+            "$ref" : "#/components/schemas/ProductOperations"
+          },
           "roleManagementURL" : {
             "type" : "string",
             "description" : "Url of the utilities management"
@@ -1186,6 +1384,21 @@
           "label" : {
             "type" : "string",
             "description" : "Product role label"
+          }
+        }
+      },
+      "ProductRoleInfoOperations" : {
+        "title" : "ProductRoleInfoOperations",
+        "type" : "object",
+        "properties" : {
+          "multiroleAllowed" : {
+            "type" : "boolean"
+          },
+          "roles" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ProductRoleOperations"
+            }
           }
         }
       },

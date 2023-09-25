@@ -537,5 +537,67 @@ class ProductControllerTest {
 
     }
 
+    @Test
+    void getProductIsValid() throws Exception {
+
+        String id = "prod-io-premium";
+
+        ProductOperations product = new ProductDto();
+        ProductOperations baseProduct = new ProductDto();
+        baseProduct.setId("prod-io");
+        product.setId(id);
+        product.setParentId("prod-io");
+        product.setCreatedBy(randomUUID().toString());
+        product.setModifiedBy(randomUUID().toString());
+        EnumMap<PartyRole, ProductRoleInfo> roleMappings = new EnumMap<>(PartyRole.class);
+        for (PartyRole partyRole : PartyRole.values()) {
+            ProductRoleInfo productRoleInfo = new ProductRoleInfo();
+            List<ProductRole> roles = new ArrayList<>();
+            roles.add(mockInstance(new ProductRole(), partyRole.ordinal() + 1));
+            roles.add(mockInstance(new ProductRole(), partyRole.ordinal() + 2));
+            productRoleInfo.setRoles(roles);
+            roleMappings.put(partyRole, productRoleInfo);
+        }
+        product.setRoleMappings(roleMappings);
+        product.setProductOperations(baseProduct);
+
+        // given
+        when(productServiceMock.getProductIsValid(id)).thenReturn(product);
+
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/{id}/valid", id)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+
+        // then
+        verify(productServiceMock, times(1))
+                .getProductIsValid(anyString());
+        verifyNoMoreInteractions(productServiceMock);
+    }
+@Test
+    void getProductIsNotValid() throws Exception {
+
+        String id = "prod-io-premium";
+        ProductOperations product = null;
+
+        // given
+        when(productServiceMock.getProductIsValid(id)).thenReturn(product);
+
+        // when
+        mvc.perform(MockMvcRequestBuilders
+                        .get(BASE_URL + "/{id}/valid", id)
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .accept(APPLICATION_JSON_VALUE))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+
+        // then
+        verify(productServiceMock, times(1))
+                .getProductIsValid(anyString());
+        verifyNoMoreInteractions(productServiceMock);
+    }
 
 }

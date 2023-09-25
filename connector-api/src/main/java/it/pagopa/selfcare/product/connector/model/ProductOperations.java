@@ -101,4 +101,7 @@ public interface ProductOperations {
 
     void setDelegable(boolean delegable);
 
+    ProductOperations getProductOperations();
+
+    void setProductOperations(ProductOperations productOperations);
 }
