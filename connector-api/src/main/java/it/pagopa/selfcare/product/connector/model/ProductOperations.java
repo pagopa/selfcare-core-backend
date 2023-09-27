@@ -1,5 +1,7 @@
 package it.pagopa.selfcare.product.connector.model;
 
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
+
 import java.time.Instant;
 import java.util.EnumMap;
 import java.util.Map;

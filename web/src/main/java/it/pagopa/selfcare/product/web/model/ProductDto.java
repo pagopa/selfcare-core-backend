@@ -1,6 +1,7 @@
 package it.pagopa.selfcare.product.web.model;
 
 
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.product.connector.model.*;
 import lombok.Data;
 
