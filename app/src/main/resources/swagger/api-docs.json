@@ -239,7 +239,7 @@
           "style" : "form",
           "schema" : {
             "type" : "string",
-            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SCP" ]
+            "enum" : [ "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
           }
         } ],
         "responses" : {

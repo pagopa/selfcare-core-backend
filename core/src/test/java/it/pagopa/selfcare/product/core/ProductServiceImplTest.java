@@ -1,5 +1,6 @@
 package it.pagopa.selfcare.product.core;
 
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.commons.utils.TestUtils;
 import it.pagopa.selfcare.product.connector.api.ProductConnector;
 import it.pagopa.selfcare.product.connector.exception.ResourceAlreadyExistsException;
