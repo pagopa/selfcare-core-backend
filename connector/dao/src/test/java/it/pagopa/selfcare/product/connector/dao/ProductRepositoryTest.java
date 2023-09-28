@@ -1,8 +1,8 @@
 package it.pagopa.selfcare.product.connector.dao;
 
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.product.connector.dao.config.DaoTestConfig;
 import it.pagopa.selfcare.product.connector.dao.model.ProductEntity;
-import it.pagopa.selfcare.product.connector.model.InstitutionType;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductStatus;
 import org.junit.jupiter.api.AfterEach;

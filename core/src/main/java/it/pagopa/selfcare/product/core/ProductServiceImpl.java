@@ -1,9 +1,13 @@
 package it.pagopa.selfcare.product.core;
 
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.product.connector.api.ProductConnector;
 import it.pagopa.selfcare.product.connector.exception.ResourceAlreadyExistsException;
 import it.pagopa.selfcare.product.connector.exception.ResourceNotFoundException;
-import it.pagopa.selfcare.product.connector.model.*;
+import it.pagopa.selfcare.product.connector.model.PartyRole;
+import it.pagopa.selfcare.product.connector.model.ProductOperations;
+import it.pagopa.selfcare.product.connector.model.ProductRoleInfoOperations;
+import it.pagopa.selfcare.product.connector.model.ProductStatus;
 import it.pagopa.selfcare.product.core.exception.InvalidRoleMappingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
