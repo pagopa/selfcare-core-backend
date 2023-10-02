@@ -69,10 +69,10 @@ public class ProductController {
         return result;
     }
 
-    @PutMapping(value = "/{id}/logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{id}/logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.product.operation.saveProductLogo}")
-    public Object saveProductLogo(@ApiParam("${swagger.product.model.id}")
+    public ResponseEntity<String> saveProductLogo(@ApiParam("${swagger.product.model.id}")
                                   @PathVariable("id") String id,
                                   @ApiParam("${swagger.product.model.logoImage}")
                                   @RequestPart("logo") MultipartFile logo) throws IOException {
@@ -81,13 +81,13 @@ public class ProductController {
         log.debug("saveProductLogo id = {}, logo = {}", id, logo);
         productService.saveProductLogo(id, logo.getInputStream(), logo.getContentType(), logo.getOriginalFilename());
         log.trace("saveProductLogo end");
-        return null;
+        return ResponseEntity.ok().build();
     }
 
-    @PutMapping(value = "/{id}/depict-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/{id}/depict-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.product.operation.saveProductDepictImage}")
-    public Object saveProductDepictImage(@ApiParam("${swagger.product.model.id}")
+    public ResponseEntity<String> saveProductDepictImage(@ApiParam("${swagger.product.model.id}")
                                          @PathVariable("id") String id,
                                          @ApiParam("${swagger.product.model.depictImage}")
                                          @RequestPart("depictImage") MultipartFile depictImage) throws IOException {
@@ -95,7 +95,7 @@ public class ProductController {
         log.debug("saveProductDepictImage id = {}, logo = {}", id, depictImage);
         productService.saveProductDepictImage(id, depictImage.getInputStream(), depictImage.getContentType(), depictImage.getOriginalFilename());
         log.trace("saveProductDepictImage end");
-        return null;
+        return ResponseEntity.ok().build();
     }
 
 

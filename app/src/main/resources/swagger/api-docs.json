@@ -462,12 +462,12 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object"
+                  "type" : "string"
                 }
               },
               "multipart/form-data" : {
                 "schema" : {
-                  "type" : "object"
+                  "type" : "string"
                 }
               }
             }
@@ -547,12 +547,12 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object"
+                  "type" : "string"
                 }
               },
               "multipart/form-data" : {
                 "schema" : {
-                  "type" : "object"
+                  "type" : "string"
                 }
               }
             }

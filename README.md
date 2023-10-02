@@ -1,6 +1,28 @@
-# selfcare-ms-product
+# Microservice ms-product
 
-## Configuration Properties
+Microservice responsible for providing all the information regarding the products managed by selfcare. It is needed for identify which product is valid for onboarding, which roles is enabled on product and if this one is delegable for a technology partner
+
+## Required Configuration Properties
+
+Before running you must set these properties as environment variables.
+
+
+| **Property**                                  | **Environment Variable**                 | **Default** | **Required** |
+|-----------------------------------------------|------------------------------------------|-------------|:------------:|
+| spring.data.mongodb.uri<br/>                  | MONGODB_CONNECTION_URI                   |             |     yes      |
+| jwt.signingKey<br/>                           | JWT_TOKEN_PUBLIC_KEY                     |             |     yes      |
+
+## Running the application
+
+You can run your application using:
+```shell script
+./mvnw install
+./mvnw spring-boot:run -pl app
+```
+
+Application will respond to the url http://localhost:8080
+
+## All Configuration Properties
 
 | **Application properties** |
 |:--------------------------:|
