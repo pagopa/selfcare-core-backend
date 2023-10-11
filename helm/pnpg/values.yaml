@@ -82,3 +82,6 @@ affinity: { }
 config:
   MONGODB_NAME: selcProduct
   APPLICATIONINSIGHTS_ROLE_NAME: "ms-product"
+
+selectorLabels:
+  product: "pnpg"
