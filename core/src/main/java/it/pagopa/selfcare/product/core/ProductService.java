@@ -1,6 +1,6 @@
 package it.pagopa.selfcare.product.core;
 
-import it.pagopa.selfcare.product.connector.model.InstitutionType;
+import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductStatus;
 
