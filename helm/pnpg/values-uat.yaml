@@ -14,7 +14,7 @@ ingress:
       paths:
         - path: /ms-product/v1/(.*)
           pathType: ImplementationSpecific
-
+    
 autoscaling:
   enabled: false
   minReplicas: 1
