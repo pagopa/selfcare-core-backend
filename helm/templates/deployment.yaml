@@ -81,7 +81,12 @@ spec:
             successThreshold: 1
             failureThreshold: 30
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            requests:
+              cpu: "0.1"
+              memory: "0.2Gi"
+            limits:
+              cpu: "0.5"
+              memory: "0.4Gi"
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
