@@ -82,11 +82,11 @@ spec:
             failureThreshold: 30
           resources:
             requests:
-              cpu: "0.1"
-              memory: "0.2Gi"
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
             limits:
-              cpu: "0.5"
-              memory: "0.4Gi"
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
