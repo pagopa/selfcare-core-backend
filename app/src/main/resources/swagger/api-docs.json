@@ -1288,7 +1288,7 @@
           },
           "createdBy" : {
             "type" : "string",
-            "description" : "User who created/activated the resource",
+            "description" : "User who created/activated the resource pippo",
             "format" : "uuid"
           },
           "delegable" : {
