@@ -3,14 +3,14 @@ on:
   pull_request:
     branches:
       - release-dev
-    types: [ closed ]
+    types: [ opened ]
   workflow_dispatch: #allow to run github action manually
 permissions:
   contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
+    #if: github.event.pull_request.merged == true
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
@@ -23,9 +23,8 @@ jobs:
       run: mvn test -Dtest=SwaggerConfigTest#swaggerSpringPlugin -DfailIfNoTests=false
     - name: Commit api-docs
       run: |
-          echo  'PR title: ${{ github.event.pull_request.title }}'
           git ls-files ./app** | grep 'api-docs*' | xargs git add
           git config --global user.email "selfcare-github@pagopa.it"
           git config --global user.name "selfcare-github-bot"
-          git commit -m "Update Swagger documentation ${{ github.event.pull_request.title }}" || exit 0
+          git commit -m "Update Swagger documentation" || exit 0
           git push origin ${{ github.ref_name}}
