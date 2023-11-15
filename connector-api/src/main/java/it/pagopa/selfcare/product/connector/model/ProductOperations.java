@@ -106,4 +106,7 @@ public interface ProductOperations {
     ProductOperations getProductOperations();
 
     void setProductOperations(ProductOperations productOperations);
+
+    boolean isInvoiceable();
+    void setInvoiceable(boolean invoiceable);
 }

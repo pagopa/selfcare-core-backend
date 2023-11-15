@@ -81,4 +81,7 @@ public class ProductResource {
     private String roleManagementURL;
 
     private ProductOperations productOperations;
+
+    @ApiModelProperty(value = "${swagger.product.model.invoiceable}")
+    private boolean invoiceable;
 }
