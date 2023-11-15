@@ -193,6 +193,7 @@ class ProductControllerTest {
         assertEquals(expected.getParentId(), actual.getParentId());
         assertEquals(expected.getContractTemplatePath(), actual.getContractTemplatePath());
         assertEquals(expected.isDelegable(), actual.isDelegable());
+        assertEquals(expected.isInvoiceable(), actual.isInvoiceable());
     }
 
     @Test

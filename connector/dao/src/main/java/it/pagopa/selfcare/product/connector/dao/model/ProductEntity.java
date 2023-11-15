@@ -59,6 +59,7 @@ public class ProductEntity implements ProductOperations, Persistable<String> {
     @Transient
     private boolean isNew = true;
     private ProductOperations productOperations;
+    private boolean invoiceable;
 
     @Override
     public ProductOperations getProductOperations() {
@@ -124,6 +125,7 @@ public class ProductEntity implements ProductOperations, Persistable<String> {
         parentId = product.getParentId();
         identityTokenAudience = product.getIdentityTokenAudience();
         backOfficeEnvironmentConfigurations = product.getBackOfficeEnvironmentConfigurations();
+        invoiceable = product.isInvoiceable();
     }
 
 

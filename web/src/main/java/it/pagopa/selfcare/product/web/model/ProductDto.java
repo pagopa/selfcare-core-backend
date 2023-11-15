@@ -37,6 +37,7 @@ public class ProductDto implements ProductOperations {
     private String identityTokenAudience;
     private Map<String, ? extends BackOfficeConfigurations> backOfficeEnvironmentConfigurations;
     private ProductOperations productOperations;
+    private boolean invoiceable;
 
 
     @Override
