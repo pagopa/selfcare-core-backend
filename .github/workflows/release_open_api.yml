@@ -8,10 +8,6 @@ on:
 permissions:
   contents: write
 jobs:
-  openapi-compatiable:
-    strategy:
-      max-parallel: 1
-      fail-fast: false
   build:
     runs-on: ubuntu-latest
     #if: github.event.pull_request.merged == true
