@@ -11,6 +11,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions: write-all
     #if: github.event.pull_request.merged == true
     steps:
     - uses: actions/checkout@v3
