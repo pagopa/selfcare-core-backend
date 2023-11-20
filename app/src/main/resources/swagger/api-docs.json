@@ -1362,11 +1362,6 @@
             "description" : "Product's status",
             "enum" : [ "ACTIVE", "INACTIVE", "PHASE_OUT", "TESTING" ]
           },
-          "test" : {
-            "type" : "boolean",
-            "description" : "If a product is invoiceable",
-            "example" : false
-          },
           "title" : {
             "type" : "string",
             "description" : "Product's title"
