@@ -1346,7 +1346,7 @@
           "productOperations" : {
             "$ref" : "#/components/schemas/ProductOperations"
           },
-          "roleManagementURL" : {
+          "roleManagementURLs" : {
             "type" : "string",
             "description" : "Url of the utilities management"
           },
@@ -1361,11 +1361,6 @@
             "type" : "string",
             "description" : "Product's status",
             "enum" : [ "ACTIVE", "INACTIVE", "PHASE_OUT", "TESTING" ]
-          },
-          "test" : {
-            "type" : "boolean",
-            "description" : "If a product is invoiceable",
-            "example" : false
           },
           "title" : {
             "type" : "string",
