@@ -78,7 +78,7 @@ public class ProductResource {
     private Map<String, BackOfficeConfigurationsResource> backOfficeEnvironmentConfigurations;
 
     @ApiModelProperty(value = "${swagger.product.model.roleManagementURL}")
-    private String roleManagementURLs;
+    private String roleManagementURL;
 
     private ProductOperations productOperations;
 
