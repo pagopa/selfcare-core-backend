@@ -24,12 +24,12 @@ jobs:
     - name: Check out HEAD revision
       uses: actions/checkout@v2
       with:
-          ref: release-dev
+          ref: ${{ github.head_ref }}
           path: head
     - name: Check out BASE revision
       uses: actions/checkout@v2
       with:
-          ref: ${{ github.head_ref }}
+          ref: release-dev
           path: base
     - name: Build with Maven
       run: mvn test -Dtest=SwaggerConfigTest#swaggerSpringPlugin -DfailIfNoTests=false
