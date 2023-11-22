@@ -47,6 +47,7 @@ jobs:
     - name: Check report diff
       run: |
           zip -r diff-reports.zip output/
+          cd /output
           result=$(grep -Po 'Incompatible' api-docs.html)
           if [ -z $result ]; then
             core.setFailed('New swagger is different from old one. Action is going to fail!!!!')
