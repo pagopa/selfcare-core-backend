@@ -40,17 +40,15 @@ jobs:
             base_spec: base/app/src/main/resources/swagger/api-docs.json
             output_path: ./output
             github_token: ${{ github.token }}
-    - uses: actions/upload-artifact@v2
-      with:
-          name: diff-reports
-          path: ./output
     - name: Check report diff
       run: |
         cd output
-        echo "test";
         result=$(sed -n '/<span class="badge badge-Incompatible">/,/<\/span>/p'  api-docs.html)
-        echo "test2";
-        echo $result;
+        if [ -z $result ]; then
+             exit 1;
+        else
+            echo 'No differences between the two api docs';
+        fi
     - name: Commit api-docs
       run: |
           #git ls-files ./app** | grep 'api-docs*' | xargs git add
