@@ -44,10 +44,11 @@ jobs:
       run: |
         cd output
         result=$(grep -Po 'Incompatible' api-docs.html)
+        echo result
         if [ -z $result ]; then
             echo "DIFF_RESULT=$(echo $result)" >> $GITHUB_ENV;
         else
-          echo 'No diff between the two api docs';
+          echo 'No differences between the two api docs';
         fi
     - name: Label check
       if: contains(env.DIFF_RESULT, 'Incompatible')
