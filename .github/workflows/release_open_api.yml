@@ -40,6 +40,10 @@ jobs:
             base_spec: base/app/src/main/resources/swagger/api-docs.json
             output_path: ./output
             github_token: ${{ github.token }}
+    - uses: actions/upload-artifact@v2
+      with:
+          name: diff-reports
+          path: ./output
     - name: Check report diff
       run: |
         cd output
