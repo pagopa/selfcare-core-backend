@@ -44,7 +44,9 @@ jobs:
       run: |
         ls
         cd output
-        echo "ok"
+        ls
+        result=$(grep -Po 'Incompatible' api-docs.html)
+        echo $result
     - uses: actions/upload-artifact@v2
       with:
           name: diff-reports
