@@ -47,7 +47,7 @@ jobs:
         if [ -z $result ]; then
             echo "DIFF_RESULT=$(echo $result)" >> $GITHUB_ENV
     - name: Label check
-      if: contains(DIFF_RESULT, 'Incompatible')
+      if: contains(env.DIFF_RESULT, 'Incompatible')
       uses: actions/github-script@v3
       with:
           script: |
