@@ -45,8 +45,7 @@ jobs:
         cd output
         result=$(grep -Po 'Incompatible' api-docs.html)
         if [ -z $result ]; then
-            echo 'New swagger is different from old one. Action is going to fail!!!!'
-        exit 1
+            exit 1
     - name: Commit api-docs
       run: |
           #git ls-files ./app** | grep 'api-docs*' | xargs git add
