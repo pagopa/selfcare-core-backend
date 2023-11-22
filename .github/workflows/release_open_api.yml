@@ -45,6 +45,7 @@ jobs:
         cd output
         result=$(grep -Po 'Incompatible' api-docs.html)
         if [ -z $result ]; then
+            echo "::error file={name},line={line},endLine={endLine},title={title}::{message}"
             exit 1
     - name: Commit api-docs
       run: |
