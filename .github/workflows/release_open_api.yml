@@ -40,26 +40,11 @@ jobs:
             base_spec: base/app/src/main/resources/swagger/api-docs.json
             output_path: ./output
             github_token: ${{ github.token }}
-    - name: Debug
-      run: |
-        ls
-        cd output
-        ls
-        result=$(grep -Po 'Incompatible' api-docs.html)
-        echo $result
-    - uses: actions/upload-artifact@v2
-      with:
-          name: diff-reports
-          path: ./output
-    - name: Unzip artifact
-      uses: montudor/action-zip@v1.0.0
-      with:
-          args: unzip -qq diff-reports.zip -d ${{ github.workspace }}
     - name: Check report diff
       run: |
-          cd ${{ github.workspace }}/diff-reports
-          result=$(grep -Po 'Incompatible' api-docs.html)
-          if [ -z $result ]; then
+        cd output
+        result=$(grep -Po 'Incompatible' api-docs.html)
+        if [ -z $result ]; then
             core.setFailed('New swagger is different from old one. Action is going to fail!!!!')
     - name: Commit api-docs
       run: |
