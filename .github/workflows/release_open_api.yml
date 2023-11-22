@@ -40,16 +40,12 @@ jobs:
             base_spec: base/app/src/main/resources/swagger/api-docs.json
             output_path: ./output
             github_token: ${{ github.token }}
-    - uses: actions/upload-artifact@v2
-      with:
-          name: diff-reports
-          path: ./output
-    - name: Label check
-      if: contains(github.event.pull_request.labels.*.name, 'OAS:Incompatible')
-      uses: actions/github-script@v3
-      with:
-        script: |
-          core.setFailed('New swagger is different from old one. Action is going to fail!!!!')
+    - name: Commit api-docs
+      run: |
+          cd /github/workspace/output
+          result=$(grep -Po 'Incompatible' api-docs.html)
+          if [ -z $result ]; then
+            core.setFailed('New swagger is different from old one. Action is going to fail!!!!')
     - name: Commit api-docs
       run: |
           #git ls-files ./app** | grep 'api-docs*' | xargs git add
