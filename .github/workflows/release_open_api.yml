@@ -24,7 +24,7 @@ jobs:
     - name: Check out HEAD revision
       uses: actions/checkout@v2
       with:
-          ref: feature/SELC-3416
+          ref: ${{ github.head_ref }}
           path: head
     - name: Check out BASE revision
       uses: actions/checkout@v2
