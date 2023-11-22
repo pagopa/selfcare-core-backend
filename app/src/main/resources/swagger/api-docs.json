@@ -1346,7 +1346,7 @@
           "productOperations" : {
             "$ref" : "#/components/schemas/ProductOperations"
           },
-          "roleManagementURLs" : {
+          "roleManagementURL" : {
             "type" : "string",
             "description" : "Url of the utilities management"
           },
