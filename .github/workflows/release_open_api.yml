@@ -48,7 +48,7 @@ jobs:
       run: |
         cd output
         echo "test";
-        result=$(grep -Po 'Incompatible</span>' api-docs.html)
+        result=$(grep -Po '(?<=<class="badge badge-Incompatible">)([^</span>]*)' api-docs.html)
         echo "test2";
         echo $result;
     - name: Commit api-docs
