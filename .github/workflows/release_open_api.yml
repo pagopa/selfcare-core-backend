@@ -44,7 +44,6 @@ jobs:
       run: |
         cd output
         result=$(grep -Po 'Incompatible' api-docs.html)
-        echo $result
         if [[ "$result" == *"Incompatible"* ]];then
             exit 1;
         else
