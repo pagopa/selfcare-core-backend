@@ -44,7 +44,8 @@ jobs:
       run: |
         cd output
         result=$(sed -n '/<span class="badge badge-Incompatible">/,/<\/span>/p'  api-docs.html)
-        if [ -z $result ]; then
+        echo $result;
+        if [ -s "${result}" ]; then
              exit 1;
         else
             echo 'No differences between the two api docs';
