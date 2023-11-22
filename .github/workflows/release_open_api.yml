@@ -47,8 +47,8 @@ jobs:
     - name: Check report diff
       run: |
         cd output
-        result=$(grep -Po '<span class="badge badge-Incompatible">Incompatible</span>' api-docs.html)
-        echo 'test $result'
+        result=$(grep '<span class="badge badge-Incompatible">Incompatible</span>' api-docs.html)
+        echo $result
         if [[ $result == *"Incompatible"* ]];then
             exit 1;
         else
