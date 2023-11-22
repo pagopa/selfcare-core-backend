@@ -41,13 +41,12 @@ jobs:
             output_path: ./output
             github_token: ${{ github.token }}
     - name: Check report diff
-      uses: actions/github-script@v3
-      with:
-          script: |
-            cd output
-            result=$(grep -Po 'Incompatible' api-docs.html)
-            if [ -z $result ]; then
-              core.setFailed('New swagger is different from old one. Action is going to fail!!!!')
+      run: |
+        cd output
+        result=$(grep -Po 'Incompatible' api-docs.html)
+        if [ -z $result ]; then
+            echo 'New swagger is different from old one. Action is going to fail!!!!'
+        exit 1
     - name: Commit api-docs
       run: |
           #git ls-files ./app** | grep 'api-docs*' | xargs git add
