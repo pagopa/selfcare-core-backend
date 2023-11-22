@@ -24,7 +24,7 @@ jobs:
     - name: Check out HEAD revision
       uses: actions/checkout@v2
       with:
-          ref: feature/SELC-3416
+          ref: ${{ github.head_ref }}
           path: head
     - name: Check out BASE revision
       uses: actions/checkout@v2
@@ -47,11 +47,10 @@ jobs:
     - name: Check report diff
       run: |
         cd output
-        result=$(grep -Po 'badge badge-Incompatible' api-docs.html)
-        echo 'test';
+        result=$(grep -Po '<span class="badge badge-Incompatible">Incompatible</span>' api-docs.html)
         echo $result;
-        if [ -s ${result} ];then
-            exit 1;
+        if [ -z $result ]; then
+          exit 1;
         else
           echo 'No differences between the two api docs';
         fi
