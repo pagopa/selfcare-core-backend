@@ -48,6 +48,7 @@ jobs:
       run: |
         cd output
         result=$(grep '<span class="badge badge-Incompatible">Incompatible</span>' api-docs.html)
+        echo 'test'
         echo $result
         if [ -s "${result}" ];then
             exit 1;
