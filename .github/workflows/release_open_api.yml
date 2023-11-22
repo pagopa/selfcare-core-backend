@@ -43,11 +43,11 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
           name: diff-reports
-          path: ${{ runner.temp }}
-    - name: Unzip project
+          path: ./output
+    - name: Unzip artifact
       uses: montudor/action-zip@v1.0.0
       with:
-          args: unzip -qq ${{ runner.temp }}/diff-reports.zip -d ${{ github.workspace }}
+          args: unzip -qq ./output/diff-reports.zip -d ${{ github.workspace }}
     - name: Check report diff
       run: |
           cd ${{ github.workspace }}/diff-reports
