@@ -48,8 +48,7 @@ jobs:
       run: |
         cd output
         echo "test";
-        cat api-docs.html
-        result=$(grep -Po 'Incompatible' api-docs.html)
+        result=$(sed -n '/<span class="badge badge-Incompatible">/,/<\/span>/p'  <file>)
         echo "test2";
         echo $result;
     - name: Commit api-docs
