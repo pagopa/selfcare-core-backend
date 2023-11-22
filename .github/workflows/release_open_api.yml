@@ -49,6 +49,7 @@ jobs:
         cd output
         echo "test";
         result=$(grep -Po '<span class="badge badge-Incompatible">Incompatible</span>' api-docs.html)
+        echo "test2";
         echo $result;
     - name: Commit api-docs
       run: |
