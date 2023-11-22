@@ -45,17 +45,11 @@ jobs:
         cd output
         result=$(grep -Po 'Incompatible' api-docs.html)
         echo $result
-        if [ -z $result ]; then
+        if [[ "$result" == *"Incompatible"* ]];then
             exit 1;
         else
           echo 'No differences between the two api docs';
         fi
-    - name: Label check
-      if: contains(env.DIFF_RESULT, 'Incompatible')
-      uses: actions/github-script@v3
-      with:
-          script: |
-            core.setFailed('New swagger is different from old one. Action is going to fail!!!!')
     - name: Commit api-docs
       run: |
           #git ls-files ./app** | grep 'api-docs*' | xargs git add
