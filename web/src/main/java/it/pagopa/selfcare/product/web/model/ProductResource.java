@@ -78,13 +78,10 @@ public class ProductResource {
     private Map<String, BackOfficeConfigurationsResource> backOfficeEnvironmentConfigurations;
 
     @ApiModelProperty(value = "${swagger.product.model.roleManagementURL}")
-    private String roleManagementURL;
+    private String roleManagementURLs;
 
     private ProductOperations productOperations;
 
     @ApiModelProperty(value = "${swagger.product.model.invoiceable}")
     private boolean invoiceable;
-
-    @ApiModelProperty(value = "${swagger.product.model.invoiceable}")
-    private boolean test;
 }

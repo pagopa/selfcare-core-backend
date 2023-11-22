@@ -24,12 +24,12 @@ jobs:
     - name: Check out HEAD revision
       uses: actions/checkout@v2
       with:
-          ref: release-dev
+          ref: ${{ github.head_ref }}
           path: head
     - name: Check out BASE revision
       uses: actions/checkout@v2
       with:
-          ref: ${{ github.head_ref }}
+          ref: release-dev
           path: base
     - name: Build with Maven
       run: mvn test -Dtest=SwaggerConfigTest#swaggerSpringPlugin -DfailIfNoTests=false
@@ -40,10 +40,20 @@ jobs:
             base_spec: base/app/src/main/resources/swagger/api-docs.json
             output_path: ./output
             github_token: ${{ github.token }}
-    #- name: Commit api-docs
-     # run: |
-      #    git ls-files ./app** | grep 'api-docs*' | xargs git add
-       #   git config --global user.email "selfcare-github@pagopa.it"
-        #  git config --global user.name "selfcare-github-bot"
-         # git commit -m "Update Swagger documentation" || exit 0
+    - uses: actions/upload-artifact@v2
+      with:
+          name: diff-reports
+          path: ./output
+    - name: Label check
+      if: contains(github.event.pull_request.labels.*.name, 'OAS:Incompatible')
+      uses: actions/github-script@v3
+      with:
+        script: |
+          core.setFailed('New swagger is different from old one. Action is going to fail!!!!')
+    - name: Commit api-docs
+      run: |
+          #git ls-files ./app** | grep 'api-docs*' | xargs git add
+          #git config --global user.email "selfcare-github@pagopa.it"
+          #git config --global user.name "selfcare-github-bot"
+          #git commit -m "Update Swagger documentation" || exit 0
           #git push origin ${{ github.ref_name}}
