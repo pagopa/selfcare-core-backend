@@ -50,11 +50,6 @@ jobs:
         echo "test";
         result=$(grep -Po '<span class="badge badge-Incompatible">Incompatible</span>' api-docs.html)
         echo $result;
-        #if [[ ! -z "$(cat ${result})" ]]; then
-          #exit 1;
-        #else
-          #echo 'No differences between the two api docs';
-        #fi
     - name: Commit api-docs
       run: |
           #git ls-files ./app** | grep 'api-docs*' | xargs git add
