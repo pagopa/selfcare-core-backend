@@ -85,4 +85,7 @@ public class ProductResource {
     @ApiModelProperty(value = "${swagger.product.model.invoiceable}")
     private boolean invoiceable;
 
+    @ApiModelProperty(value = "${swagger.product.model.invoiceable}")
+    private boolean test;
+
 }
