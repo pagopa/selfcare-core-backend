@@ -45,10 +45,10 @@ jobs:
         cd output
         result=$(sed -n '/<span class="badge badge-Incompatible">/,/<\/span>/p'  api-docs.html)
         echo $result;
-        if [ -s "${result}" ]; then
+        if [[ "$result" == *"Incompatible"* ]]; then
              exit 1;
         else
-            echo 'No differences between the two api docs';
+            echo 'No incompatible differences between the two api docs';
         fi
     - name: Commit api-docs
       run: |
