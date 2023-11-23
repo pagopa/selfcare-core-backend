@@ -3,8 +3,7 @@ on:
   pull_request:
     branches:
       - release-dev
-      - feature/SELC-3416
-    types: [ opened, reopened ]
+    types: [ opened ]
   workflow_dispatch: #allow to run github action manually
 permissions:
   contents: write
@@ -52,8 +51,8 @@ jobs:
         fi
     - name: Commit api-docs
       run: |
-          #git ls-files ./app** | grep 'api-docs*' | xargs git add
-          #git config --global user.email "selfcare-github@pagopa.it"
-          #git config --global user.name "selfcare-github-bot"
-          #git commit -m "Update Swagger documentation" || exit 0
-          #git push origin ${{ github.ref_name}}
+          git ls-files ./app** | grep 'api-docs*' | xargs git add
+          git config --global user.email "selfcare-github@pagopa.it"
+          git config --global user.name "selfcare-github-bot"
+          git commit -m "Update Swagger documentation" || exit 0
+          git push origin ${{ github.ref_name}}
