@@ -3,8 +3,7 @@ on:
   pull_request:
     branches:
       - release-dev
-      - feature/SELC-3416
-    types: [ opened, reopened ]
+    types: [ opened ]
   workflow_dispatch: #allow to run github action manually
 permissions:
   contents: write
@@ -40,14 +39,20 @@ jobs:
             base_spec: base/app/src/main/resources/swagger/api-docs.json
             output_path: ./output
             github_token: ${{ github.token }}
-    - uses: actions/upload-artifact@v2
-      with:
-          name: diff-reports
-          path: ./output
+    - name: Check report diff
+      run: |
+        cd output
+        result=$(sed -n '/<span class="badge badge-Incompatible">/,/<\/span>/p'  api-docs.html)
+        echo $result;
+        if [[ "$result" == *"Incompatible"* ]]; then
+             exit 1;
+        else
+            echo 'No incompatible differences between the two api docs';
+        fi
     - name: Commit api-docs
       run: |
-          #git ls-files ./app** | grep 'api-docs*' | xargs git add
-          #git config --global user.email "selfcare-github@pagopa.it"
-          #git config --global user.name "selfcare-github-bot"
-          #git commit -m "Update Swagger documentation" || exit 0
-          #git push origin ${{ github.ref_name}}
+          git ls-files ./app** | grep 'api-docs*' | xargs git add
+          git config --global user.email "selfcare-github@pagopa.it"
+          git config --global user.name "selfcare-github-bot"
+          git commit -m "Update Swagger documentation" || exit 0
+          git push origin ${{ github.ref_name}}
