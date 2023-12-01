@@ -34,6 +34,7 @@ public class DummyProduct implements ProductOperations {
     private Map<String, ? extends BackOfficeConfigurations> backOfficeEnvironmentConfigurations;
     private String roleManagementURL;
     private ProductOperations productOperations;
+    private boolean invoiceable;
 
 
     @Override
