@@ -3,6 +3,7 @@ package it.pagopa.selfcare.product.web.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import it.pagopa.selfcare.commons.base.utils.InstitutionType;
 import it.pagopa.selfcare.product.connector.model.PartyRole;
 import it.pagopa.selfcare.product.connector.model.ProductOperations;
@@ -98,7 +99,7 @@ public class ProductController {
         return ResponseEntity.ok().build();
     }
 
-
+    @Tag(name = "external-v2")
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "", notes = "${swagger.product.operation.getProduct}")

@@ -218,7 +218,7 @@
     },
     "/products/{id}" : {
       "get" : {
-        "tags" : [ "product" ],
+        "tags" : [ "external-v2" ],
         "summary" : "getProduct",
         "description" : "Service that returns the information for a single product given its product id",
         "operationId" : "getProductUsingGET",
