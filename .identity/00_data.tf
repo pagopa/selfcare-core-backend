@@ -1,0 +1,43 @@
+data "github_organization_teams" "all" {
+  root_teams_only = true
+  summary_only    = true
+}
+
+data "azurerm_key_vault" "key_vault" {
+  name                = "${local.prefix}-${var.env_short}-kv"
+  resource_group_name = "${local.prefix}-${var.env_short}-sec-rg"
+}
+
+data "azurerm_key_vault_secret" "jwt_public_key" {
+  name         = "jwt-public-key"
+  key_vault_id = data.azurerm_key_vault.key_vault.id
+}
+
+data "azurerm_key_vault_secret" "mongodb_connection_string" {
+  name         = "mongodb-connection-string"
+  key_vault_id = data.azurerm_key_vault.key_vault.id
+}
+
+data "azurerm_key_vault_secret" "user_registry_api_key" {
+  name         = "user-registry-api-key"
+  key_vault_id = data.azurerm_key_vault.key_vault.id
+}
+
+data "azurerm_key_vault_secret" "onboarding_functions_api_key" {
+  name         = "onboarding-functions-api-key"
+  key_vault_id = data.azurerm_key_vault.key_vault.id
+}
+
+data "azurerm_key_vault_secret" "sonar_token" {
+  name         = "sonar-token"
+  key_vault_id = data.azurerm_key_vault.key_vault.id
+}
+
+data "azurerm_storage_account" "tfstate_app" {
+  name                = "tfapp${lower(replace(data.azurerm_subscription.current.display_name, "-", ""))}"
+  resource_group_name = "terraform-state-rg"
+}
+
+data "azurerm_resource_group" "dashboards" {
+  name = "dashboards"
+}
