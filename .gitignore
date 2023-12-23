@@ -4,6 +4,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+/.terraform/
+/.identity/.terraform/
+
 ### STS ###
 .apt_generated
 .classpath
@@ -33,5 +36,3 @@ build/
 .vscode/
 .DS_Store
 
-/.terraform/
-/.identity/.terraform/
