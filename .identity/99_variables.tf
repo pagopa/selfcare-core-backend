@@ -9,19 +9,6 @@ locals {
   location_short = "weu"
   location       = "westeurope"
   project        = "${var.prefix}-${var.env_short}"
-
-  app_name = "github-${local.github.org}-${local.github.repository}-${var.prefix}-${local.domain}-${var.env}"
-
-  container_app_selc_environment = {
-    name           = "${local.prefix}-${var.env_short}-cae",
-    resource_group = "${local.prefix}-${var.env_short}-container-app-rg",
-  }
-
-  functions = {
-    resource_group_name = "${local.prefix}-${var.env_short}-functions-rg",
-    insights_key        = "${local.prefix}-${var.env_short}-appinsights"
-  }
-
 }
 
 variable "env" {
@@ -57,9 +44,3 @@ variable "github_repository_environment" {
   }
 }
 
-variable "environment_roles" {
-  type = object({
-    subscription = list(string)
-  })
-  description = "GitHub Continous Integration roles"
-}

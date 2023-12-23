@@ -13,9 +13,9 @@ on:
 
 env:
   TEMPLATE_DIR: azure-dashboard
-  CLIENT_ID: 59f62d45-597c-48ff-99ea-40f4b3518946
-  TENANT_ID: 7788edaf-0346-4068-9d79-c868aed15b3d
-  SUBSCRIPTION_ID: 1ab5e788-3b98-4c63-bd05-de0c7388c853
+  CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_CD }}
+  TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   API_NAME: api-selfcare-product
 
 permissions:
