@@ -6,6 +6,12 @@ target/
 
 /.terraform/
 /.identity/.terraform/
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
 
 ### STS ###
 .apt_generated
