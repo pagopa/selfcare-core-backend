@@ -1,0 +1,11 @@
+oa3_spec: app/src/main/app/src/main/resources/swagger/api-docs.json
+name: opex_api-product
+location: West Europe
+timespan: 10m # Default, a number or a timespan https://docs.microsoft.com/en-us/azure/data-explorer/kusto/query/scalar-data-types/timespan
+data_source: /subscriptions/1ab5e788-3b98-4c63-bd05-de0c7388c853/resourceGroups/selc-d-vnet-rg/providers/Microsoft.Network/applicationGateways/selc-d-app-gw
+action_groups:
+  - /subscriptions/1ab5e788-3b98-4c63-bd05-de0c7388c853/resourceGroups/selc-d-monitor-rg/providers/microsoft.insights/actionGroups/PagoPA
+  - /subscriptions/1ab5e788-3b98-4c63-bd05-de0c7388c853/resourceGroups/selc-d-monitor-rg/providers/microsoft.insights/actionGroups/SlackPagoPA
+overrides:
+  hosts: # Use these hosts instead of those inside the OpenApi spec
+    - http://selc.internal.dev.selfcare.pagopa.it
