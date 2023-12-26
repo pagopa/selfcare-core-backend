@@ -57,7 +57,7 @@ jobs:
       - name: Login
         id: login
         # from https://github.com/Azure/login/commits/master
-        uses: azure/login@1b07ea9bb57189c6ba703940a69f3522c74997c1
+        uses: azure/login@7c3c862a2858c0a9d3230468719bb864e4c376bc
         with:
           client-id: ${{ env.CLIENT_ID }}
           tenant-id: ${{ env.TENANT_ID }}
