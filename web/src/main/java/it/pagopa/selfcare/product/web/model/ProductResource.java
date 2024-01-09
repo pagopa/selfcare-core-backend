@@ -6,6 +6,7 @@ import it.pagopa.selfcare.product.connector.model.ProductOperations;
 import it.pagopa.selfcare.product.connector.model.ProductStatus;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.time.Instant;
 import java.util.EnumMap;
 import java.util.Map;
@@ -14,13 +15,16 @@ import java.util.UUID;
 @Data
 public class ProductResource {
 
-    @ApiModelProperty(value = "${swagger.product.model.id}")
+    @ApiModelProperty(value = "${swagger.product.model.id}", required = true)
+    @NotBlank
     private String id;
 
-    @ApiModelProperty(value = "${swagger.product.model.title}")
+    @ApiModelProperty(value = "${swagger.product.model.title}", required = true)
+    @NotBlank
     private String title;
 
-    @ApiModelProperty(value = "${swagger.product.model.description}")
+    @ApiModelProperty(value = "${swagger.product.model.description}", required = true)
+    @NotBlank
     private String description;
 
     @ApiModelProperty(value = "${swagger.product.model.logoBgColor}", example = "#000000")
@@ -32,22 +36,26 @@ public class ProductResource {
     @ApiModelProperty(value = "${swagger.product.model.urlPublic}")
     private String urlPublic;
 
-    @ApiModelProperty(value = "${swagger.product.model.urlBO}")
+    @ApiModelProperty(value = "${swagger.product.model.urlBO}", required = true)
+    @NotBlank
     private String urlBO;
 
     @ApiModelProperty(value = "${swagger.product.model.roleMappings}")
     private EnumMap<PartyRole, ProductRoleInfo> roleMappings;
 
-    @ApiModelProperty(value = "${swagger.product.model.status}")
+    @ApiModelProperty(value = "${swagger.product.model.status}", required = true)
+    @NotBlank
     private ProductStatus status;
 
     @ApiModelProperty(value = "${swagger.product.model.delegable}")
     private boolean delegable;
 
-    @ApiModelProperty(value = "${swagger.product.model.contractTemplatePath}")
+    @ApiModelProperty(value = "${swagger.product.model.contractTemplatePath}", required = true)
+    @NotBlank
     private String contractTemplatePath;
 
-    @ApiModelProperty(value = "${swagger.product.model.contractTemplateVersion}")
+    @ApiModelProperty(value = "${swagger.product.model.contractTemplateVersion}", required = true)
+    @NotBlank
     private String contractTemplateVersion;
 
     @ApiModelProperty(value = "${swagger.product.model.contractTemplateUpdateDateTime}")
