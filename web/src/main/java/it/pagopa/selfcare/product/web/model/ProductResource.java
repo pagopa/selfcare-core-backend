@@ -7,6 +7,8 @@ import it.pagopa.selfcare.product.connector.model.ProductStatus;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.EnumMap;
 import java.util.Map;
@@ -40,11 +42,12 @@ public class ProductResource {
     @NotBlank
     private String urlBO;
 
-    @ApiModelProperty(value = "${swagger.product.model.roleMappings}")
+    @ApiModelProperty(value = "${swagger.product.model.roleMappings}", required = true)
+    @NotEmpty
     private EnumMap<PartyRole, ProductRoleInfo> roleMappings;
 
     @ApiModelProperty(value = "${swagger.product.model.status}", required = true)
-    @NotBlank
+    @NotNull
     private ProductStatus status;
 
     @ApiModelProperty(value = "${swagger.product.model.delegable}")

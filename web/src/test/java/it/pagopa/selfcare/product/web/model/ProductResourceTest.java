@@ -10,6 +10,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
 import java.util.*;
@@ -37,7 +38,10 @@ class ProductResourceTest {
         toCheckMap.put("contractTemplateUpdatedAt", NotNull.class);
         toCheckMap.put("contractTemplatePath", NotBlank.class);
         toCheckMap.put("contractTemplateVersion", NotBlank.class);
+        toCheckMap.put("description", NotBlank.class);
+        toCheckMap.put("urlBO", NotBlank.class);
         toCheckMap.put("status", NotNull.class);
+        toCheckMap.put("roleMappings", NotEmpty.class);
         ProductResource productResource = new ProductResource();
         // when
         Set<ConstraintViolation<Object>> violations = validator.validate(productResource);
