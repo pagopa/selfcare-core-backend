@@ -59,7 +59,7 @@ jobs:
         # from https://github.com/Azure/login/commits/master
         uses: azure/login@3f2bf91b4d94b80f92c4315ce76835b6bd442380
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID_CI }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID_CD }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
