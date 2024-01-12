@@ -59,9 +59,9 @@ jobs:
         # from https://github.com/Azure/login/commits/master
         uses: azure/login@3f2bf91b4d94b80f92c4315ce76835b6bd442380
         with:
-          client-id: ${{ env.CLIENT_ID }}
-          tenant-id: ${{ env.TENANT_ID }}
-          subscription-id: ${{ env.SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID_CI }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       # this action create a folder named /azure-dashboard
       - uses: pagopa/opex-dashboard-action@main
