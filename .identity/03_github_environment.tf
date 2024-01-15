@@ -53,7 +53,10 @@ locals {
     "AZURE_ONBOARDING_FN_SERVICE_PLAN" : "${local.project}-onboarding-fn-plan"
   }
   repo_secrets = {
-    "SONAR_TOKEN" : data.azurerm_key_vault_secret.sonar_token.value
+    "SONAR_TOKEN" : data.azurerm_key_vault_secret.sonar_token.value,
+    "AZURE_CLIENT_ID" : data.azurerm_user_assigned_identity.identity_cd.client_id,
+    "AZURE_TENANT_ID" : data.azurerm_client_config.current.tenant_id,
+    "AZURE_SUBSCRIPTION_ID" : data.azurerm_subscription.current.subscription_id
   }
 }
 
