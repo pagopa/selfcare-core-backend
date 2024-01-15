@@ -13,9 +13,10 @@ on:
 
 env:
   TEMPLATE_DIR: azure-dashboard
-  CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_CD }}
-  TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-  SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  ARM_USE_OIDC: true
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_CI }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   API_NAME: api-selfcare-product
 
 permissions:
@@ -73,15 +74,3 @@ jobs:
       - name: Copy Environments
         run: |
           cp -R .opex/${API_NAME}/env ./${TEMPLATE_DIR}
-
-      # now is possible to launch the command: terraform apply
-      - name: Terraform Apply
-        shell: bash
-        run: |
-          cd ./${TEMPLATE_DIR}
-          export ARM_CLIENT_ID="${CLIENT_ID}"
-          export ARM_SUBSCRIPTION_ID=$(az account show --query id --output tsv)
-          export ARM_TENANT_ID=$(az account show --query tenantId --output tsv)
-          export ARM_USE_OIDC=true
-
-          bash ./terraform.sh apply ${{ matrix.environment }} -auto-approve
