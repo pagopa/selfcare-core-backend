@@ -43,8 +43,7 @@ locals {
     "AZURE_SUBSCRIPTION_ID" : data.azurerm_subscription.current.subscription_id
   }
   env_secrets_cd = {
-    "AZURE_CLIENT_ID_CD" : module.identity_cd.identity_client_id,
-    #data.azurerm_user_assigned_identity.identity_cd.client_id,
+    "AZURE_CLIENT_ID_CD" : data.azurerm_user_assigned_identity.identity_cd.client_id,
     "AZURE_TENANT_ID" : data.azurerm_client_config.current.tenant_id,
     "AZURE_SUBSCRIPTION_ID" : data.azurerm_subscription.current.subscription_id
   }
