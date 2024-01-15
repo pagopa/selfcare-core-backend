@@ -68,7 +68,6 @@ jobs:
       - uses: pagopa/opex-dashboard-action@main
         with:
           template: ${{ env.TEMPLATE_DIR }}
-          w
 
       # we need to set env variables in the folder /azure-dashboard
       - name: Copy Environments
