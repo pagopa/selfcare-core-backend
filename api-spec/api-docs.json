@@ -5,6 +5,8 @@
     "description": "The services described in this section deal with the management of the Product entity, providing the necessary methods for its creation, consultation and activation.",
     "version": "0.0.1-SNAPSHOT"
   },
+  "host": "selc.internal.dev.selfcare.pagopa.it",
+  "basePath": "/ms-product/v1",
   "servers": [
     {
       "url": "https://selc.internal.dev.selfcare.pagopa.it/ms-product/v1"
