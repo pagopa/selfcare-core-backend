@@ -7,18 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://selc.internal.dev.selfcare.pagopa.it/ms-product/v1",
-      "variables": {
-        "url": {
-          "default": "http://localhost"
-        },
-        "port": {
-          "default": "80"
-        },
-        "basePath": {
-          "default": ""
-        }
-      }
+      "url": "https://selc.internal.dev.selfcare.pagopa.it/ms-product/v1"
     }
   ],
   "tags": [

@@ -4,14 +4,7 @@ info:
   description: The services described in this section deal with the management of the Product entity, providing the necessary methods for its creation, consultation and activation.
   version: 0.0.1-SNAPSHOT
 servers:
-  - url: '{url}:{port}{basePath}'
-    variables:
-      url:
-        default: http://localhost
-      port:
-        default: '80'
-      basePath:
-        default: ''
+  - url: 'https://selc.internal.dev.selfcare.pagopa.it/ms-product/v1'
 tags:
   - name: product
     description: Product's endpoints for CRUD operations
