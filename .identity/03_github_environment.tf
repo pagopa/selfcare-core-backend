@@ -48,9 +48,7 @@ locals {
     "AZURE_SUBSCRIPTION_ID" : data.azurerm_subscription.current.subscription_id
   }
   env_variables = {
-    "AZURE_ONBOARDING_FN_APP_NAME" : "${local.project}-onboarding-fn",
-    "AZURE_ONBOARDING_FN_RESOURCE_GROUP" : "${local.project}-onboarding-fn-rg",
-    "AZURE_ONBOARDING_FN_SERVICE_PLAN" : "${local.project}-onboarding-fn-plan"
+
   }
   repo_secrets = {
     "SONAR_TOKEN" : data.azurerm_key_vault_secret.sonar_token.value,
