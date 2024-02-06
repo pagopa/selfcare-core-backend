@@ -18,6 +18,14 @@ ingress:
         - path: /ms-product/v1/(.*)
           pathType: ImplementationSpecific
 
+resources:
+  requests:
+    cpu: "400m"
+    memory: "600M"
+  limits:
+    cpu: "800m"
+    memory: "700M"
+
 autoscaling:
   enabled: false
   minReplicas: 1
