@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://selc.internal.dev.selfcare.pagopa.it/ms-product/v1"
+      "url": "https://api.selfcare.pagopa.it/ms-product/v1"
     }
   ],
   "tags": [
