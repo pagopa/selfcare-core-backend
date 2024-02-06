@@ -13,10 +13,12 @@ on:
 
 env:
   TEMPLATE_DIR: azure-dashboard
-  CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_CD }}
-  TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-  SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  ARM_USE_OIDC: true
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_CD }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   API_NAME: api-selfcare-product
+  DOCKER_IMAGE_TAG: sha256:04d8ead53c772d23b094c2a395292dc159e6f2905e1b13b5f828f31eac6eb27f
 
 permissions:
   id-token: write
@@ -28,9 +30,7 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-22.04
 
-    strategy:
-      matrix:
-        environment: [ dev ]
+    environment: 'prod-cd'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -54,34 +54,37 @@ jobs:
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
 
-      - name: Login
-        id: login
-        # from https://github.com/Azure/login/commits/master
-        uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2
+      - uses: pagopa/opex-dashboard-azure-action@3ad80a5e4a2d5a8f342615637072f21b687320ce
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID_CI }}
+          environment: prod
+          api-name: ${{ env.API_NAME }}
+          config: .opex/${{ env.API_NAME }}/env/prod/config.yaml
+          client-id: ${{ secrets.AZURE_CLIENT_ID_CD }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          docker-version: ${{ env.DOCKER_IMAGE_TAG }}
 
-      # this action create a folder named /azure-dashboard
-      - uses: pagopa/opex-dashboard-action@main
-        with:
-          template: ${{ env.TEMPLATE_DIR }}
-          config: .opex/${{ env.API_NAME }}/env/${{ matrix.environment }}/config.yaml
-
-      # we need to set env variables in the folder /azure-dashboard
-      - name: Copy Environments
-        run: |
-          cp -R .opex/${API_NAME}/env ./${TEMPLATE_DIR}
-
-      # now is possible to launch the command: terraform apply
-      - name: Terraform Apply
-        shell: bash
-        run: |
-          cd ./${TEMPLATE_DIR}
-          export ARM_CLIENT_ID="${CLIENT_ID}"
-          export ARM_SUBSCRIPTION_ID=$(az account show --query id --output tsv)
-          export ARM_TENANT_ID=$(az account show --query tenantId --output tsv)
-          export ARM_USE_OIDC=true
-
-          bash ./terraform.sh apply ${{ matrix.environment }} -auto-approve
+#      - name: Login
+#        id: login
+#        # from https://github.com/Azure/login/commits/master
+#        #          uses: azure/login@de95379fe4dadc2defb305917eaa7e5dde727294
+#        uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2
+#        with:
+#          client-id: ${{ secrets.AZURE_CLIENT_ID_CD }}
+#          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+#          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+#
+#
+#
+#
+#
+#
+#      # this action create a folder named /azure-dashboard
+#      - uses: pagopa/opex-dashboard-action@main
+#        with:
+#          template: ${{ env.TEMPLATE_DIR }}
+#
+#      # we need to set env variables in the folder /azure-dashboard
+#      - name: Copy Environments
+#        run: |
+#          cp -R .opex/${API_NAME}/env ./${TEMPLATE_DIR}

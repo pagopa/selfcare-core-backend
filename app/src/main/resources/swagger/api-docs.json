@@ -239,7 +239,7 @@
           "style" : "form",
           "schema" : {
             "type" : "string",
-            "enum" : [ "AS", "GSP", "PA", "PG", "PSP", "PT", "SA", "SCP" ]
+            "enum" : [ "AS", "CON", "GSP", "PA", "PG", "PSP", "PT", "REC", "SA", "SCP" ]
           }
         } ],
         "responses" : {
@@ -1262,6 +1262,7 @@
       },
       "ProductResource" : {
         "title" : "ProductResource",
+        "required" : [ "contractTemplatePath", "contractTemplateVersion", "description", "id", "roleMappings", "status", "title", "urlBO" ],
         "type" : "object",
         "properties" : {
           "backOfficeEnvironmentConfigurations" : {

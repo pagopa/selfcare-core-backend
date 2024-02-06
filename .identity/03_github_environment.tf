@@ -3,12 +3,12 @@ data "azurerm_resource_group" "identity_rg" {
 }
 
 data "azurerm_user_assigned_identity" "identity_ci" {
-  name                = "${local.project}-github-ci-identity"
+  name                = "${local.project}-ms-github-ci-identity"
   resource_group_name = data.azurerm_resource_group.identity_rg.name
 }
 
 data "azurerm_user_assigned_identity" "identity_cd" {
-  name                = "${local.project}-github-cd-identity"
+  name                = "${local.project}-ms-github-cd-identity"
   resource_group_name = data.azurerm_resource_group.identity_rg.name
 }
 
@@ -48,12 +48,13 @@ locals {
     "AZURE_SUBSCRIPTION_ID" : data.azurerm_subscription.current.subscription_id
   }
   env_variables = {
-    "AZURE_ONBOARDING_FN_APP_NAME" : "${local.project}-onboarding-fn",
-    "AZURE_ONBOARDING_FN_RESOURCE_GROUP" : "${local.project}-onboarding-fn-rg",
-    "AZURE_ONBOARDING_FN_SERVICE_PLAN" : "${local.project}-onboarding-fn-plan"
+
   }
   repo_secrets = {
-    "SONAR_TOKEN" : data.azurerm_key_vault_secret.sonar_token.value
+    "SONAR_TOKEN" : data.azurerm_key_vault_secret.sonar_token.value,
+    "AZURE_CLIENT_ID" : data.azurerm_user_assigned_identity.identity_cd.client_id,
+    "AZURE_TENANT_ID" : data.azurerm_client_config.current.tenant_id,
+    "AZURE_SUBSCRIPTION_ID" : data.azurerm_subscription.current.subscription_id
   }
 }
 

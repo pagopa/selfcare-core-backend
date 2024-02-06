@@ -1,12 +1,12 @@
 prefix    = "selc"
-env       = "dev"
-env_short = "d"
+env       = "prod"
+env_short = "p"
 domain    = "ms-product"
 
 cd_github_federations = [
   {
     repository = "selfcare-ms-product"
-    subject    = "dev-cd"
+    subject    = "prod-cd"
   }
 ]
 
@@ -21,7 +21,7 @@ environment_cd_roles = {
 
 tags = {
   CreatedBy   = "Terraform"
-  Environment = "Dev"
+  Environment = "Prod"
   Owner       = "SelfCare"
   Source      = "https://github.com/pagopa/selfcare-ms-product"
   CostCenter  = "TS310 - PAGAMENTI & SERVIZI"
