@@ -30,7 +30,7 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-22.04
 
-    environment: 'dev-cd'
+    environment: 'prod-cd'
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -56,9 +56,9 @@ jobs:
 
       - uses: pagopa/opex-dashboard-azure-action@3ad80a5e4a2d5a8f342615637072f21b687320ce
         with:
-          environment: dev
+          environment: prod
           api-name: ${{ env.API_NAME }}
-          config: .opex/${{ env.API_NAME }}/env/dev/config.yaml
+          config: .opex/${{ env.API_NAME }}/env/prod/config.yaml
           client-id: ${{ secrets.AZURE_CLIENT_ID_CD }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}

@@ -3,12 +3,12 @@ data "azurerm_resource_group" "identity_rg" {
 }
 
 data "azurerm_user_assigned_identity" "identity_ci" {
-  name                = "${local.project}-github-ci-identity"
+  name                = "${local.project}-ms-github-ci-identity"
   resource_group_name = data.azurerm_resource_group.identity_rg.name
 }
 
 data "azurerm_user_assigned_identity" "identity_cd" {
-  name                = "${local.project}-github-cd-identity"
+  name                = "${local.project}-ms-github-cd-identity"
   resource_group_name = data.azurerm_resource_group.identity_rg.name
 }
 
