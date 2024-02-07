@@ -1,3 +1,9 @@
+resource "azurerm_resource_group" "dashboards" {
+  name     = "dashboards"
+  location = var.location
+  tags     = var.tags
+}
+
 data "azurerm_resource_group" "identity_rg" {
   name = "${local.project}-identity-rg"
 }
