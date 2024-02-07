@@ -68,3 +68,8 @@ variable "github_repository_environment" {
 variable "tags" {
   type = map(any)
 }
+
+variable "location" {
+  type    = string
+  default = "westeurope"
+}
