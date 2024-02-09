@@ -11,7 +11,7 @@ cd_github_federations = [
 ]
 
 environment_cd_roles = {
-  subscription    = ["Contributor"]
+  subscription = ["Contributor"]
   resource_groups = {
     "terraform-state-rg" = [
       "Storage Blob Data Contributor"
