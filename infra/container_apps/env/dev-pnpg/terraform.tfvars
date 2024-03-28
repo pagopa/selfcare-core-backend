@@ -45,7 +45,7 @@ app_settings = [
 ]
 
 secrets_names = {
-  "JWT_PUBLIC_KEY"                          = "jwt-public-key"
+  "JWT_TOKEN_PUBLIC_KEY"                    = "jwt-public-key"
   "MONGODB_CONNECTION_URI"                  = "mongodb-connection-string"
   "BLOB_STORAGE_CONN_STRING"                = "blob-storage-product-connection-string"
   "APPLICATIONINSIGHTS_CONNECTION_STRING"   = "appinsights-connection-string"
