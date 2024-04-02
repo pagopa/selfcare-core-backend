@@ -30,8 +30,6 @@ container_app = {
   memory = "2.5Gi"
 }
 
-
-
 app_settings = [
   {
     name  = "APPLICATIONINSIGHTS_ROLE_NAME"
