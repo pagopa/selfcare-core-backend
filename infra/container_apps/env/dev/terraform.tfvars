@@ -25,8 +25,8 @@ container_app = {
       name = "cron-scale-rule"
     }
   ]
-  cpu          = 0.5
-  memory       = "1Gi"
+  cpu    = 0.5
+  memory = "1Gi"
 }
 
 app_settings = [
@@ -48,17 +48,17 @@ app_settings = [
   },
   {
     name  = "DEPICT_IMAGE_URL"
-    value =  "https://selcdcheckoutsa.z6.web.core.windows.net/resources/products/default/depict-image.jpeg"
+    value = "https://selcdcheckoutsa.z6.web.core.windows.net/resources/products/default/depict-image.jpeg"
   },
   {
-    name = "BLOBSTORAGE_PUBLIC_HOST"
+    name  = "BLOBSTORAGE_PUBLIC_HOST"
     value = "selcdcheckoutsa.z6.web.core.windows.net"
   }
 ]
 
 secrets_names = {
-  "JWT_TOKEN_PUBLIC_KEY"                    = "jwt-public-key"
-  "MONGODB_CONNECTION_URI"                  = "mongodb-connection-string"
-  "BLOB_STORAGE_CONN_STRING"                = "blob-storage-product-connection-string"
-  "APPLICATIONINSIGHTS_CONNECTION_STRING"   = "appinsights-connection-string"
+  "JWT_TOKEN_PUBLIC_KEY"                  = "jwt-public-key"
+  "MONGODB_CONNECTION_URI"                = "mongodb-connection-string"
+  "BLOB_STORAGE_CONN_STRING"              = "blob-storage-product-connection-string"
+  "APPLICATIONINSIGHTS_CONNECTION_STRING" = "appinsights-connection-string"
 }
